@@ -52,9 +52,17 @@
                 "NU1605"
               ]
             },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[5.0.2, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[5.6.3, )"
+            },
+            "mysql.data": {
+              "target": "Package",
+              "version": "[8.0.23, )"
             }
           },
           "imports": [
