@@ -36,14 +36,14 @@ namespace api.Controllers
         [HttpGet("{date}", Name = "GetDistinctAvailableAppointments")]
         public List<Appointment> GetDistinctAvailableAppointments()
         {
-            IReadAppointment ra = new ReadAppointment();
+            ReadAppointment ra = new ReadAppointment();
             return ra.ReadDistinctAvailableAppointments();
         }
         // GetAvailableAppointmentsByDate
         [HttpGet("{date}", Name = "GetAvailableAppointmentsByDate")]
         public List<Appointment> GetAvailableAppointmentsByDate(DateTime date)
         {
-            IReadAppointment ra = new ReadAppointment();
+            ReadAppointment ra = new ReadAppointment();
             return ra.ReadAvailableAppointmentsByDate(date);
         }
 
@@ -51,7 +51,7 @@ namespace api.Controllers
         [HttpGet("{date}", Name = "GetAvailableAppointmentsByDateForTrainer")]
         public List<Appointment> GetAvailableAppointmentsByDateForTrainer(int trainerId, DateTime date)
         {
-            IReadAppointment ra = new ReadAppointment();
+            ReadAppointment ra = new ReadAppointment();
             return ra.ReadAvailableAppointmentsByDateForTrainer(trainerId,date);
         }
 
@@ -62,7 +62,7 @@ namespace api.Controllers
         public void Post([FromBody] Appointment a)
         {
             IWriteAppointment wa = new WriteAppointment();
-             System.Console.WriteLine("made it to the post.");
+            System.Console.WriteLine("made it to the post.");
             wa.Write(a);
         }
 
@@ -79,7 +79,7 @@ namespace api.Controllers
         [HttpPut("{customerid}", Name = "UpdateByAddingCustomerId")]
         public void PutByAddingCustomerId(int id, [FromBody] Appointment a)
         {
-            IUpdateAppointment ua = new UpdateAppointment();
+            UpdateAppointment ua = new UpdateAppointment();
             System.Console.WriteLine("made it to the update.");
             ua.UpdateAddCustomerId(a);
         }
@@ -87,7 +87,7 @@ namespace api.Controllers
         [HttpPut("{customerid}", Name = "UpdateByDeletingCustomerId")]
         public void PutByDeletingCustomerId(int id, [FromBody] Appointment a)
         {
-            IUpdateAppointment ua = new UpdateAppointment();
+            UpdateAppointment ua = new UpdateAppointment();
             System.Console.WriteLine("made it to the update.");
             ua.UpdateDeleteCustomerId(a);
         }
