@@ -81,7 +81,7 @@ namespace api.Controllers
         {
             UpdateAppointment ua = new UpdateAppointment();
             System.Console.WriteLine("made it to the update.");
-            ua.UpdateAddCustomerId(a);
+            ua.UpdateAddCustomerId(a,id);
         }
         // Update Appointments by Deleting a customer from appointment
         [HttpPut("{customerid}", Name = "UpdateByDeletingCustomerId")]

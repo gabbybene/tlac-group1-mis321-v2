@@ -27,7 +27,7 @@ namespace api.Database{
                 cmd.ExecuteNonQuery();
             }
         }
-        public void AddCustToAppt(Appointment appt,int custID){
+        public void UpdateAddCustomerId(Appointment appt,int custID){
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
@@ -40,7 +40,7 @@ namespace api.Database{
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
-        public void RemoveCustFromAppt(Appointment appt){
+        public void UpdateDeleteCustomerId(Appointment appt){
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
