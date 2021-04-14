@@ -6,7 +6,7 @@ namespace api.interfaces
     public interface IReadCustomer
     {
         Customer Read(string email);
-        Customer GetCustomerByID(int id);
+        Customer GetCustomerByID(object id);
         List<Customer> ReadAll();
     }
 }
