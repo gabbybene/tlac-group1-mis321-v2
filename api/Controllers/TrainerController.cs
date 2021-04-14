@@ -25,10 +25,11 @@ namespace api.Controllers
         }
 
         // GET: api/Trainer/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet("{id}", Name = "GetTrainer")]
+        public Trainer Get(string email)
         {
-            return "value";
+            IReadTrainer rt = new ReadTrainer();
+            return rt.Read(email);
         }
 
         // POST: api/Trainer

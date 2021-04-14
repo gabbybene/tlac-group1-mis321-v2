@@ -25,10 +25,11 @@ namespace api.Controllers
         }
 
         // GET: api/Manager/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet("{id}", Name = "GetManager")]
+        public Manager Get(int id)
         {
-            return "value";
+            IReadManager rm = new ReadManager();
+            return rm.Read();
         }
 
         // POST: api/Manager

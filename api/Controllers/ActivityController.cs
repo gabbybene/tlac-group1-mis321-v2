@@ -25,10 +25,11 @@ namespace api.Controllers
         }
 
         // GET: api/Activity/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet("{id}", Name = "GetActivity")]
+        public Activity Get(int id)
         {
-            return "value";
+            IReadActivity ra = new ReadActivity();
+            return ra.Read(id);
         }
 
         // POST: api/Activity

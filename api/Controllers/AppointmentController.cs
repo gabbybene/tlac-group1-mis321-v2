@@ -25,7 +25,7 @@ namespace api.Controllers
         }
 
         // GET: api/Appointment/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = "GetAppointment")]
         public Appointment Get(int id)
         {
             IReadAppointment ra = new ReadAppointment();
@@ -56,7 +56,6 @@ namespace api.Controllers
         }
 
         // POST: api/Appointment
-        //do we want customer and trainer on post method or just trainer?
         [EnableCors("AnotherPolicy")]
         [HttpPost]
         public void Post([FromBody] Appointment a)
