@@ -4,6 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
+using api.models;
+using api.Database;
+using api.interfaces;
 
 namespace api.Controllers
 {
@@ -52,6 +56,7 @@ namespace api.Controllers
         }
 
         // POST: api/Appointment
+        //do we want customer and trainer on post method or just trainer?
         [EnableCors("AnotherPolicy")]
         [HttpPost]
         public void Post([FromBody] Appointment a)
@@ -64,14 +69,14 @@ namespace api.Controllers
         // PUT: api/Appointment/5
         [EnableCors("AnotherPolicy")]
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Appointment a)
+        public void Put(int id, [FromBody] List<Appointment> a)
         {
             IUpdateAppointment ua = new UpdateAppointment();
             System.Console.WriteLine("made it to the update.");
             ua.Update(a);
         }
         // Update Appointments by adding a Customer to appointment
-        [HttpPut("{customerid}", name = "UpdateByAddingCustomerId")]
+        [HttpPut("{customerid}", Name = "UpdateByAddingCustomerId")]
         public void PutByAddingCustomerId(int id, [FromBody] Appointment a)
         {
             IUpdateAppointment ua = new UpdateAppointment();
@@ -79,7 +84,7 @@ namespace api.Controllers
             ua.UpdateAddCustomerId(a);
         }
         // Update Appointments by Deleting a customer from appointment
-        [HttpPut("{customerid}", name = "UpdateByDeletingCustomerId")]
+        [HttpPut("{customerid}", Name = "UpdateByDeletingCustomerId")]
         public void PutByDeletingCustomerId(int id, [FromBody] Appointment a)
         {
             IUpdateAppointment ua = new UpdateAppointment();

@@ -4,6 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
+using api.models;
+using api.Database;
+using api.interfaces;
 
 namespace api.Controllers
 {
@@ -40,7 +44,7 @@ namespace api.Controllers
         // PUT: api/Activity/5
         [EnableCors("AnotherPolicy")]
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Activity a)
+        public void Put(int id, [FromBody] List<Activity> a)
         {
             IUpdateActivity ua = new UpdateActivity();
             System.Console.WriteLine("made it to the update.");
