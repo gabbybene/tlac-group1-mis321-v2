@@ -33,14 +33,18 @@ namespace api.Controllers
         }
         
         // GetDistinctAvailableAppointments
-        [HttpGet("{date}", Name = "GetDistinctAvailableAppointments")]
+        [Route("[action]/{date}")]
+        [HttpGet]
+        //[HttpGet("{date}", Name = "GetDistinctAvailableAppointments")]
         public List<Appointment> GetDistinctAvailableAppointments()
         {
             ReadAppointment ra = new ReadAppointment();
             return ra.ReadDistinctAvailableAppointments();
         }
         // GetAvailableAppointmentsByDate
-        [HttpGet("{date}", Name = "GetAvailableAppointmentsByDate")]
+        [Route("[action]/{date}")]
+        [HttpGet]
+        //[HttpGet("{date}", Name = "GetAvailableAppointmentsByDate")]
         public List<Appointment> GetAvailableAppointmentsByDate(DateTime date)
         {
             ReadAppointment ra = new ReadAppointment();
@@ -74,15 +78,22 @@ namespace api.Controllers
             System.Console.WriteLine("made it to the update.");
             ua.Update(a);
         }
+        
+        
         // Update Appointments by adding a Customer to appointment
-        [HttpPut("{customerid}", Name = "UpdateByAddingCustomerId")]
-        public void PutByAddingCustomerId(int id, [FromBody] Appointment a)
+        [Route("[action]/{customerid}")]
+        [HttpPut]
+        //[HttpPut("{customerid}", Name = "UpdateByAddingCustomerId")]
+          public void PutByAddingCustomerId(int id, [FromBody] Appointment a)
         {
             UpdateAppointment ua = new UpdateAppointment();
             System.Console.WriteLine("made it to the update.");
             ua.UpdateAddCustomerId(a,id);
         }
-        // Update Appointments by Deleting a customer from appointment
+       
+       
+        // Update Appointments by Deleting a customer from appointment 
+
         [HttpPut("{customerid}", Name = "UpdateByDeletingCustomerId")]
         public void PutByDeletingCustomerId(int id, [FromBody] Appointment a)
         {
