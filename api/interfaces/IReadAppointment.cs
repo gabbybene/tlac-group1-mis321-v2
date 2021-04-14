@@ -8,7 +8,7 @@ namespace api.interfaces
     {
         Appointment Read(int id);
         List<Appointment> ReadAll();
-        List<Appointment> ReadDistinctAvailableAppointments();
+        List<DateTime> ReadDistinctAvailableAppointments();
         List<Appointment> ReadAvailableAppointmentsByDate(DateTime date);
         List<Appointment> ReadAvailableAppointmentsByDateForTrainer(int trainerId, DateTime date);
     }

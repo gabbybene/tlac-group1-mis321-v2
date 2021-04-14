@@ -13,8 +13,9 @@ namespace api.Database{
             using var cmd = new MySqlCommand();
 
             foreach(Appointment i in al){
-                cmd.CommandText = @"UPDATE appointment SET appointmentID=@apptID,TrainerID=@trnID,ActivityID=@actID,CustomerID=@custID,startTime=@start,endTime=@end,CashAmount=@cash,CardAmount=@card) WHERE activityID=@activityid;";
+                cmd.CommandText = @"UPDATE appointment SET appointmentID=@apptID,date=@date,TrainerID=@trnID,ActivityID=@actID,CustomerID=@custID,startTime=@start,endTime=@end,CashAmount=@cash,CardAmount=@card) WHERE activityID=@activityid;";
                 cmd.Parameters.AddWithValue("@apptID", i.appointmentId);
+                cmd.Parameters.AddWithValue("@date", i.appointmentDate);
                 cmd.Parameters.AddWithValue("@trnID", i.appointmentTrainer.trainerId);
                 cmd.Parameters.AddWithValue("@actID", i.appointmentActivity.activityId);
                 cmd.Parameters.AddWithValue("@custID", i.appointmentCustomer.customerId);
