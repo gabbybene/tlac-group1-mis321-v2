@@ -130,8 +130,27 @@
     font-family: 'Roboto', sans-serif;
 }
 
-.new-user-form-inputs{
+.new-user-form-inputs {
     line-height: 24px;
+}
+
+/* #custGender, custBirthDate {
+    padding-top: 10px;
+    padding-bottom: 2px;
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+} */
+
+#trainerGender, #trainerBirthDate, #custGender, #custBirthDate {
+    padding-top: 10px;
+    padding-bottom: 2px;
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+    line-height: 24px;
+    height: 45px;
+    border: 1px solid #DDDDDD;
 }
 
 .row label {

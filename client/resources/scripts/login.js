@@ -45,28 +45,89 @@ window.onclick = function(event){
 
 function handleCustomerSignIn()
 {
-    //make API call to DB to search for a Customer w/ that email and password
+    //get value of user input email and password
+    let inputEmail = document.getElementById("customerEmail").value;
+    let inputPassword = document.getElementById("customerPassword").value;
 
-    //if customer with that email and password are found
-        //get customer id from that Customer, pass it into the URL to send it to the dashboard
-    //else
-        //update modal with a message that user was not found.
+    let customer = "";
+    //make API call to DB to get all customers, then search for a customer w/ that email and password
+    const customerApiUrl = "https://localhost:5001/api/Customer";
+    fetch(customerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        var success = false;
+        for(var i in json){
+            if(json[i].email == inputEmail && json[i].password == inputPassword){
+                success = true;
+                customer = json[i];
+                console.log("json[i] found: " + json[i].emailAddress + " " + json[i].password);
+            }
+        }
+    }).catch(function(error){
+        console.log(error);
+    }) 
 
+    if(success){
+        //go to the Customer dashboard but send in the customer id into the URL
+        // window.location.href = "./customer.html?id=@"+customer.customerId+"@";
+    }
+    else {
+        //if not successfull, show the error message above the sign in button.
+    }
 
     //PASS IN CUSTOMER ID TO SEND CUSTOMER DATA TO THE DASHBOARD
-    window.location.href = "./customer.html";
+    // window.location.href = "./customer.html";
 }
 
 function handleCreateNewCustOnClick(){
-    
-    //read in data and save to database
-    //close modal
+    const customerApiUrl = "https://localhost:5001/api/Customer";
+    let email = document.getElementById("custEmail").value;
+    let password = document.getElementById("custPassword").value;
+    let firstName = document.getElementById("custFirstName").value;
+    let lastName = document.getElementById("custLastName").value;
+    let dob = document.getElementById("custBirthDate").value;
+    let gender = document.getElementById("custGender").value;
+    if(document.getElementById("fitnessGoals").value != null){
+        let fitnessGoals = document.getElementById("fitnessGoals").value;
+    }
+    else{
+        let fitnessGoals = null;
+    }
+    //HANDLE PREFERRED ACTIVITIES
+    //IF A CERTAIN ITEM IS CHECKED, SET THE ACTIVITY ID TO A CERTAIN ID
+    if(document.getElementById("yesReferred").checked){
+        let referredByName = document.getElementById("referrerName");
+    }
 
-    //go to ./customer.html
-    //PASS IN CUSTOMER ID TO SEND CUSTOMER DATA TO CUSTOMER DASHBOARD
+    //set user inputs to a body object
+    var bodyObj = {
+        fName: firstName,
+        lName: lastName,
+        birthDate: dob,
+        gender: gender,
+        email: email,
+        password: password, 
+        fitnessGoals: fitnessGoals,
+        // referredBy: referredByName,
+    };
+    //make api call to save data
+    fetch(customerApiUrl, {
+        method: "POST",
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify(bodyObj)
+    }).then(function(response){
+        console.log(response);
+        
+    })
+
+    //then get that new customer's id and send them  to ./customer.html?id=@id@
+
     window.location.href = "./customer.html"
 
-    //send customer data to customer dashboard
 }
 
 
