@@ -36,7 +36,7 @@ namespace api.Controllers
         [Route("[action]/{date}")]
         [HttpGet]
         //[HttpGet("{date}", Name = "GetDistinctAvailableAppointments")]
-        public List<Appointment> GetDistinctAvailableAppointments()
+        public List<DateTime> GetDistinctAvailableAppointments()
         {
             ReadAppointment ra = new ReadAppointment();
             return ra.ReadDistinctAvailableAppointments();
