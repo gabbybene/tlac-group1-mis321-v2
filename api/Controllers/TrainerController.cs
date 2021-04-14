@@ -12,35 +12,48 @@ namespace api.Controllers
     public class TrainerController : ControllerBase
     {
         // GET: api/Trainer
+        [EnableCors("AnotherPolicy")]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<Trainer> Get()
         {
-            return new string[] { "value1", "value2" };
+            IReadTrainer rt = new ReadTrainer();
+            return rt.ReadAll();
         }
 
         // GET: api/Trainer/5
-        [HttpGet("{id}", Name = "GetTrainer")]
+        [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
             return "value";
         }
 
         // POST: api/Trainer
+        [EnableCors("AnotherPolicy")]
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] Trainer t)
         {
+            IWriteTrainer wt = new WriteTrainer();
+             System.Console.WriteLine("made it to the post.");
+            wt.Write(t);
         }
 
         // PUT: api/Trainer/5
+        [EnableCors("AnotherPolicy")]
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] Trainer t)
         {
+            IUpdateTrainer ut = new UpdateTrainer();
+            System.Console.WriteLine("made it to the update.");
+            ut.Update(t);
         }
 
         // DELETE: api/Trainer/5
+        [EnableCors("AnotherPolicy")]
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            IDeleteTrainer dt = new DeleteTrainer();
+            dt.Delete(id);
         }
     }
 }

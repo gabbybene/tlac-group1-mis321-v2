@@ -27,6 +27,20 @@ namespace api
         public void ConfigureServices(IServiceCollection services)
         {
 
+                services.AddCors(options =>
+            {
+                options.AddPolicy("AnotherPolicy",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+            
+            
+            
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -47,6 +61,8 @@ namespace api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 

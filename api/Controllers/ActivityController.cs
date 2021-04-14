@@ -12,35 +12,48 @@ namespace api.Controllers
     public class ActivityController : ControllerBase
     {
         // GET: api/Activity
+        [EnableCors("AnotherPolicy")]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<Activity> Get()
         {
-            return new string[] { "value1", "value2" };
+            IReadActivity ra = new ReadActivity();
+            return ra.ReadAll();
         }
 
         // GET: api/Activity/5
-        [HttpGet("{id}", Name = "GetActivity")]
+        [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
             return "value";
         }
 
         // POST: api/Activity
+        [EnableCors("AnotherPolicy")]
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] Activity a)
         {
+            IWriteActivity wa = new WriteActivity();
+             System.Console.WriteLine("made it to the post.");
+            wa.Write(a);
         }
 
         // PUT: api/Activity/5
+        [EnableCors("AnotherPolicy")]
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] Activity a)
         {
+            IUpdateActivity ua = new UpdateActivity();
+            System.Console.WriteLine("made it to the update.");
+            ua.Update(a);
         }
 
         // DELETE: api/Activity/5
+        [EnableCors("AnotherPolicy")]
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            IDeleteActivity da = new DeleteActivity();
+            da.Delete(id);
         }
     }
 }

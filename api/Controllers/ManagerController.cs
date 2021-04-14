@@ -12,35 +12,48 @@ namespace api.Controllers
     public class ManagerController : ControllerBase
     {
         // GET: api/Manager
+        [EnableCors("AnotherPolicy")]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<Manager> Get()
         {
-            return new string[] { "value1", "value2" };
+            IReadManager rm = new ReadManager();
+            return rm.ReadAll();
         }
 
         // GET: api/Manager/5
-        [HttpGet("{id}", Name = "GetManager")]
+        [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
             return "value";
         }
 
         // POST: api/Manager
+        [EnableCors("AnotherPolicy")]
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] Manager m)
         {
+            IWriteManager wm = new WriteManager();
+             System.Console.WriteLine("made it to the post.");
+            wm.Write(m);
         }
 
         // PUT: api/Manager/5
+        [EnableCors("AnotherPolicy")]
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] Manager m)
         {
+            IUpdateManager um = new UpdateManager();
+            System.Console.WriteLine("made it to the update.");
+            um.Update(m);
         }
 
         // DELETE: api/Manager/5
+        [EnableCors("AnotherPolicy")]
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            IDeleteManager dm = new DeleteManager();
+            dm.Delete(id);
         }
     }
 }
