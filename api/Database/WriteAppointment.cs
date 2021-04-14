@@ -20,21 +20,7 @@ namespace api.Database{
             cmd.Parameters.AddWithValue("@cost", i.appointmentCost);
             cmd.Connection=con;
             cmd.Prepare();
-            cmd.ExecuteNonQuery();
-            
-            foreach(Activity act in al){
-                cmd.CommandText = @"INSERT into includes (appointmentID, activityid) VALUES ((SELECT appointmentid from Appointment where date=@date AND starttime=@starttime AND endtime=@endtime AND trainerID=@trainer),@activity)";
-                cmd.Parameters.AddWithValue("@trainer", t.trainerId);
-                cmd.Parameters.AddWithValue("@date", i.appointmentDate);
-                cmd.Parameters.AddWithValue("@starttime", i.startTime);
-                cmd.Parameters.AddWithValue("@endtime", i.endTime);
-                cmd.Parameters.AddWithValue("@cost", i.appointmentCost);
-                cmd.Parameters.AddWithValue("@activity", act.activityId);
-                cmd.Connection=con;
-                cmd.Prepare();
-                cmd.ExecuteNonQuery();
-            }
-            
+            cmd.ExecuteNonQuery();            
         }
     }
 }

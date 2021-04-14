@@ -46,10 +46,5 @@ namespace api.Database{
             using var cmd = new MySqlCommand();
             throw new System.NotImplementedException();
         }
-
-        public Customer GetCustomerByID(int id)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
