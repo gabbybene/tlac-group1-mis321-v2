@@ -71,6 +71,9 @@ function handleCustomerSignIn()
     if(success){
         //go to the Customer dashboard but send in the customer id into the URL
         // window.location.href = "./customer.html?id=@"+customer.customerId+"@";
+        window.location.href = "./customer.html?id="+customer.customerId;
+        console.log("customerId is " + customerId);
+        
     }
     else {
         //if not successfull, show the error message above the sign in button.
@@ -84,18 +87,19 @@ function CreateNewCustomer(){
     const customerApiUrl = "https://localhost:5001/api/Customer";
 
     //get customer data
-    let email = document.getElementById("custEmail").value;
-    let password = document.getElementById("custPassword").value;
-    let firstName = document.getElementById("custFirstName").value;
-    let lastName = document.getElementById("custLastName").value;
+    let inputEmail = document.getElementById("custEmail").value;
+    let inputPassword = document.getElementById("custPassword").value;
+    let inputFirstName = document.getElementById("custFirstName").value;
+    let inputLastName = document.getElementById("custLastName").value;
     let dob = document.getElementById("custBirthDate").value;
-    let gender = document.getElementById("custGender").value;
-
+    let inputGender = document.getElementById("custGender").value;
+    let inputFitnessGoals;
+    console.log("birthDate is " + dob);
     if(document.getElementById("fitnessGoals").value != null){
-        let fitnessGoals = document.getElementById("fitnessGoals").value;
+        inputFitnessGoals = document.getElementById("fitnessGoals").value;
     }
     else{
-        let fitnessGoals = null;
+        inputFitnessGoals = null;
     }
     //To-do: handle preferred activities
 
@@ -104,15 +108,30 @@ function CreateNewCustomer(){
         let referredByName = document.getElementById("referrerName");
     }
     //set user inputs to a body object
+    // var bodyObj = {
+    //     "password": password,
+    //     "birthDate": dob, 
+    //     "gender": gender,
+    //     "fitnessGoals": fitnessGoals,
+    //     "PhoneNo": "000-123-4567", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
+    //     "fName": firstName,
+    //     "lName": lastName,
+    //     "email": email
+    //     // referredBy: referredByName,
+    // };
+
+    console.log(inputPassword + " " + dob + " " + inputGender + " " + inputFirstName + " " + inputLastName + " " + inputEmail);
+    console.log("fitness goals: " + inputFitnessGoals);
+
     var bodyObj = {
-        "fName": firstName,
-        "lName": lastName,
-        "birthDate": dob,
-        "gender": gender,
-        "email": email,
-        "password": password, 
-        "fitnessGoals": fitnessGoals,
-        "PhoneNo": "0001234567" 
+        password: inputPassword,
+        birthDate: dob, 
+        gender: inputGender,
+        fitnessGoals: inputFitnessGoals,
+        PhoneNo: "5554443333", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
+        fName: inputFirstName,
+        lName: inputLastName,
+        email: inputEmail
         // referredBy: referredByName,
     };
     //make api call to CREATE customer
@@ -124,24 +143,32 @@ function CreateNewCustomer(){
         },
         body: JSON.stringify(bodyObj)
     }).then(function(response){
+        console.log("made it to the POST");
         console.log(response);
         
     })
-    //then GET that new customer's id and send them  to ./customer.html?customerId=@"+customerId+"@";
-    let customerId = -1;
-    fetch(customerApiUrl).then(function(response){
+
+    sendCustomerToDashboard(inputEmail);
+}
+
+function sendCustomerToDashboard(email){
+    //get new customer's id and send them to ./customer.html?id=@id@
+    const getCustomerApiUrl = "https://localhost:5001/api/Customer/"+email;
+    fetch(getCustomerApiUrl).then(function(response){
         console.log(response);
         return response.json();
     }).then(function(json){
-        for(var i in json){
-            if(json[i].email == email){
-                customerId = json[i].customerId;
-            }
-        }
+        // for(var i in json){
+        //     if(json[i].email == email){
+        //         customerId = json[i].customerId;
+        //     }
+        // }
+        let customerId = json.customerId;
+        // window.location.href = "./customer.html?customerId="+customerId;
+        console.log("customerId is " + customerId);
     }).catch(function(error){
         console.log(error);
     }) 
-    //window.location.href = "./customer.html?customerId=@"+customerId+"@";
 }
 
 
