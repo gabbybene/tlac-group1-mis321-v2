@@ -24,8 +24,9 @@ namespace api.Controllers
             return rc.ReadAll();
         }
 
-        // GET: api/Customer/5
-        [HttpGet("{id}", Name = "GetCustomer")]
+        // GET: api/Customer/email
+        [EnableCors("AnotherPolicy")]
+        [HttpGet("{email}", Name = "GetCustomer")]
         public Customer Get(string email)
         {
             IReadCustomer rc = new ReadCustomer();
