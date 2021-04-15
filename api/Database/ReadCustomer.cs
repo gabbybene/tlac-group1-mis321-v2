@@ -12,7 +12,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,Gender,AcctID,Refer_custID,Phone) FROM Trainer WHERE AcctID=@AcctID";
+            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,Gender,AcctID,Refer_custID,Phone) FROM Customer WHERE AcctID=@AcctID";
             cmd.Parameters.AddWithValue("@AcctID",emailAddress);
             cmd.Prepare();
             cmd.ExecuteReader();
@@ -29,7 +29,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,Gender,AcctID,Phone) FROM Trainer WHERE CustID=@CustID";
+            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,Gender,AcctID,Phone) FROM CustomerWHERE CustID=@CustID";
             cmd.Parameters.AddWithValue("@CustID",id);
             cmd.Prepare();
             cmd.ExecuteReader();
@@ -39,11 +39,24 @@ namespace api.Database{
             }
             return null;
         }
-        public List<models.Customer> ReadAll(){
+        public List<Customer> ReadAll(){
+
+            //We may want to update this method further to see if we can retrieve all customers (comment by Gabby) 
+            List<Customer> allCustomers = new List<Customer>();
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
             using var cmd = new MySqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "SELECT * from Customer";
+            using MySqlDataReader rdr = cmd.ExecuteReader();
+
+            while(rdr.Read()){
+                Customer temp = new Customer(){customerId=rdr.GetInt32(0), fName=rdr.GetString(2), lName=rdr.GetString(3), birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), email=rdr.GetString(7)};
+                allCustomers.Add(temp);
+            }
+
+            // return allCustomers;
             throw new System.NotImplementedException();
         }
     }

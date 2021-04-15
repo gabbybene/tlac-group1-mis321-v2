@@ -81,37 +81,45 @@ function handleCustomerSignIn()
 }
 
 function handleCreateNewCustOnClick(){
+    preventDefault();
     const customerApiUrl = "https://localhost:5001/api/Customer";
+
+    //get customer data
     let email = document.getElementById("custEmail").value;
     let password = document.getElementById("custPassword").value;
     let firstName = document.getElementById("custFirstName").value;
     let lastName = document.getElementById("custLastName").value;
     let dob = document.getElementById("custBirthDate").value;
     let gender = document.getElementById("custGender").value;
+
+    console.log("birthDate is " + dob);
     if(document.getElementById("fitnessGoals").value != null){
         let fitnessGoals = document.getElementById("fitnessGoals").value;
     }
     else{
         let fitnessGoals = null;
     }
-    //HANDLE PREFERRED ACTIVITIES
-    //IF A CERTAIN ITEM IS CHECKED, SET THE ACTIVITY ID TO A CERTAIN ID
+    //To-do: handle preferred activities
+
+    //If yesReferred is checked, get referrerName
     if(document.getElementById("yesReferred").checked){
         let referredByName = document.getElementById("referrerName");
     }
 
     //set user inputs to a body object
     var bodyObj = {
-        fName: firstName,
-        lName: lastName,
-        birthDate: dob,
-        gender: gender,
-        email: email,
-        password: password, 
-        fitnessGoals: fitnessGoals,
+        "fName": firstName,
+        "lName": lastName,
+        "birthDate": dob,
+        "gender": gender,
+        "email": email,
+        "password": password, 
+        "fitnessGoals": fitnessGoals,
+        "PhoneNo": "000-123-4567" 
         // referredBy: referredByName,
     };
-    //make api call to save data
+
+    //make api call to create customer
     fetch(customerApiUrl, {
         method: "POST",
         headers: {
@@ -125,8 +133,20 @@ function handleCreateNewCustOnClick(){
     })
 
     //then get that new customer's id and send them  to ./customer.html?id=@id@
-
-    window.location.href = "./customer.html"
+    let customerId = -1;
+    fetch(customerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        for(var i in json){
+            if(json[i].email == email){
+                customerId = json[i].customerId;
+            }
+        }
+    }).catch(function(error){
+        console.log(error);
+    }) 
+    // window.location.href = "./customer.html?customerId=@"+customerId+"@";
 
 }
 
@@ -164,9 +184,45 @@ function handleNewTrainer(){ //to pop up new trainer form
 }
 
 function handleCreateNewTrainerOnClick(){ 
+    const trainerApiUrl = "https://localhost:5001/api/Trainer";
+
+    //get customer data
+    let email = document.getElementById("trainerEmail").value;
+    let password = document.getElementById("trainerPassword").value;
+    let firstName = document.getElementById("trainerFirstName").value;
+    let lastName = document.getElementById("trainerLastName").value;
+    let dob = document.getElementById("trainerBirthDate").value;
+    let gender = document.getElementById("trainerGender").value;
+    
+    //To-do: handle training activities and price
+
+
+    //set user inputs to a body object
+    var bodyObj = {
+        "fName": firstName,
+        "lName": lastName,
+        "birthDate": dob,
+        "gender": gender,
+        "email": email,
+        "password": password, 
+        //preferred activities []
+    };
+    
+    //make api call to create customer
+    fetch(trainerApiUrl, {
+        method: "POST",
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify(bodyObj)
+    }).then(function(response){
+        console.log(response);
+        console.log("made it to the post");
+    })
     //create new trainer (get data and add to DB)
     //go to trainer.html
-    window.location.href = "./trainer.html";
+    //window.location.href = "./trainer.html";
 }
 
 function closeNewTrainerModal(){
