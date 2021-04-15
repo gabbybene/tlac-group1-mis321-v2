@@ -80,8 +80,7 @@ function handleCustomerSignIn()
     // window.location.href = "./customer.html";
 }
 
-function handleCreateNewCustOnClick(){
-    preventDefault();
+function CreateNewCustomer(){
     const customerApiUrl = "https://localhost:5001/api/Customer";
 
     //get customer data
@@ -92,7 +91,6 @@ function handleCreateNewCustOnClick(){
     let dob = document.getElementById("custBirthDate").value;
     let gender = document.getElementById("custGender").value;
 
-    console.log("birthDate is " + dob);
     if(document.getElementById("fitnessGoals").value != null){
         let fitnessGoals = document.getElementById("fitnessGoals").value;
     }
@@ -105,7 +103,6 @@ function handleCreateNewCustOnClick(){
     if(document.getElementById("yesReferred").checked){
         let referredByName = document.getElementById("referrerName");
     }
-
     //set user inputs to a body object
     var bodyObj = {
         "fName": firstName,
@@ -115,11 +112,10 @@ function handleCreateNewCustOnClick(){
         "email": email,
         "password": password, 
         "fitnessGoals": fitnessGoals,
-        "PhoneNo": "000-123-4567" 
+        "PhoneNo": "0001234567" 
         // referredBy: referredByName,
     };
-
-    //make api call to create customer
+    //make api call to CREATE customer
     fetch(customerApiUrl, {
         method: "POST",
         headers: {
@@ -131,8 +127,7 @@ function handleCreateNewCustOnClick(){
         console.log(response);
         
     })
-
-    //then get that new customer's id and send them  to ./customer.html?id=@id@
+    //then GET that new customer's id and send them  to ./customer.html?customerId=@"+customerId+"@";
     let customerId = -1;
     fetch(customerApiUrl).then(function(response){
         console.log(response);
@@ -146,9 +141,9 @@ function handleCreateNewCustOnClick(){
     }).catch(function(error){
         console.log(error);
     }) 
-    // window.location.href = "./customer.html?customerId=@"+customerId+"@";
-
+    //window.location.href = "./customer.html?customerId=@"+customerId+"@";
 }
+
 
 
 

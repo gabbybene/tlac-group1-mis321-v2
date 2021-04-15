@@ -12,8 +12,8 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,Gender,AcctID,Refer_custID,Phone) FROM Customer WHERE AcctID=@AcctID";
-            cmd.Parameters.AddWithValue("@AcctID",emailAddress);
+            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,gender,AccountID,Refer_custID,phone) FROM Customer WHERE AccountID=@AccountID";
+            cmd.Parameters.AddWithValue("@AccountID",emailAddress);
             cmd.Prepare();
             cmd.ExecuteReader();
             MySqlDataReader rdr = cmd.ExecuteReader();
@@ -29,7 +29,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,Gender,AcctID,Phone) FROM CustomerWHERE CustID=@CustID";
+            cmd.CommandText = @"SELECT (CustID,fName,lName,DOB,gender,AccountID,phone) FROM Customer WHERE CustID=@CustID";
             cmd.Parameters.AddWithValue("@CustID",id);
             cmd.Prepare();
             cmd.ExecuteReader();

@@ -25,11 +25,20 @@ namespace api.Controllers
         }
 
         // GET: api/Customer/5
+        [EnableCors("AnotherPolicy")]
         [HttpGet("{id}", Name = "GetCustomer")]
         public Customer Get(string email)
         {
             IReadCustomer rc = new ReadCustomer();
             return rc.Read(email);
+        }
+
+        //GET: api/GetCustomerByID/
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public Customer GetCustomerByID(int id){
+            IReadCustomer rc = new ReadCustomer();
+            return rc.GetCustomerByID(id);
         }
 
         // POST: api/Customer
