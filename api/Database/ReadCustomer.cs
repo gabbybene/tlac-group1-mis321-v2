@@ -34,10 +34,10 @@ namespace api.Database{
             }
            return customer;
         }
-        public Customer GetCustomerByID(object id){
-            if (id==null){
-                return new Customer(){customerId = -1};
-            }
+        public Customer GetCustomerByID(int id){
+            // if (id==null){
+            //     return new Customer(){customerId = -1};
+            // }
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
