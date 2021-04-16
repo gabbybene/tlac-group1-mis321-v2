@@ -13,7 +13,7 @@ namespace api.models
         public DateTime birthDate {get; set;}
         public string gender {get; set;}
         public string phoneNo {get; set;}
-        public List<Activity> trainerActivities = new List<Activity>();
+        public List<Activity> trainerActivities {get; set;}
         public IWriteTrainer writeBehavior {get; set;}
         public IDeleteTrainer deleteBehavior {get; set;}
         public IReadTrainer readBehavior {get; set;}

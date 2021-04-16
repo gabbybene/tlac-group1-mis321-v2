@@ -20,6 +20,7 @@ namespace api.Database{
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read()){
                 Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                temp.trainerActivities = GetTrainerActivities(temp);
                 trainer = temp;
             }
             return trainer;
@@ -37,6 +38,7 @@ namespace api.Database{
             Trainer trainer = new Trainer();
             while (rdr.Read()){
                 Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                temp.trainerActivities = GetTrainerActivities(temp);
                 trainer = temp;
             }
             return trainer;
@@ -54,9 +56,25 @@ namespace api.Database{
             List<Trainer> allTrainers = new List<Trainer>();
             while(rdr.Read()){
                 Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                temp.trainerActivities = GetTrainerActivities(temp);
                 allTrainers.Add(temp);
             }
             return allTrainers;
+        }
+        private List<Activity> GetTrainerActivities(Trainer trn){
+            ConnectionString cs = new ConnectionString();
+            using var con = new MySqlConnection(cs.cs);
+            con.Open();
+            using var cmd = new MySqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "SELECT c.activityid,activityname,price from cando c join activity a on c.activityid=a.activityid WHERE c.trainerID=@trn";
+            cmd.Parameters.AddWithValue("@trn",trn.trainerId);
+            using MySqlDataReader rdr = cmd.ExecuteReader();
+            List<Activity> returnList = new List<Activity>();
+            while(rdr.Read()){
+                returnList.Add(new Activity(){activityId=rdr.GetInt32(0),activityName=rdr.GetString(1),trainerPriceForActivity=rdr.GetDouble(2)});
+            }
+            return returnList;
         }
     }
 }
