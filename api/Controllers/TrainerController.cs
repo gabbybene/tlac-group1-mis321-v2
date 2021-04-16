@@ -34,13 +34,14 @@ namespace api.Controllers
         }
 
         // GET: api/Trainer/id
-        // [EnableCors("AnotherPolicy")]
-        // [HttpGet("{id}", Name = "GetTrainerById")]
-        // public Trainer GetTrainerByID(int id)
-        // {
-        //     IReadTrainer rt = new ReadTrainer();
-        //     return rt.GetTrainerByID(id);
-        // }
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public Trainer GetTrainerByID(int id)
+        {
+            IReadTrainer rt = new ReadTrainer();
+            return rt.GetTrainerByID(id);
+        }
 
         // POST: api/Trainer
         [EnableCors("AnotherPolicy")]
