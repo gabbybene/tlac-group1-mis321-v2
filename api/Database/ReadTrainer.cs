@@ -67,7 +67,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = "SELECT p.activityid,activityname,price from cando c join activity a on c.activityid=a.activityid WHERE c.trainerID=@trn";
+            cmd.CommandText = "SELECT c.activityid,activityname,price from cando c join activity a on c.activityid=a.activityid WHERE c.trainerID=@trn";
             cmd.Parameters.AddWithValue("@trn",trn.trainerId);
             using MySqlDataReader rdr = cmd.ExecuteReader();
             List<Activity> returnList = new List<Activity>();
