@@ -89,7 +89,8 @@
           <input type="email" name="email" id="customerEmail" class="form-control" placeholder="Email address" autofocus="" required="">
           <label for="customerPassword">Password:</label>
           <input type="password" name="password" id="customerPassword" class="form-control" placeholder="Password" required="">
-          <button class="btn btn-success btn-block" type="submit" id="btn-signin" onclick="handleCustomerSignIn()">
+          <div class="text-center" id="custSignInErrorMsg"></div>
+          <button class="btn btn-success btn-block" type="button" id="btn-signin" onclick="handleCustomerSignIn()">
           <i class="fas fa-sign-in-alt"></i> Sign in</button>
           <hr>
           <p style="font-style: italic;">New to our gym?</p>

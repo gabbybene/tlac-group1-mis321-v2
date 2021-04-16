@@ -45,42 +45,53 @@ window.onclick = function(event){
 
 function handleCustomerSignIn()
 {
+    document.getElementById("custSignInErrorMsg").style.display = "none"; //hide the errorMsg unless sign-in is invalid
+    
     //get value of user input email and password
     let inputEmail = document.getElementById("customerEmail").value;
     let inputPassword = document.getElementById("customerPassword").value;
 
+    var success;
     let customer = "";
-    //make API call to DB to get all customers, then search for a customer w/ that email and password
-    const customerApiUrl = "https://localhost:5001/api/Customer";
+    let errorMsgHtml = "";
+
+    const customerApiUrl = "https://localhost:5001/api/Customer/"+inputEmail;
     fetch(customerApiUrl).then(function(response){
         console.log(response);
         return response.json();
     }).then(function(json){
-        var success = false;
-        for(var i in json){
-            if(json[i].email == inputEmail && json[i].password == inputPassword){
-                success = true;
-                customer = json[i];
-                console.log("json[i] found: " + json[i].emailAddress + " " + json[i].password);
+        if(json.customerId == 0){
+            //if no customer found w/ that email address, display error message
+            errorMsgHtml = "<p>No customer found with that email address.</p>";
+            document.getElementById("custSignInErrorMsg").innerHTML = errorMsgHtml;
+            document.getElementById("custSignInErrorMsg").style.display = "block";
+        }
+        else { //if the customer was found with that email, check for the password
+            if(inputPassword == json.password){
+                customer = json; //set the json object to the customer
+                window.location.href = "./customer.html?id="+customer.customerId; //go to customer dashboard
+            }
+            else {
+                //if password doesn't match, display error message
+                errorMsgHtml = "<p>Invalid login.</p>";
+                document.getElementById("custSignInErrorMsg").innerHTML = errorMsgHtml;
+                document.getElementById("custSignInErrorMsg").style.display = "block";
             }
         }
     }).catch(function(error){
         console.log(error);
     }) 
 
-    if(success){
-        //go to the Customer dashboard but send in the customer id into the URL
-        // window.location.href = "./customer.html?id=@"+customer.customerId+"@";
-        window.location.href = "./customer.html?id="+customer.customerId;
-        console.log("customerId is " + customerId);
-        
-    }
-    else {
-        //if not successfull, show the error message above the sign in button.
-    }
+    // if(success){
+    //     //go to the Customer dashboard but send in the customer id into the URL
+    //     console.log("made it to the if success==true");
 
-    //PASS IN CUSTOMER ID TO SEND CUSTOMER DATA TO THE DASHBOARD
-    // window.location.href = "./customer.html";
+    // }
+    // else {
+    //     //if not successfull, show the error message above the sign in button.
+
+    // }
+
 }
 
 function CreateNewCustomer(){
@@ -158,11 +169,6 @@ function sendCustomerToDashboard(email){
         console.log(response);
         return response.json();
     }).then(function(json){
-        // for(var i in json){
-        //     if(json[i].email == email){
-        //         customerId = json[i].customerId;
-        //     }
-        // }
         let customerId = json.customerId;
         // window.location.href = "./customer.html?customerId="+customerId;
         console.log("customerId is " + customerId);
