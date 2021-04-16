@@ -20,19 +20,31 @@ namespace api.Database{
 
             Customer customer = new Customer();
             while(rdr.Read()){
-                if(rdr.IsDBNull(6)){
-                    //if referredBy is null, return a new Customer, but leave referredBy as null
+                //if phoneNo and referredBy are both null, new Customer without either
+                if(rdr.IsDBNull(6) && rdr.IsDBNull(7)){
+                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
+                    customer = temp;
+                }
+                else if(rdr.IsDBNull(6) && !rdr.IsDBNull(7)){
+                    //if referredBy is null, but phoneNo is not, new Customer with phoneNo
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
                     temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
                 }
-                else {
-                    //if referredBy is not null, return the new Customer that includes a referredBy
-                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5),referredBy=GetCustomerByID(rdr.GetInt32(6)),phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                else if(!rdr.IsDBNull(6) && rdr.IsDBNull(7)){
+                    //if referredBy is not null, but phoneNo is null, new Customer with referredBy
+                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), referredBy=GetCustomerByID(rdr.GetInt32(6)), password=rdr.GetString(9)};
                     temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
                 }
-               
+
+                else {
+                    //if phoneNo and referredBy are both NOT null, new Customer with both
+                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5),referredBy=GetCustomerByID(rdr.GetInt32(6)),phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
+                    customer = temp;
+                }        
             }
            return customer;
         }
@@ -53,18 +65,30 @@ namespace api.Database{
     
             Customer customer = new Customer();
             while(rdr.Read()){
-                if(rdr.IsDBNull(6)){
-                    //if referredBy is null, return a new Customer, but leave referredBy as null
-                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), /*phoneNo=rdr.GetString(7),*/ password=rdr.GetString(9)};
+                if(rdr.IsDBNull(6) && rdr.IsDBNull(7)){
+                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), password=rdr.GetString(9)};
                     temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
                 }
+                else if(rdr.IsDBNull(6) && !rdr.IsDBNull(7)){
+                    //if referredBy is null, but phoneNo is not, new Customer with phoneNo
+                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
+                    customer = temp;
+                }
+                else if(!rdr.IsDBNull(6) && rdr.IsDBNull(7)){
+                    //if referredBy is not null, but phoneNo is null, new Customer with referredBy
+                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), referredBy=GetCustomerByID(rdr.GetInt32(6)), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
+                    customer = temp;
+                }
+
                 else {
-                    //if referredBy is not null, return the new Customer that includes a referredBy
+                    //if phoneNo and referredBy are both NOT null, new Customer with both
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5),referredBy=GetCustomerByID(rdr.GetInt32(6)),phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
                     temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
-                }
+                }     
             }
             return customer;
         }
