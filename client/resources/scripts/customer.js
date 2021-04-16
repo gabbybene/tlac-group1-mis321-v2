@@ -2,53 +2,6 @@
 including loading customer confirmed appts,
 loading available appointments to calendar, 
 and loading customer profile */
-//TEMPORARY: a list of appointments
-// var testAppointments = [
-//     {
-//         "date": "4/6/2021",
-//         "startTime" : "10:00am",
-//         "activity": "Cardio",
-//         "trainer": "Josh Hargrove",
-//         "customer": null,
-//         "price": 50.00
-//     },
-//     {
-//         "date": "4/6/2021",
-//         "startTime": "12:00pm",
-//         "activity": "Strength Training",
-//         "trainer": "Callie Jones",
-//         "customer": "Alex Carver",
-//         "price": 75.00
-//     },
-//     {
-//         "date": "4/8/2021",
-//         "startTime": "4:00pm",
-//         "activity": "Cardio",
-//         "trainer": "Eric Blackburn",
-//         "customer": null,
-//         "price": 65.00
-//     },
-//     {
-//         "date": "4/10/2021",
-//         "startTime": "6:00pm",
-//         "activity": "Kickboxing",
-//         "trainer": "Princess Smith",
-//         "customer": "Maria Lawrence",
-//         "price": 60.00
-//     },
-//     {
-//         "date": "4/10/2021",
-//         "startTime": "8:00am",
-//         "activity": "Pilates",
-//         "trainer": "Kim Berry",
-//         "customer": null,
-//         "price": 70.00
-//     }
-// ];
-
-
-
-
 
 
 var today = new Date();
@@ -68,7 +21,7 @@ function getCustomer(){
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const id = urlParams.get("id");
-    console.log(id);
+    console.log("made it to getCustomer. Id is " + id);
 
     let customer = "";
 
@@ -77,7 +30,9 @@ function getCustomer(){
         console.log(response);
         return response.json();
     }).then(function(json){
+        console.log("json.id is" + json.customerId);
         customer = json;
+        console.log('customer id is ' + customer.customerId);
     }).catch(function(error){
         console.log(error);
     }) 
@@ -619,10 +574,14 @@ window.onclick = function(event){
 
 /* GET / UPDATE CUSTOMER PROFILE SECTION */
 function getCustomerProfileForm(){
-    /*get the logged in customer's data)
-
-    /* STATIC CUSTOMER FOR TESTING */
+    console.log("made it to customerProfileForm");
+   
+    //get customer from API call using id in url
     let customer = getCustomer();
+    
+    //yet these are undefined?
+    console.log(customer.email);
+    console.log(customer.fName);
    
     document.getElementById("currEmail").value = customer.email;
     document.getElementById("inputFName").value = customer.fName;
