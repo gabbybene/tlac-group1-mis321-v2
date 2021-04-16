@@ -49,17 +49,20 @@ namespace api.Database{
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
+            Console.WriteLine(searchDate);
             using var cmd = new MySqlCommand();
+            string searchDateString = searchDate.ToString("yyyy-MM-dd");
+            Console.WriteLine(searchDateString);
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price,CashAmount,CardAmount,date FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID is null AND starttime LIKE @date";
-            cmd.Parameters.AddWithValue("@date",searchDate);
+            cmd.CommandText = @"SELECT AppointmentID,IFNULL(CustomerID,0) AS CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price,CashAmount,CardAmount,date FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID is null AND date LIKE @date";
+            cmd.Parameters.AddWithValue("@date",searchDateString);
             cmd.Prepare();
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read()){
                 IReadCustomer readCust = new ReadCustomer();
                 IReadTrainer readTrn = new ReadTrainer();
                 IReadActivity readAct = new ReadActivity();
-                returnList.Add(new Appointment(){appointmentId=rdr.GetInt32(1),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(2)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(3)),appointmentActivity=readAct.Read(rdr.GetInt32(4)), startTime=rdr.GetDateTime(5), endTime=rdr.GetDateTime(6),appointmentCost=(rdr.GetDouble(7)),amountPaidByCash=rdr.GetDouble(8), amountPaidByCard=rdr.GetDouble(9),appointmentDate=rdr.GetDateTime(10)});
+                returnList.Add(new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4), endTime=rdr.GetDateTime(5),appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)});
             }
             return returnList;
             }
