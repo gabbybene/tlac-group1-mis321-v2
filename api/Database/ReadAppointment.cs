@@ -102,11 +102,7 @@ namespace api.Database{
             cmd.Parameters.AddWithValue("@TrainerId",trainerId);
             cmd.Parameters.AddWithValue("@date",date);
             cmd.Prepare();
-<<<<<<< HEAD
-=======
-            // cmd.ExecuteReader();
->>>>>>> 1d0cd9c61be52fa7fb0513a2e55332908c12207d
-            
+          
             using MySqlDataReader rdr = cmd.ExecuteReader();
 
             //created new ReadCustomer, ReadTrainer, and ReacActivity to get Customer, Trainer, and Activity data
