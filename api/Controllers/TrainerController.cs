@@ -25,7 +25,8 @@ namespace api.Controllers
         }
 
         // GET: api/Trainer/5
-        [HttpGet("{id}", Name = "GetTrainer")]
+        [EnableCors("AnotherPolicy")]
+        [HttpGet("{email}", Name = "GetTrainer")]
         public Trainer Get(string email)
         {
             IReadTrainer rt = new ReadTrainer();

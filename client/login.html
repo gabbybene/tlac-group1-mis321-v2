@@ -221,10 +221,11 @@
         <form class="login-form" id="logreg-forms">
           <h2 class="login-heading">Login</h2>
           <label for="trainerEmail">Email Address:</label>
-          <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus="">
-          <label for="inputPassword">Password:</label>
-          <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-          <button class="btn btn-success btn-block" type="submit" id="btn-signin" onclick="handleTrainerSignIn()">
+          <input type="email" id="trainerEmail" class="form-control" placeholder="Email address" required autofocus="">
+          <label for="trainerPassword">Password:</label>
+          <input type="password" id="trainerPassword" class="form-control" placeholder="Password" required>
+          <div class="text-center" id="trainerSignInErrorMsg"></div>
+          <button class="btn btn-success btn-block" type="button" id="btn-signin" onclick="handleTrainerSignIn()">
           <i class="fas fa-sign-in-alt"></i> Sign in</button>
           <hr>
           <p style="font-style: italic">New to training with us?</p>
@@ -248,11 +249,11 @@
           <h4 style="font-style: italic">Your email address and password will be used to log in in the future.</h4>
           <div class="col-sm-6"> <!--UPDATE COL CLASSES LATER-->
             <label for="trainerEmail">Email Address</label>
-            <input type="email" id="trainerEmail" class="form-control" placeholder="Enter email address" required autofocus="">
+            <input type="email" id="newTrainerEmail" class="form-control" placeholder="Enter email address" required autofocus="">
           </div>
           <div class="col-sm-6">
             <label for="trainerPassword">Password</label>
-            <input type="password" id="trainerPassword" class="form-control" placeholder="Password" required>
+            <input type="password" id="newTrainerPassword" class="form-control" placeholder="Password" required>
           </div>
         </div> <!--end row-->
         <hr>
@@ -333,7 +334,7 @@
         </div> <!--end row-->
         <hr>
         <div class="row text-center">
-          <button class="btn btn-success btn-lg" type="submit" onclick="handleCreateNewTrainerOnClick()">
+          <button class="btn btn-success btn-lg" type="button" onclick="handleCreateNewTrainerOnClick()">
             <i class="fas fa-sign-in-alt"></i>Create Account</button>
         </div>
       </form>

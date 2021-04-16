@@ -158,11 +158,11 @@
     padding-bottom: 2px;
 }
 
-#custSignInErrorMsg {
+#custSignInErrorMsg, #trainerSignInErrorMsg {
     display: none;
 }
 
-#custSignInErrorMsg p {
+#custSignInErrorMsg p, #trainerSignInErrorMsg p {
     color: red;
     font-style: italic;
 }
