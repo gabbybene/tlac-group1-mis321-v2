@@ -174,7 +174,6 @@ function getTrainerCalendar(currentMonth, currentYear){
     }
     //<td> with dates for that month
     while(d.getMonth() == mon) {
-        console.log("todayDate: " + todayDate + " | d.GetDate():" + d.getDate());
         if(d.getDate() < todayDate) {
             //if date is before today's date, disable button
             calendarTable += "<td><button disabled style=\"background-color: #808080\">" + d.getDate() + "</button></td>"; 

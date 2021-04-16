@@ -235,7 +235,7 @@ function handleTrainerSignIn(){
 function handleCreateNewTrainerOnClick(){ 
     const trainerApiUrl = "https://localhost:5001/api/Trainer";
 
-    //get customer data
+    //get trainer data
     let inputEmail = document.getElementById("newTrainerEmail").value;
     let inputPassword = document.getElementById("newTrainerPassword").value;
     let inputFirstName = document.getElementById("trainerFName").value;
@@ -257,7 +257,7 @@ function handleCreateNewTrainerOnClick(){
         //preferred activities []
     };
     
-    //make api call to create customer
+    //make api call to create trainer
     fetch(trainerApiUrl, {
         method: "POST",
         headers: {
@@ -268,11 +268,12 @@ function handleCreateNewTrainerOnClick(){
     }).then(function(response){
         console.log(response);
         console.log("made it to the post");
+        sendTrainerToDashboard(inputEmail);
     })
     //create new trainer (get data and add to DB)
     //go to trainer.html
     //window.location.href = "./trainer.html";
-    sendTrainerToDashboard(inputEmail);
+    
 }
 
 function sendTrainerToDashboard(email){
@@ -283,7 +284,7 @@ function sendTrainerToDashboard(email){
         return response.json();
     }).then(function(json){
         let trainerId = json.trainerId;
-       // window.location.href = "./trainer.html?trainerId="+trainerId;
+        window.location.href = "./trainer.html?trainerId="+trainerId;
         console.log("customerId is " + trainerId);
     }).catch(function(error){
         console.log(error);

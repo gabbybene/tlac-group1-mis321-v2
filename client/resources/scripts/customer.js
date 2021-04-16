@@ -8,22 +8,39 @@ var today = new Date();
 var currentMonth = today.getMonth();
 var currentYear = today.getFullYear();
 
+
+
 //Check https://github.com/niinpatel/calendarHTML-Javascript/blob/master/scripts.js for a possible JS calendar
 function handleCustomerDashboardOnLoad(){ //load each part of dashboard
-    getCustomerAppointments();
+    let id = getCustomerId();
+    let customer = [];
+    const customerApiUrl = "https://localhost:5001/api/Customer/GetCustomerByID/"+id;
+    fetch(customerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        customer = json;
+        // getCustomerAppointments(customer);
+        getConfirmedAppointments(customer);
+        getAvailableAppointmentCalendar(currentMonth, currentYear);
+        getCustomerProfileForm(customer);
 
-    getAvailableAppointmentCalendar(currentMonth, currentYear);
-    
-    getCustomerProfileForm();
+    }).catch(function(error){
+        console.log(error);
+    }) 
 }
 
-function getCustomer(){
+function getCustomerId(){
+    //get customer Id from URL
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const id = urlParams.get("id");
-    console.log("made it to getCustomer. Id is " + id);
+    return id;
+}
 
-    let customer = "";
+function getCustomerObject(){
+    var id = getCustomerId();
+    let customer = [];
 
     const customerApiUrl = "https://localhost:5001/api/Customer/GetCustomerByID/"+id;
     fetch(customerApiUrl).then(function(response){
@@ -39,35 +56,12 @@ function getCustomer(){
     return customer;
 }
 
-function getCustomerAppointments(){
-    /* load any appointments that have customer's id, 
-    change html in the element with id "custApptList"
-    to the list of buttons as seen in the static customer.html page  */
-    let customer = getCustomer();
-    console.log("customer id is " + customer.customerId);
-
-    let confirmedAppts = getConfirmedAppointments(customer);
-    console.log("confirmedAppts is " + confirmedAppts);
-    let html = "";
-    if(confirmedAppts == undefined) {
-        //if no appointments are found, set up some html to say they have no confirmed appointments at this time 
-        html += "<h2>You don't have any upcoming appointments scheduled at this time.</h2><h2>Check out the calendar below to find some sessions and get training!</h2>";
-    }
-    else {
-        for(let i = 0; i < confirmedAppts.length; i++) {
-            //create buttons with the appointment information, onclick = cancelApptOnClick()
-            html += "<button type=\"button btn\" class=\"list-group-item list-group-item-action\" onclick=\"showEditCustApptModal("+confirmedAppts[i].appointmentID+")\">";
-            html += confirmedAppts[i].date + " at " + confirmedAppts[i].startTime + "-" + confirmedAppts[i].endTime + " | Activity: " + confirmedAppts[i].activity.activityName + " | Trainer: " + confirmedAppts[i].trainer.trainerfName+ " " + confirmedAppts[i].trainer.trainerlName +"</button>";
-        }
-    }
-    document.getElementById("custApptList").innerHTML = html;
-}
-
 
 function getConfirmedAppointments(customer){
     //Get appointments from DB that match the customer ID In the url & have a date of today or in the future.
     //return that array of appointment objects
-    let confirmedAppts = "";
+    // var confirmedAppts = [];
+    let html = "";
     const apptApiUrl = "https://localhost:5001/api/Appointment/GetConfirmedAppointmentsForCustomer/"+customer.customerId;
     fetch(apptApiUrl).then(function(response){
         console.log(response);
@@ -75,21 +69,32 @@ function getConfirmedAppointments(customer){
     }).then(function(json){
         if(json[0] == undefined){
             console.log("no appointments found");
-             //set to a default value if no appointments were found for that customer
-            return undefined;
+             //will return the empty []
+            html += "<h2>You don't have any upcoming appointments scheduled at this time.</h2><h2>Check out the calendar below to find some sessions and get training!</h2>";
         }
         else{
-            console.log("Appointments found!");
-            confirmedAppts = json;
-            return confirmedAppts;
+            //parse date and time to better format for use
+            let apptDate = getFormattedDate(json[i].date);
+            let startTime = getFormattedTime(json[i].startTime);
+            let endTime = getFormattedTime(json[i].endTime);
+            console.log("Price of json[0]: " + json[0].appointmentTrainer.trainerActivities[0].trainerPriceForActivity);
+            //for every json object
+            for(var i in json){
+                html += "<button type=\"button btn\" class=\"list-group-item list-group-item-action\" onclick=\"showEditCustApptModal("+json[i].appointmentID+")\">";
+                html += apptDate + " at " + formattedStartTime + "-" + formattedEndTime + " | Activity: " + json[i].appointmentTrainer.trainerActivities[0].activityName + " | Trainer: " + json[i].appointmentTrainer.fName+ " " + json[i].appointmentTrainer.lName +"</button>";
+            }
         }
+        //set the innerHTML of custApptList
+        document.getElementById("custApptList").innerHTML = html;
     }).catch(function(error){
         console.log(error);
     }) 
 
-    // console.log("confirmedAppts is " + confirmedAppts)
+    // console.log("confirmedAppts is " + confirmedAppts);
     // return confirmedAppts;
 }
+
+
 
 //FOR EDIT CUSTOMER APPT MODAL in viewCustAppointments section
 function showEditCustApptModal(apptID){
@@ -528,35 +533,29 @@ window.onclick = function(event){
 /*END CALENDAR/MAKE APPOINTMENTS SECTION*/
 
 /* GET / UPDATE CUSTOMER PROFILE SECTION */
-function getCustomerProfileForm(){
-    console.log("made it to customerProfileForm");
-   
-    //get customer from API call using id in url
-    let customer = getCustomer();
-    
-    //yet these are undefined?
-    console.log(customer.email);
-    console.log(customer.fName);
+function getCustomerProfileForm(customer){
+
+    let dateAndTime = customer.birthDate;
+    let birthDateOnly = dateAndTime.slice(0,10);
    
     document.getElementById("currEmail").value = customer.email;
     document.getElementById("inputFName").value = customer.fName;
     document.getElementById("inputLName").value = customer.lName;
-    document.getElementById("birthDate").value = customer.birthDate;
+    document.getElementById("birthDate").value = birthDateOnly;
     document.getElementById("gender").value = customer.gender;
     document.getElementById("fitnessGoals").value = customer.fitnessGoals;
 
-    for(var i in customer.activities){ //update checked status of activities
-        if(customer.activities[i] == "cardio"){
+    for(var i in customer.customerActivities){ //update checked status of activities
+        if(customer.customerActivities[i].activityId == 4){ // 4 = cardio
             document.getElementById("cardio").checked = true;
-            
         }
-        else if(customer.activities[i] == "strength training"){
+        else if(customer.customerActivities[i].activityId == 14){ // 14 = strength training
             document.getElementById("strengthTraining").checked = true;
         }
-        else if(customer.activities[i] == "kickboxing"){
+        else if(customer.customerActivities[i].activityId == 34){ // 34 = kickboxing
             document.getElementById("kickboxing").checked = true;
         }
-        else if(customer.activities[i] == "yoga"){
+        else if(customer.customerActivities[i].activityId == 24){ // 24 = yoga
             document.getElementById("yoga").checked = true;
         }
     }
