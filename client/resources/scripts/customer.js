@@ -3,48 +3,49 @@ including loading customer confirmed appts,
 loading available appointments to calendar, 
 and loading customer profile */
 //TEMPORARY: a list of appointments
-var testAppointments = [
-    {
-        "date": "4/6/2021",
-        "startTime" : "10:00am",
-        "activity": "Cardio",
-        "trainer": "Josh Hargrove",
-        "customer": null,
-        "price": 50.00
-    },
-    {
-        "date": "4/6/2021",
-        "startTime": "12:00pm",
-        "activity": "Strength Training",
-        "trainer": "Callie Jones",
-        "customer": "Alex Carver",
-        "price": 75.00
-    },
-    {
-        "date": "4/8/2021",
-        "startTime": "4:00pm",
-        "activity": "Cardio",
-        "trainer": "Eric Blackburn",
-        "customer": null,
-        "price": 65.00
-    },
-    {
-        "date": "4/10/2021",
-        "startTime": "6:00pm",
-        "activity": "Kickboxing",
-        "trainer": "Princess Smith",
-        "customer": "Maria Lawrence",
-        "price": 60.00
-    },
-    {
-        "date": "4/10/2021",
-        "startTime": "8:00am",
-        "activity": "Pilates",
-        "trainer": "Kim Berry",
-        "customer": null,
-        "price": 70.00
-    }
-];
+// var testAppointments = [
+//     {
+//         "date": "4/6/2021",
+//         "startTime" : "10:00am",
+//         "activity": "Cardio",
+//         "trainer": "Josh Hargrove",
+//         "customer": null,
+//         "price": 50.00
+//     },
+//     {
+//         "date": "4/6/2021",
+//         "startTime": "12:00pm",
+//         "activity": "Strength Training",
+//         "trainer": "Callie Jones",
+//         "customer": "Alex Carver",
+//         "price": 75.00
+//     },
+//     {
+//         "date": "4/8/2021",
+//         "startTime": "4:00pm",
+//         "activity": "Cardio",
+//         "trainer": "Eric Blackburn",
+//         "customer": null,
+//         "price": 65.00
+//     },
+//     {
+//         "date": "4/10/2021",
+//         "startTime": "6:00pm",
+//         "activity": "Kickboxing",
+//         "trainer": "Princess Smith",
+//         "customer": "Maria Lawrence",
+//         "price": 60.00
+//     },
+//     {
+//         "date": "4/10/2021",
+//         "startTime": "8:00am",
+//         "activity": "Pilates",
+//         "trainer": "Kim Berry",
+//         "customer": null,
+//         "price": 70.00
+//     }
+// ];
+
 
 
 
@@ -63,12 +64,34 @@ function handleCustomerDashboardOnLoad(){ //load each part of dashboard
     getCustomerProfileForm();
 }
 
+function getCustomer(){
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id = urlParams.get("id");
+    console.log(id);
+
+    let customer = "";
+
+    const customerApiUrl = "https://localhost:5001/api/Customer/GetCustomerByID/"+id;
+    fetch(customerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        customer = json;
+    }).catch(function(error){
+        console.log(error);
+    }) 
+    return customer;
+}
+
 function getCustomerAppointments(){
     /* load any appointments that have customer's id, 
     change html in the element with id "custApptList"
     to the list of buttons as seen in the static customer.html page  */
+    let customer = getCustomer();
+    console.log("customer id is " + customer.customerId);
 
-    let confirmedAppts = getConfirmedAppointments();
+    let confirmedAppts = getConfirmedAppointments(customer);
     let html = "";
     if(confirmedAppts.length == 0) {
         //set up some html to say they have no confirmed appointments at this time 
@@ -77,47 +100,34 @@ function getCustomerAppointments(){
     else {
         for(let i = 0; i < confirmedAppts.length; i++) {
             //create buttons with the appointment information, onclick = cancelApptOnClick()
-            html += "<button type=\"button btn\" class=\"list-group-item list-group-item-action\" onclick=\"showEditCustApptModal("+confirmedAppts[i].apptID+")\">";
-            html += confirmedAppts[i].date + " at " + confirmedAppts[i].startTime + "-" + confirmedAppts[i].endTime + " | Activity: " + confirmedAppts[i].activity + " | Trainer: " + confirmedAppts[i].trainer + "</button>";
+            html += "<button type=\"button btn\" class=\"list-group-item list-group-item-action\" onclick=\"showEditCustApptModal("+confirmedAppts[i].appointmentID+")\">";
+            html += confirmedAppts[i].date + " at " + confirmedAppts[i].startTime + "-" + confirmedAppts[i].endTime + " | Activity: " + confirmedAppts[i].activity.activityName + " | Trainer: " + confirmedAppts[i].trainer.trainerfName+ " " + confirmedAppts[i].trainer.trainerlName +"</button>";
         }
     }
     document.getElementById("custApptList").innerHTML = html;
 }
 
 
-function getConfirmedAppointments(){
+function getConfirmedAppointments(customer){
     //Get appointments from DB that match the customer ID In the url & have a date of today or in the future.
     //return that array of appointment objects
-    //TEMPORARY: static appointments for testing
-    let confirmedAppts = [
-        {
-            apptID: 1,
-            date: "4/13/2021",
-            startTime: "8:00AM",
-            endTime: "9:00AM",
-            activity:"Cardio",
-            trainer: "Josh Hargrave",
-            price: 55.00
-        },
-        {
-            apptID: 2,
-            date: "4/14/2021",
-            startTime: "6:00AM",
-            endTime: "7:00AM",
-            activity: "Strength Training",
-            trainer: "Kim Arens",
-            price: 60.00
-        },
-        {
-            apptID: 3,
-            date: "4/16/2021",
-            startTime: "5:00PM",
-            endTime: "6:00PM",
-            activity: "Kickboxing",
-            trainer: "Princess Smith",
-            price: 50.00
+    const apptApiUrl = "https://localhost:5001/api/Appointment/GetConfirmedAppointmentsForCustomer/"+customer.customerId;
+    fetch(apptApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        if(json = null){
+            console.log("no appointments found");
+            confirmedAppts = -1; //set to a default value if no appointments were found for that customer
         }
-    ];
+        else{
+            console.log("Appointments found!");
+            confirmedAppts = json;
+        }
+    }).catch(function(error){
+        console.log(error);
+    }) 
+
     return confirmedAppts;
 }
 
