@@ -12,11 +12,10 @@ namespace api.Database{
             using var cmd = new MySqlCommand();;
 
             cmd.CommandText = @"INSERT into account (Email,Password,AcctType) VALUES (@email,@password,'manager');
-                            INSERT into manager (fname, lname, permissionLevel, acctID) VALUES (@fname,@lname,@permission (SELECT acctID FROM Account WHERE acctID=@email))";
+                            INSERT into manager (fname, lname, acctID) VALUES (@fname,@lname, (SELECT acctID FROM Account WHERE acctID=@email))";
             cmd.Parameters.AddWithValue("@email", i.email);
             cmd.Parameters.AddWithValue("@fname", i.fName);
             cmd.Parameters.AddWithValue("@lname", i.lName);
-            cmd.Parameters.AddWithValue("@permission", i.permissionLevel);
             cmd.Parameters.AddWithValue("@password", i.password);
             cmd.Connection=con;
             cmd.Prepare();

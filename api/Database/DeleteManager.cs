@@ -10,6 +10,13 @@ namespace api.Database{
             using var con = new MySqlConnection(cs.cs);
             con.Open();
             using var cmd = new MySqlCommand();
+            cmd.Connection = con;
+            IReadManager readObj = new ReadManager();
+            Manager delObj = readObj.GetManagerByID(id);
+            cmd.CommandText = @"delete from account where AcctID=@email";
+            cmd.Parameters.AddWithValue("@email",delObj.email);
+            cmd.Prepare();
+            cmd.ExecuteNonQuery();
         }
     }
 }

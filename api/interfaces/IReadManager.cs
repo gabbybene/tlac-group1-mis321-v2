@@ -7,5 +7,6 @@ namespace api.interfaces
     {
         Manager Read();
         List<Manager> ReadAll(); 
+        Manager GetManagerByID(int id);
     }
 }

@@ -8,7 +8,6 @@ namespace api.models
     {
         public int managerId {get; set;}
         public string password {get; set;}
-        public string permissionLevel {get; set;}
         public IWriteCustomer writeCustomer {get; set;}
         public IDeleteCustomer deleteCustomer {get; set;}
         public IReadCustomer readCustomer {get; set;}
