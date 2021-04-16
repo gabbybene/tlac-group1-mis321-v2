@@ -72,7 +72,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = "SELECT * from Customer c JOIN Account a WHERE c.AccountID = a.AcctID";
+            cmd.CommandText = "SELECT * from Customer c JOIN Account a ON c.AccountID = a.AcctID";
             using MySqlDataReader rdr = cmd.ExecuteReader();
 
             while(rdr.Read()){

@@ -157,6 +157,15 @@
     padding-top: 10px;
     padding-bottom: 2px;
 }
+
+#custSignInErrorMsg {
+    display: none;
+}
+
+#custSignInErrorMsg p {
+    color: red;
+    font-style: italic;
+}
 /*--login/new account form styling, copied and modified from https://bootsnipp.com/snippets/GavAo*/
 
 
