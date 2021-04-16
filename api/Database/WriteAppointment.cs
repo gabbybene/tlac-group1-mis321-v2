@@ -12,12 +12,11 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
 
-            cmd.CommandText = @"INSERT into appointment (trainerID,Date,StartTime,EndTime,AppointmentCost,ActivityID,CashAmount,CardAmount) VALUES (@trainer,@date,@starttime,@endtime,@cost,@actid,@cash,@card);";
+            cmd.CommandText = @"INSERT into appointment (trainerID,Date,StartTime,EndTime,ActivityID,CashAmount,CardAmount) VALUES (@trainer,@date,@starttime,@endtime,@actid,@cash,@card);";
             cmd.Parameters.AddWithValue("@trainer", i.appointmentTrainer.trainerId);
             cmd.Parameters.AddWithValue("@date", i.appointmentDate);
             cmd.Parameters.AddWithValue("@starttime", i.startTime);
             cmd.Parameters.AddWithValue("@endtime", i.endTime);
-            cmd.Parameters.AddWithValue("@cost", i.appointmentCost);
             cmd.Parameters.AddWithValue("@actid", i.appointmentActivity.activityId);
             cmd.Parameters.AddWithValue("@cash", i.amountPaidByCash);
             cmd.Parameters.AddWithValue("@card", i.amountPaidByCard);

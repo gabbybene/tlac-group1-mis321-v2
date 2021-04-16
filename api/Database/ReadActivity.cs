@@ -12,13 +12,12 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT (ActivityID,ActivityName,ActivityDescription) FROM Activity WHERE ActivityID=@ActivityID";
+            cmd.CommandText = @"SELECT ActivityID,ActivityName FROM Activity WHERE ActivityID=@ActivityID";
             cmd.Parameters.AddWithValue("@ActivityID",id);
             cmd.Prepare();
-            cmd.ExecuteReader();
             MySqlDataReader rdr = cmd.ExecuteReader();
             if (rdr.Read()){
-                return new Activity(){activityId=rdr.GetInt32(1),activityName=rdr.GetString(2),description=rdr.GetString(3)};
+                return new Activity(){activityId=rdr.GetInt32(0),activityName=rdr.GetString(1)};
             }
             return null;
         }
@@ -32,7 +31,6 @@ namespace api.Database{
             cmd.Parameters.AddWithValue("@ActivityID",actID);
             cmd.Parameters.AddWithValue("@TrainerID",trnID);
             cmd.Prepare();
-            cmd.ExecuteReader();
             MySqlDataReader rdr = cmd.ExecuteReader();
             if (rdr.Read()){
                 return new Activity(){activityId=rdr.GetInt32(1),activityName=rdr.GetString(2),description=rdr.GetString(3)};

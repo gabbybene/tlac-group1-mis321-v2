@@ -53,7 +53,7 @@ namespace api.Database{
             while(rdr.Read()){
                 if(rdr.IsDBNull(6)){
                     //if referredBy is null, return a new Customer, but leave referredBy as null
-                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), /*phoneNo=rdr.GetString(7),*/ password=rdr.GetString(9)};
                     customer = temp;
                 }
                 else {
@@ -79,7 +79,7 @@ namespace api.Database{
                 if(rdr.IsDBNull(6)){
                     //if referredBy is null, make a new Customer() without a referredBy property
                     
-                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), /*phoneNo=rdr.GetString(7),*/ password=rdr.GetString(9)};
                 }
                 else {
                     //if referredBy is not null, make a new Customer() containing that referredBy customerId

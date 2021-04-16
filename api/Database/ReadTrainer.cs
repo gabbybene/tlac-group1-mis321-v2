@@ -28,13 +28,12 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT (TrainerID,fName,lName,DOB,Gender,AcctID) FROM Trainer WHERE TrainerID=@AcctID";
+            cmd.CommandText = @"SELECT TrainerID,fName,lName,DOB,Gender,AcctID FROM Trainer WHERE TrainerID=@AcctID";
             cmd.Parameters.AddWithValue("@AcctID",id);
             cmd.Prepare();
-            cmd.ExecuteReader();
             MySqlDataReader rdr = cmd.ExecuteReader();
             if (rdr.Read()){
-                return new Trainer(){trainerId=rdr.GetInt32(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), email=rdr.GetString(6)};
+                return new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5)};
             }
             return null;
         }
