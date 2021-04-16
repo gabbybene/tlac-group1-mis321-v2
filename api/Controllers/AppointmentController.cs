@@ -25,6 +25,7 @@ namespace api.Controllers
         }
 
         // GET: api/Appointment/5
+        [EnableCors("AnotherPolicy")]
         [HttpGet("{id}", Name = "GetAppointment")]
         public Appointment Get(int id)
         {
@@ -33,6 +34,7 @@ namespace api.Controllers
         }
         
         // GetDistinctAvailableAppointments
+        [EnableCors("AnotherPolicy")]
         [Route("[action]/{date}")]
         [HttpGet]
         //[HttpGet("{date}", Name = "GetDistinctAvailableAppointments")]
@@ -41,7 +43,9 @@ namespace api.Controllers
             ReadAppointment ra = new ReadAppointment();
             return ra.ReadDistinctAvailableAppointments();
         }
+
         // GetAvailableAppointmentsByDate
+        [EnableCors("AnotherPolicy")]
         [Route("[action]/{date}")]
         [HttpGet]
         //[HttpGet("{date}", Name = "GetAvailableAppointmentsByDate")]
@@ -52,6 +56,7 @@ namespace api.Controllers
         }
 
         // GetAvailableAppointmentsByDate for individual trainer
+        [EnableCors("AnotherPolicy")]
         [HttpGet("{date}", Name = "GetAvailableAppointmentsByDateForTrainer")]
         public List<Appointment> GetAvailableAppointmentsByDateForTrainer(int trainerId, DateTime date)
         {

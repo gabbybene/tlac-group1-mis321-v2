@@ -33,6 +33,16 @@ namespace api.Controllers
             return rc.Read(email);
         }
 
+        // GET: api/
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public Customer GetCustomerByID(int id)
+        {
+            IReadCustomer rc = new ReadCustomer();
+            return rc.GetCustomerByID(id);
+        }
+
         // POST: api/Customer
         [EnableCors("AnotherPolicy")]
         [HttpPost]

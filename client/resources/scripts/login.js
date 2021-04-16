@@ -82,15 +82,6 @@ function handleCustomerSignIn()
         console.log(error);
     }) 
 
-    // if(success){
-    //     //go to the Customer dashboard but send in the customer id into the URL
-    //     console.log("made it to the if success==true");
-
-    // }
-    // else {
-    //     //if not successfull, show the error message above the sign in button.
-
-    // }
 
 }
 
