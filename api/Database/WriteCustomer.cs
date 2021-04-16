@@ -27,11 +27,10 @@ namespace api.Database{
             cmd.Parameters.AddWithValue("@dob", i.birthDate);
             cmd.Parameters.AddWithValue("@gender", i.gender);
             cmd.Parameters.AddWithValue("@phone", i.phoneNo);
-            cmd.Parameters.AddWithValue("@act",null);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
-
+            cmd.Parameters.AddWithValue("@act",null);
             foreach(Activity act in i.customerActivities){
                 
                 cmd.CommandText = @"INSERT into prefers (CustID,ActivityID) VALUES ((SELECT CustID from Customer where AccountID=@email),@act)";

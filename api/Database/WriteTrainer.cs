@@ -28,6 +28,16 @@ namespace api.Database
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
+            cmd.Parameters.AddWithValue("@act",null);
+            foreach(Activity act in i.trainerActivities){
+                
+                cmd.CommandText = @"INSERT into cando (TrainerID,ActivityID,Price) VALUES ((SELECT TrainerID from Trainer where AccountID=@email),@act,@price)";
+                cmd.Parameters["@act"].Value= act.activityId;
+                cmd.Parameters["@price"].Value = act.trainerPriceForActivity;
+                cmd.Connection=con;
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }
