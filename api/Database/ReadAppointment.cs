@@ -74,16 +74,16 @@ namespace api.Database{
 
             //I (Gabby) commented these lines out and updated lines 52-53 instead because there were errors
             // cmd.Connection = con;
-            // cmd.CommandText = @"SELECT DISTINCT AppointmentDate,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerId = null ORDER BY ___ asc";
+            // cmd.CommandText = @"SELECT DISTINCT AppointmentDate,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerId = null ORDER BY Appointment asc";
             
             //Statement
-            string stm = @"SELECT DISTINCT date FROM Appointment WHERE CustomerId = null ORDER BY ___ asc";
+            string stm = @"SELECT DISTINCT date FROM Appointment WHERE CustomerID IS NULL ORDER BY date asc";
             using var cmd = new MySqlCommand(stm, con);
             using MySqlDataReader rdr = cmd.ExecuteReader();
 
             while (rdr.Read())
             {
-                returnList.Add(rdr.GetDateTime(1));
+                returnList.Add(rdr.GetDateTime(0));
 
             }
             return returnList;
