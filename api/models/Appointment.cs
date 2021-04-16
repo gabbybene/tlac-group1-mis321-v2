@@ -9,8 +9,8 @@ namespace api.models
     {
         public int appointmentId {get; set;}
         public DateTime appointmentDate{get; set;}
-        public DateTime startTime {get; set;}
-        public DateTime endTime {get; set;}
+        public TimeSpan startTime {get; set;}
+        public TimeSpan endTime {get; set;}
         public Trainer appointmentTrainer {get; set;}
         public Customer appointmentCustomer {get; set;}
         public double appointmentCost {get; set;}

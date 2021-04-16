@@ -21,7 +21,7 @@ namespace api.Database{
                 IReadCustomer readCust = new ReadCustomer();
                 IReadTrainer readTrn = new ReadTrainer();
                 IReadActivity readAct = new ReadActivity();
-                return new Appointment(){appointmentId=rdr.GetInt32(1),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(2)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(3)),appointmentActivity=readAct.Read(rdr.GetInt32(4)), startTime=rdr.GetDateTime(5), endTime=rdr.GetDateTime(6),appointmentCost=(rdr.GetDouble(7)),amountPaidByCash=rdr.GetDouble(8), amountPaidByCard=rdr.GetDouble(9),appointmentDate=rdr.GetDateTime(10)};
+                return new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4).TimeOfDay, endTime=rdr.GetDateTime(5).TimeOfDay,appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)};
             }
             return null;        
         }
@@ -40,19 +40,17 @@ namespace api.Database{
                 IReadTrainer readTrn = new ReadTrainer();
                 IReadActivity readAct = new ReadActivity();
                 Console.WriteLine(rdr.GetInt32(0));
-                returnList.Add(new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4), endTime=rdr.GetDateTime(5),appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)});
+                returnList.Add(new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4).TimeOfDay, endTime=rdr.GetDateTime(5).TimeOfDay,appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)});
             }
             return returnList;
         }
         public List<Appointment> ReadAvailableAppointmentsByDate(DateTime searchDate){
+            string searchDateString = searchDate.ToString("yyyy-MM-dd");
             List<Appointment> returnList = new List<Appointment>();
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
-            Console.WriteLine(searchDate);
             using var cmd = new MySqlCommand();
-            string searchDateString = searchDate.ToString("yyyy-MM-dd");
-            Console.WriteLine(searchDateString);
             cmd.Connection = con;
             cmd.CommandText = @"SELECT AppointmentID,IFNULL(CustomerID,0) AS CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price,CashAmount,CardAmount,date FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID is null AND date LIKE @date";
             cmd.Parameters.AddWithValue("@date",searchDateString);
@@ -62,7 +60,7 @@ namespace api.Database{
                 IReadCustomer readCust = new ReadCustomer();
                 IReadTrainer readTrn = new ReadTrainer();
                 IReadActivity readAct = new ReadActivity();
-                returnList.Add(new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4), endTime=rdr.GetDateTime(5),appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)});
+                returnList.Add(new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4).TimeOfDay, endTime=rdr.GetDateTime(5).TimeOfDay,appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)});
             }
             return returnList;
             }
@@ -114,7 +112,7 @@ namespace api.Database{
             IReadActivity readAct = new ReadActivity();
             while (rdr.Read())
             {
-                Appointment temp = new Appointment(){appointmentId=rdr.GetInt32(1),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(2)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(3)),appointmentActivity=readAct.Read(rdr.GetInt32(4)), startTime=rdr.GetDateTime(5), endTime=rdr.GetDateTime(6),appointmentCost=(rdr.GetDouble(7)),amountPaidByCash=rdr.GetDouble(8), amountPaidByCard=rdr.GetDouble(9)};
+                Appointment temp = new Appointment(){appointmentId=rdr.GetInt32(1),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(2)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(3)),appointmentActivity=readAct.Read(rdr.GetInt32(4)), startTime=rdr.GetDateTime(5).TimeOfDay, endTime=rdr.GetDateTime(6).TimeOfDay,appointmentCost=(rdr.GetDouble(7)),amountPaidByCash=rdr.GetDouble(8), amountPaidByCard=rdr.GetDouble(9)};
                 myAppointments.Add(temp);
 
             }
@@ -140,7 +138,7 @@ namespace api.Database{
             IReadTrainer readTrn = new ReadTrainer();
             IReadActivity readAct = new ReadActivity();
             while(rdr.Read()){
-                Appointment temp = new Appointment(){appointmentDate=rdr.GetDateTime(0), startTime=rdr.GetDateTime(1), endTime=rdr.GetDateTime(2), appointmentId=rdr.GetInt32(3), appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(4)), appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(5)), appointmentActivity=readAct.Read(rdr.GetInt32(6)), amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8), appointmentCost=rdr.GetDouble(9)};
+                Appointment temp = new Appointment(){appointmentDate=rdr.GetDateTime(0), startTime=rdr.GetDateTime(1).TimeOfDay, endTime=rdr.GetDateTime(2).TimeOfDay, appointmentId=rdr.GetInt32(3), appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(4)), appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(5)), appointmentActivity=readAct.Read(rdr.GetInt32(6)), amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8), appointmentCost=rdr.GetDouble(9)};
                 appointments.Add(temp);
             }
 
