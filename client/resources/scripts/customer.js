@@ -92,10 +92,11 @@ function getCustomerAppointments(){
     console.log("customer id is " + customer.customerId);
 
     let confirmedAppts = getConfirmedAppointments(customer);
+    console.log("confirmedAppts is " + confirmedAppts);
     let html = "";
-    if(confirmedAppts.length == 0) {
-        //set up some html to say they have no confirmed appointments at this time 
-        html += "<h2>You don't have any upcoming appointments scheduled at this time. Check out the calendar below to find some sessions and get training!</h2>";
+    if(confirmedAppts == undefined) {
+        //if no appointments are found, set up some html to say they have no confirmed appointments at this time 
+        html += "<h2>You don't have any upcoming appointments scheduled at this time.</h2><h2>Check out the calendar below to find some sessions and get training!</h2>";
     }
     else {
         for(let i = 0; i < confirmedAppts.length; i++) {
@@ -111,24 +112,28 @@ function getCustomerAppointments(){
 function getConfirmedAppointments(customer){
     //Get appointments from DB that match the customer ID In the url & have a date of today or in the future.
     //return that array of appointment objects
+    let confirmedAppts = "";
     const apptApiUrl = "https://localhost:5001/api/Appointment/GetConfirmedAppointmentsForCustomer/"+customer.customerId;
     fetch(apptApiUrl).then(function(response){
         console.log(response);
         return response.json();
     }).then(function(json){
-        if(json = null){
+        if(json[0] == undefined){
             console.log("no appointments found");
-            confirmedAppts = -1; //set to a default value if no appointments were found for that customer
+             //set to a default value if no appointments were found for that customer
+            return undefined;
         }
         else{
             console.log("Appointments found!");
             confirmedAppts = json;
+            return confirmedAppts;
         }
     }).catch(function(error){
         console.log(error);
     }) 
 
-    return confirmedAppts;
+    // console.log("confirmedAppts is " + confirmedAppts)
+    // return confirmedAppts;
 }
 
 //FOR EDIT CUSTOMER APPT MODAL in viewCustAppointments section
@@ -311,7 +316,7 @@ function getAvailableAppointmentCalendar(currentMonth, currentYear){
 
 function setCalendarHeader(currentMonth, currentYear)
 {
-    var currDate = new Date(); //current date
+    // var currDate = new Date(); //current date
     var mList = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
     var monthName = mList[currentMonth];
     var monthAndYear = monthName + " " + currentYear;
@@ -617,21 +622,11 @@ function getCustomerProfileForm(){
     /*get the logged in customer's data)
 
     /* STATIC CUSTOMER FOR TESTING */
-    let customer = {
-        emailAddress: "gnmoody@crimson.ua.edu",
-        password: "abc123",
-        firstName: "Gabby",
-        lastName:"Benefield",
-        birthDate: "1994-11-12",
-        gender: "female",
-        fitnessGoals: "I just like to stay active.",
-        activities: ["cardio", "strength training"],
-        referredBy: null
-    };
+    let customer = getCustomer();
    
-    document.getElementById("currEmail").value = customer.emailAddress;
-    document.getElementById("inputFName").value = customer.firstName;
-    document.getElementById("inputLName").value = customer.lastName;
+    document.getElementById("currEmail").value = customer.email;
+    document.getElementById("inputFName").value = customer.fName;
+    document.getElementById("inputLName").value = customer.lName;
     document.getElementById("birthDate").value = customer.birthDate;
     document.getElementById("gender").value = customer.gender;
     document.getElementById("fitnessGoals").value = customer.fitnessGoals;
