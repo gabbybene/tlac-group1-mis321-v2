@@ -11,9 +11,8 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
 
-            cmd.CommandText = @"INSERT into activity (activityName,activityDescription) VALUES (@name,@desc);";
+            cmd.CommandText = @"INSERT into activity (activityName) VALUES (@name);";
             cmd.Parameters.AddWithValue("@name", i.activityName);
-            cmd.Parameters.AddWithValue("@desc", i.description);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();

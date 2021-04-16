@@ -13,9 +13,8 @@ namespace api.Database{
             using var cmd = new MySqlCommand();
 
             foreach(Activity i in al){
-                cmd.CommandText = @"UPDATE activity SET activityName=@name,activityDescription=@desc) WHERE activityID=@activityid;";
+                cmd.CommandText = @"UPDATE activity SET activityName=@name) WHERE activityID=@activityid;";
                 cmd.Parameters.AddWithValue("@name", i.activityName);
-                cmd.Parameters.AddWithValue("@desc", i.description);
                 cmd.Parameters.AddWithValue("activityid", i.activityId);
                 cmd.Connection=con;
                 cmd.Prepare();

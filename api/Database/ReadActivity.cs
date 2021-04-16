@@ -27,24 +27,32 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT (ActivityID,ActivityName,ActivityDescription) FROM CanDo WHERE ActivityID=@ActivityID AND TrainerID=@trainerID";
+            cmd.CommandText = @"SELECT (ActivityID,ActivityName) FROM CanDo WHERE ActivityID=@ActivityID AND TrainerID=@trainerID";
             cmd.Parameters.AddWithValue("@ActivityID",actID);
             cmd.Parameters.AddWithValue("@TrainerID",trnID);
             cmd.Prepare();
             MySqlDataReader rdr = cmd.ExecuteReader();
             if (rdr.Read()){
-                return new Activity(){activityId=rdr.GetInt32(1),activityName=rdr.GetString(2),description=rdr.GetString(3)};
+                return new Activity(){activityId=rdr.GetInt32(0),activityName=rdr.GetString(1)};
             }
             return null;
         }
 
-        public List<models.Activity> ReadAll()
+        public List<Activity> ReadAll()
         {
+            List<Activity> returnList = new List<Activity>();
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
             using var cmd = new MySqlCommand();
-            throw new System.NotImplementedException();
+            cmd.Connection = con;
+            cmd.CommandText = @"SELECT ActivityID,ActivityName FROM Activity";
+            cmd.Prepare();
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read()){
+                returnList.Add(new Activity(){activityId=rdr.GetInt32(0),activityName=rdr.GetString(1)});
+            }
+            return returnList;
         }
     }
 }

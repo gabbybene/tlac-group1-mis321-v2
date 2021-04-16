@@ -14,7 +14,7 @@ namespace api.models
        public string phoneNo {get; set;}
        public Customer referredBy  {get; set;}
        public string fitnessGoals {get; set;}
-       public List<Activity> customerActivities = new List<Activity>(); 
+       public List<Activity> customerActivities {get; set;} 
        public IWriteCustomer writeBehavior {get; set;}
        public IDeleteCustomer deleteBehavior {get; set;}
        public IReadCustomer readBehavior {get; set;}

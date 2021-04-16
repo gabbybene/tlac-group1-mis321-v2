@@ -23,11 +23,13 @@ namespace api.Database{
                 if(rdr.IsDBNull(6)){
                     //if referredBy is null, return a new Customer, but leave referredBy as null
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
                 }
                 else {
                     //if referredBy is not null, return the new Customer that includes a referredBy
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5),referredBy=GetCustomerByID(rdr.GetInt32(6)),phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
                 }
                
@@ -54,11 +56,13 @@ namespace api.Database{
                 if(rdr.IsDBNull(6)){
                     //if referredBy is null, return a new Customer, but leave referredBy as null
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), /*phoneNo=rdr.GetString(7),*/ password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
                 }
                 else {
                     //if referredBy is not null, return the new Customer that includes a referredBy
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5),referredBy=GetCustomerByID(rdr.GetInt32(6)),phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
                     customer = temp;
                 }
             }
@@ -80,14 +84,32 @@ namespace api.Database{
                     //if referredBy is null, make a new Customer() without a referredBy property
                     
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5), /*phoneNo=rdr.GetString(7),*/ password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
+                    allCustomers.Add(temp);
                 }
                 else {
                     //if referredBy is not null, make a new Customer() containing that referredBy customerId
                     Customer temp = new Customer(){customerId=rdr.GetInt32(0),email=rdr.GetString(1),fName=rdr.GetString(2),lName=rdr.GetString(3),birthDate=rdr.GetDateTime(4), gender=rdr.GetString(5),referredBy=GetCustomerByID(rdr.GetInt32(6)),phoneNo=rdr.GetString(7), password=rdr.GetString(9)};
+                    temp.customerActivities = GetCustomerPreferredActivities(temp);
                     allCustomers.Add(temp);
                 }      
             }
             return allCustomers;
+        }
+        private List<Activity> GetCustomerPreferredActivities(Customer cust){
+            ConnectionString cs = new ConnectionString();
+            using var con = new MySqlConnection(cs.cs);
+            con.Open();
+            using var cmd = new MySqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = "SELECT p.activityid,activityname from prefers p join activity a on p.activityid=a.activityid WHERE p.custID=@cust";
+            cmd.Parameters.AddWithValue("@cust",cust.customerId);
+            using MySqlDataReader rdr = cmd.ExecuteReader();
+            List<Activity> returnList = new List<Activity>();
+            while(rdr.Read()){
+                returnList.Add(new Activity(){activityId=rdr.GetInt32(0),activityName=rdr.GetString(1)});
+            }
+            return returnList;
         }
     }
 }

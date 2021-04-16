@@ -30,6 +30,15 @@ namespace api.Database{
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
+
+            foreach(Activity act in i.customerActivities){
+                cmd.CommandText = @"INSERT into prefers (CustID,ActivityID) VALUES (@cust,@act)";
+                cmd.Parameters.AddWithValue("@cust", i.customerId);
+                cmd.Parameters.AddWithValue("@act", act.activityId);
+                cmd.Connection=con;
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }
