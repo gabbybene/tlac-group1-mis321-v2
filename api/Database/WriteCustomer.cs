@@ -27,14 +27,15 @@ namespace api.Database{
             cmd.Parameters.AddWithValue("@dob", i.birthDate);
             cmd.Parameters.AddWithValue("@gender", i.gender);
             cmd.Parameters.AddWithValue("@phone", i.phoneNo);
+            cmd.Parameters.AddWithValue("@act",null);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
 
             foreach(Activity act in i.customerActivities){
-                cmd.CommandText = @"INSERT into prefers (CustID,ActivityID) VALUES (@cust,@act)";
-                cmd.Parameters.AddWithValue("@cust", i.customerId);
-                cmd.Parameters.AddWithValue("@act", act.activityId);
+                
+                cmd.CommandText = @"INSERT into prefers (CustID,ActivityID) VALUES ((SELECT CustID from Customer where AccountID=@email),@act)";
+                cmd.Parameters["@act"].Value= act.activityId;
                 cmd.Connection=con;
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
