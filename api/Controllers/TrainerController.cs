@@ -24,7 +24,7 @@ namespace api.Controllers
             return rt.ReadAll();
         }
 
-        // GET: api/Trainer/5
+        // GET: api/Trainer/email
         [EnableCors("AnotherPolicy")]
         [HttpGet("{email}", Name = "GetTrainer")]
         public Trainer Get(string email)
@@ -32,6 +32,15 @@ namespace api.Controllers
             IReadTrainer rt = new ReadTrainer();
             return rt.Read(email);
         }
+
+        // GET: api/Trainer/id
+        // [EnableCors("AnotherPolicy")]
+        // [HttpGet("{id}", Name = "GetTrainerById")]
+        // public Trainer GetTrainerByID(int id)
+        // {
+        //     IReadTrainer rt = new ReadTrainer();
+        //     return rt.GetTrainerByID(id);
+        // }
 
         // POST: api/Trainer
         [EnableCors("AnotherPolicy")]
