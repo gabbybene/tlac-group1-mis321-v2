@@ -29,7 +29,7 @@ namespace api.Controllers
         public Manager Get(int id)
         {
             IReadManager rm = new ReadManager();
-            return rm.Read();
+            return rm.GetManagerByID(id);
         }
 
         // POST: api/Manager

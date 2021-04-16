@@ -5,7 +5,6 @@ namespace api.interfaces
 {
     public interface IReadManager
     {
-        Manager Read();
         List<Manager> ReadAll(); 
         Manager GetManagerByID(int id);
     }
