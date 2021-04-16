@@ -601,8 +601,8 @@ function getCustomerProfileForm(){
         else if(customer.activities[i] == "kickboxing"){
             document.getElementById("kickboxing").checked = true;
         }
-        else if(customer.activities[i] == "pilates"){
-            document.getElementById("pilates").checked = true;
+        else if(customer.activities[i] == "yoga"){
+            document.getElementById("yoga").checked = true;
         }
     }
 

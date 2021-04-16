@@ -163,6 +163,8 @@ function getTrainerCalendar(currentMonth, currentYear){
     //get month and year for use below
     let mon = currentMonth;
     let d = new Date(currentYear, mon);
+    let today = new Date();
+    let todayDate = today.getDate();
     //CREATE CALENDAR TABLE
     let calendarTable = "<table class=\"table table-responsive-sm calendar-table\"><thead>";
     calendarTable += "<th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thur</th><th>Fri</th><th>Sat</th></thead><tbody id=\"calendarBody\">";
@@ -172,9 +174,20 @@ function getTrainerCalendar(currentMonth, currentYear){
     }
     //<td> with dates for that month
     while(d.getMonth() == mon) {
-        calendarTable += "<td><button onclick=\"showEditAvailabilityModal(value)\" value="+ (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() +">" + d.getDate() + "</button></td>";
-        if(d.getDay() == 6) { //if last day of week, new table row
-            calendarTable += "</tr><tr>";
+        console.log("todayDate: " + todayDate + " | d.GetDate():" + d.getDate());
+        if(d.getDate() < todayDate) {
+            //if date is before today's date, disable button
+            calendarTable += "<td><button disabled style=\"background-color: #808080\">" + d.getDate() + "</button></td>"; 
+            if(d.getDay() == 6) { //if last day of week, new table row
+                calendarTable += "</tr><tr>";
+            }
+        }
+        else {
+            //if today or later, enable button
+            calendarTable += "<td><button onclick=\"showEditAvailabilityModal(value)\" value="+ (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear() +">" + d.getDate() + "</button></td>";
+            if(d.getDay() == 6) { //if last day of week, new table row
+                calendarTable += "</tr><tr>";
+            }
         }
         d.setDate(d.getDate() + 1); //increment date
     }
@@ -245,7 +258,7 @@ function showEditAvailabilityModal(value){
         html += "<div class=\"row\"><div class=\"col-md-4\"><label for=startTime"+idCount+">Choose a start time:</label><input type=\"time\" id=startTime"+idCount+" name=\"startTime\"min=\"06:00\" max=\"18:00\"></div>";
         html += "<div class=\"col-md-4\"><label for=startTime"+idCount+">Choose an end time:</label><input type=\"time\" id=startTime"+idCount+" name=\"endTime\"min=\"06:00\" max=\"18:00\" ></div>";
         html += "<div class=\"col-md-4\"><label for=activity"+idCount+">Choose an activity:</label><select id=activity"+idCount+" name=\"activities\"><option value=\"cardio\">Cardio</option><option value=\"strengthTraining\">Strength Training</option>";
-        html += "<option value=\"kickboxing\">Kickboxing</option><option value=\"pilates\">Pilates</option></select></div></div>";
+        html += "<option value=\"kickboxing\">Kickboxing</option><option value=\"yoga\">Yoga</option></select></div></div>";
         idCount++;
     }
     //empty div to add additional rows of input fields
@@ -264,7 +277,7 @@ function addMoreRows(idCount){
         html += "<div class=\"row\"><div class=\"col-md-4\"><label for=startTime"+idCount+">Choose a start time:</label><input type=\"time\" id=startTime"+idCount+" name=\"startTime\"min=\"06:00\" max=\"18:00\"></div>";
         html += "<div class=\"col-md-4\"><label for=startTime"+idCount+">Choose an end time:</label><input type=\"time\" id=startTime"+idCount+" name=\"endTime\"min=\"06:00\" max=\"18:00\" ></div>";
         html += "<div class=\"col-md-4\"><label for=activity"+idCount+">Choose an activity:</label><select id=activity"+idCount+" name=\"activities\"><option value=\"cardio\">Cardio</option><option value=\"strengthTraining\">Strength Training</option>";
-        html += "<option value=\"kickboxing\">Kickboxing</option><option value=\"pilates\">Pilates</option></select></div></div>";
+        html += "<option value=\"kickboxing\">Kickboxing</option><option value=\"yoga\">Yoga</option></select></div></div>";
         idCount++;
     }
     document.getElementById("extraRows").innerHTML = html;
@@ -325,10 +338,10 @@ function getTrainerProfileForm(){
             document.getElementById("kickboxingPrice").value = trainer.activities[i].activityPrice;
             document.getElementById("kickboxingPrice").disabled = false;
         }
-        else if(trainer.activities[i].activityName == "pilates"){
-            document.getElementById("pilates").checked = true;
-            document.getElementById("pilatesPrice").value = trainer.activities[i].activityPrice;
-            document.getElementById("pilatesPrice").disabled = false;
+        else if(trainer.activities[i].activityName == "yoga"){
+            document.getElementById("yoga").checked = true;
+            document.getElementById("yogaPrice").value = trainer.activities[i].activityPrice;
+            document.getElementById("yogaPrice").disabled = false;
         }
     }
 }

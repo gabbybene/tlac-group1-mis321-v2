@@ -35,9 +35,8 @@ namespace api.Controllers
         
         // GetDistinctAvailableAppointments
         [EnableCors("AnotherPolicy")]
-        [Route("[action]/{date}")]
+        [Route("[action]/")]
         [HttpGet]
-        //[HttpGet("{date}", Name = "GetDistinctAvailableAppointments")]
         public List<DateTime> GetDistinctAvailableAppointments()
         {
             ReadAppointment ra = new ReadAppointment();
