@@ -98,10 +98,14 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT AppointmentDate,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE TrainerId=@TrainerId and date=@date";;
+            cmd.CommandText = @"SELECT AppointmentDate,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE TrainerId=@TrainerId and date=@date";
             cmd.Parameters.AddWithValue("@TrainerId",trainerId);
             cmd.Parameters.AddWithValue("@date",date);
             cmd.Prepare();
+<<<<<<< HEAD
+=======
+            // cmd.ExecuteReader();
+>>>>>>> 1d0cd9c61be52fa7fb0513a2e55332908c12207d
             
             using MySqlDataReader rdr = cmd.ExecuteReader();
 
@@ -116,6 +120,32 @@ namespace api.Database{
 
             }
             return myAppointments;
+        }
+
+        public List<Appointment> ReadConfirmedAppointmentsForCustomer(int customerId){
+            List<Appointment> appointments = new List<Appointment>();
+
+            ConnectionString cs = new ConnectionString();
+            using var con = new MySqlConnection(cs.cs);
+            con.Open();
+            using var cmd = new MySqlCommand();
+            cmd.Connection = con;
+            // cmd.CommandText = @"SELECT * FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID=@CustomerId";
+            cmd.CommandText = @"SELECT date,startTime, endTime, AppointmentID, a.TrainerID, CustomerID, a.ActivityID, CashAmount, CardAmount, Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID=@CustomerId";
+            
+            cmd.Parameters.AddWithValue("@CustomerId",customerId);
+            cmd.Prepare();
+            using MySqlDataReader rdr = cmd.ExecuteReader();
+
+            IReadCustomer readCust = new ReadCustomer();
+            IReadTrainer readTrn = new ReadTrainer();
+            IReadActivity readAct = new ReadActivity();
+            while(rdr.Read()){
+                Appointment temp = new Appointment(){appointmentDate=rdr.GetDateTime(0), startTime=rdr.GetDateTime(1), endTime=rdr.GetDateTime(2), appointmentId=rdr.GetInt32(3), appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(4)), appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(5)), appointmentActivity=readAct.Read(rdr.GetInt32(6)), amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8), appointmentCost=rdr.GetDouble(9)};
+                appointments.Add(temp);
+            }
+
+            return appointments;
         }
     }
 }

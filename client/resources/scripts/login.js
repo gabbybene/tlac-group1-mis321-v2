@@ -82,10 +82,10 @@ function handleCustomerSignIn()
         console.log(error);
     }) 
 
-
 }
 
-function CreateNewCustomer(){
+
+function handleCreateNewCustOnClick(){
     const customerApiUrl = "https://localhost:5001/api/Customer";
 
     //get customer data
@@ -109,18 +109,6 @@ function CreateNewCustomer(){
     if(document.getElementById("yesReferred").checked){
         let referredByName = document.getElementById("referrerName");
     }
-    //set user inputs to a body object
-    // var bodyObj = {
-    //     "password": password,
-    //     "birthDate": dob, 
-    //     "gender": gender,
-    //     "fitnessGoals": fitnessGoals,
-    //     "PhoneNo": "000-123-4567", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
-    //     "fName": firstName,
-    //     "lName": lastName,
-    //     "email": email
-    //     // referredBy: referredByName,
-    // };
 
     console.log(inputPassword + " " + dob + " " + inputGender + " " + inputFirstName + " " + inputLastName + " " + inputEmail);
     console.log("fitness goals: " + inputFitnessGoals);
@@ -161,8 +149,8 @@ function sendCustomerToDashboard(email){
         return response.json();
     }).then(function(json){
         let customerId = json.customerId;
-        // window.location.href = "./customer.html?customerId="+customerId;
-        console.log("customerId is " + customerId);
+        window.location.href = "./customer.html?customerId="+customerId;
+        //console.log("customerId is " + customerId);
     }).catch(function(error){
         console.log(error);
     }) 
@@ -202,28 +190,70 @@ function handleNewTrainer(){ //to pop up new trainer form
 
 }
 
+
+/* TRAINER login / sign-up */
+function handleTrainerSignIn(){
+    document.getElementById("trainerSignInErrorMsg").style.display = "none"; //hide the errorMsg unless sign-in is invalid
+    
+    //get value of user input email and password
+    let inputEmail = document.getElementById("trainerEmail").value;
+    let inputPassword = document.getElementById("trainerPassword").value;
+    console.log("inputEmail is " + inputEmail);
+
+
+    let trainer = "";
+    let errorMsgHtml = "";
+
+    const trainerApiUrl = "https://localhost:5001/api/Trainer/"+inputEmail;
+    fetch(trainerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        if(json.trainerId == 0){
+            //if no trainer found w/ that email address, display error message
+            errorMsgHtml = "<p>No trainer found with that email address.</p>";
+            document.getElementById("trainerSignInErrorMsg").innerHTML = errorMsgHtml;
+            document.getElementById("trainerSignInErrorMsg").style.display = "block";
+        }
+        else { //if the trainer was found with that email, check for the password
+            if(inputPassword == json.password){
+                trainer = json; //set the json object to the trainer
+                window.location.href = "./trainer.html?id="+trainer.trainerId; //go to trainer dashboard
+            }
+            else {
+                //if password doesn't match, display error message
+                errorMsgHtml = "<p>Invalid login.</p>";
+                document.getElementById("trainerSignInErrorMsg").innerHTML = errorMsgHtml;
+                document.getElementById("trainerSignInErrorMsg").style.display = "block";
+            }
+        }
+    }).catch(function(error){
+        console.log(error);
+    }) 
+}
+
 function handleCreateNewTrainerOnClick(){ 
     const trainerApiUrl = "https://localhost:5001/api/Trainer";
 
     //get customer data
-    let email = document.getElementById("trainerEmail").value;
-    let password = document.getElementById("trainerPassword").value;
-    let firstName = document.getElementById("trainerFirstName").value;
-    let lastName = document.getElementById("trainerLastName").value;
+    let inputEmail = document.getElementById("newTrainerEmail").value;
+    let inputPassword = document.getElementById("newTrainerPassword").value;
+    let inputFirstName = document.getElementById("trainerFName").value;
+    let inputLastName = document.getElementById("trainerLName").value;
     let dob = document.getElementById("trainerBirthDate").value;
-    let gender = document.getElementById("trainerGender").value;
+    let inputGender = document.getElementById("trainerGender").value;
     
     //To-do: handle training activities and price
 
 
     //set user inputs to a body object
     var bodyObj = {
-        "fName": firstName,
-        "lName": lastName,
-        "birthDate": dob,
-        "gender": gender,
-        "email": email,
-        "password": password, 
+        fName: inputFirstName,
+        lName: inputLastName,
+        birthDate: dob,
+        gender: inputGender,
+        email: inputEmail,
+        password: inputPassword, 
         //preferred activities []
     };
     
@@ -242,6 +272,23 @@ function handleCreateNewTrainerOnClick(){
     //create new trainer (get data and add to DB)
     //go to trainer.html
     //window.location.href = "./trainer.html";
+    sendTrainerToDashboard(inputEmail);
+}
+
+function sendTrainerToDashboard(email){
+    //get new customer's id and send them to Trainer Dashboard
+    const getTrainerApiUrl = "https://localhost:5001/api/Trainer/"+email;
+    fetch(getTrainerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        let trainerId = json.trainerId;
+       // window.location.href = "./trainer.html?trainerId="+trainerId;
+        console.log("customerId is " + trainerId);
+    }).catch(function(error){
+        console.log(error);
+    }) 
+
 }
 
 function closeNewTrainerModal(){
