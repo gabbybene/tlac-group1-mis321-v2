@@ -163,110 +163,100 @@ window.onclick = function(event){
 
 //CUSTOMER AVAILABLE APPOINTMENT CALENDAR SECTION
 function getAvailableAppointmentCalendar(currentMonth, currentYear){
-    /* TO-DO:   
-        -get appointments with no customer id from DB
-        -on a date, if no appointments, set button to disabled
-        -figure out how to pass in the date value to the showMakeAppointmentModal() */
-    
-        //display current month at top of calendar
-    /*STATIC APPOINTMENTS FOR TESTING
-      -will have to get DISTINCT appts from database where customer = null, sorted by date ASCENDING*/
-      let appointments = [
-        {
-            id: 1,
-            date: "4/4/2021",
-            startTime : "10:00am",
-            activity: "Cardio",
-            trainer: "Josh Hargrove",
-            customer: null,
-            price: 50.00
-        },
-        {
-            id: 2,
-            date: "4/6/2021",
-            startTime: "12:00pm",
-            activity: "Strength Training",
-            trainer: "Callie Jones",
-            customer: null,
-            price: 75.00
-        },
-        {
-            id: 3,
-            date: "4/8/2021",
-            startTime: "4:00pm",
-            activity: "Cardio",
-            trainer: "Eric Blackburn",
-            customer: null,
-            price: 65.00
-        },
-        {
-            id: 4,
-            date: "4/10/2021",
-            startTime: "6:00pm",
-            activity: "Kickboxing",
-            trainer: "Princess Smith",
-            customer: null,
-            price: 60.00
-        },
-        {
-            id: 5,
-            date: "4/12/2021",
-            startTime: "8:00am",
-            activity: "Pilates",
-            trainer: "Kim Berry",
-            customer: null,
-            price: 70.00
-        }
-    ];
-
-
-
-
     setCalendarHeader(currentMonth, currentYear);
 
     //get month and year for use below
     let mon = currentMonth;
     let d = new Date(currentYear, mon);
-    //CREATE CALENDAR TABLE
-    let calendarTable = "<table class=\"table table-responsive-sm calendar-table\"><thead>";
-    calendarTable += "<th>Mon</th><th>Tue</th><th>Wed</th><th>Thur</th><th>Fri</th><th>Sat</th><th>Sun</th></thead><tbody id=\"calendarBody\">";
-    // spaces for the first row from Sunday until the first day of the month
-    for(let i = 0; i < d.getDay(); i++) {
-        calendarTable += "<td></td>";
-    }
-    let found = false;
-    //<td> with dates for that month
-    while(d.getMonth() == mon) {
-        //for each available appointment with distinct date (sorted in ascending order)
-        let fullDate = (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
-        for(let i = 0; i < appointments.length; i++){
-            if(appointments[i].date == fullDate){ //if date matches the date of an appointment
-                calendarTable += "<td><button onclick=\"showMakeAppointmentModal(value)\" value="+(d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear()+">" + d.getDate() + "</button></td>";
-                //delete the element from the array
-                appointments.shift();
-                found = true;
-            }
+
+    //GET DISTINCT dates of available appointments, for use in populating the calendar
+    const apptApiUrl = "https://localhost:5001/api/Appointment/GetDistinctAvailableAppointments";
+    var fullDistinctDateTimeArray = []; 
+    var distinctDateArray = []; 
+    fetch(apptApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        fullDistinctDateTimeArray = json; //these values are passed through buttons
+        for(var i in json){
+            //transform date from yyyy-mm-ddtime to mm/dd/yyyy in distinctDateArray
+            let dateAndTime = json[i];
+            let myDate = dateAndTime.slice(0,10); //get first 10 characters of json string
+            let splitDate = myDate.split('-'); //split at -
+            let newMonth = parseInt(splitDate[1]);
+            newMonth = +newMonth; //remove leading zero if exists
+            let newDay = parseInt(splitDate[2]);
+            newDay = +newDay; //remove leading zero if exists
+            let newDate = [newMonth, newDay, splitDate[0]]; //make new date with correct order
+            newDate = newDate.join("/"); //join back together with /
+            distinctDateArray[i] = newDate; //set to distinctArray[i] 
+            console.log("new distinctDateArray["+i+"] is " + distinctDateArray[i]);
         }
-        if(found == false){
-            //if no matching appointments with date are found, disable button
-            calendarTable += "<td><button disabled style=\"background-color: #808080\">" + d.getDate() + "</button></td>"; 
-        }
-        
-        if(d.getDay() == 6) { //if last day of week (Saturday), new table row
-            calendarTable += "</tr><tr>";
-        }
-        d.setDate(d.getDate() + 1); //increment date
-        found = false; //reset found to false for the next loop
-    }
-    //add spaces after last days of month for last row if Saturday isn't the last day of the month
-    if(d.getDay() != 6) {
-        for(let i = d.getDay(); i < 7; i++) {
+
+    //BUILD CALENDAR
+        let calendarTable = "<table class=\"table table-responsive-sm calendar-table\"><thead>";
+        calendarTable += "<th>Mon</th><th>Tue</th><th>Wed</th><th>Thur</th><th>Fri</th><th>Sat</th><th>Sun</th></thead><tbody id=\"calendarBody\">";
+        // spaces for the first row from Sunday until the first day of the month
+        for(let i = 0; i < d.getDay(); i++) {
             calendarTable += "<td></td>";
         }
-    }
-    //close table
-    calendarTable += "<tr></tbody></table>";
-    document.getElementById("calendar").innerHTML = calendarTable;
+        let found = false;
+        //<td> with dates for that month
+        console.log("made it to mon: " + mon);
+        while(d.getMonth() == mon) {
+            let fullDate = (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
+            //if month of a date in the array doesn't match the month of fullDate, remove it from distinctDatearray
+            for(var i in distinctDateArray){
+                //split the date into an array at /
+                let tempDateStr = distinctDateArray[i];
+                let tempDateArr = tempDateStr.split('/');
+                //check month of that date. If not the same as current month, remove from the 2
+                if(tempDateArr[0] != fullDate[0]){ 
+                    //remove from distinctDateArray
+                    let itemToRemove = distinctDateArray[i];
+                    let index = distinctDateArray.indexOf(itemToRemove);
+                    if(index > -1){
+                        distinctDateArray.splice(index, 1);
+                    }
+                    //remove from fullDistinctDateTimeArray
+                    itemToRemove = fullDistinctDateTimeArray[i];
+                    index = fullDistinctDateTimeArray.indexOf(itemToRemove);
+                    if(index > -1){
+                        fullDistinctDateTimeArray.splice(index, 1);
+                    }       
+                }
+            }
+            for(var i in distinctDateArray){
+                if(distinctDateArray[i] == fullDate){
+                    calendarTable += "<td><button onclick=\"showMakeAppointmentModal(value)\" value="+fullDistinctDateTimeArray[i]+">" + d.getDate() + "</button></td>";
+                    //delete the element from both arrays
+                    distinctDateArray.shift();
+                    fullDistinctDateTimeArray.shift();
+                    found = true;
+                }
+            }
+            if (found == false) {
+                //if no date with an available appointment was found, disable the  button
+                calendarTable += "<td><button disabled style=\"background-color: #808080\">" + d.getDate() + "</button></td>"; 
+            }
+            if(d.getDay() == 6) { //if last day of week (Saturday), new table row
+                calendarTable += "</tr><tr>";
+            }
+            d.setDate(d.getDate() + 1); //increment date
+            found = false; //reset found to false for the next loop
+        }
+        //add spaces after last days of month for last row if Saturday isn't the last day of the month
+        if(d.getDay() != 6) {
+            for(let i = d.getDay(); i < 7; i++) {
+                calendarTable += "<td></td>";
+            }
+        }
+        //close table & set innerHTML
+        calendarTable += "<tr></tbody></table>";
+        document.getElementById("calendar").innerHTML = calendarTable;
+    }).catch(function(error){
+        console.log(error);
+    }) 
 }
 
 function setCalendarHeader(currentMonth, currentYear)
@@ -303,55 +293,20 @@ function showMakeAppointmentModal(value){
 
     let selectedDate = value;
     console.log("Selected Date is" + selectedDate);
-    /* STATIC APPTS FOR TESTING
-       - will have to get appts from database WHERE customer = null */
-    let appointments = [
-        {
-            id: 1,
-            date: "4/4/2021",
-            startTime : "10:00am",
-            activity: "Cardio",
-            trainer: "Josh Hargrove",
-            customer: null,
-            price: 50.00
-        },
-        {
-            id: 2,
-            date: "4/6/2021",
-            startTime: "12:00pm",
-            activity: "Strength Training",
-            trainer: "Callie Jones",
-            customer: null,
-            price: 75.00
-        },
-        {
-            id: 3,
-            date: "4/8/2021",
-            startTime: "4:00pm",
-            activity: "Cardio",
-            trainer: "Eric Blackburn",
-            customer: null,
-            price: 65.00
-        },
-        {
-            id: 4,
-            date: "4/10/2021",
-            startTime: "6:00pm",
-            activity: "Kickboxing",
-            trainer: "Princess Smith",
-            customer: null,
-            price: 60.00
-        },
-        {
-            id: 5,
-            date: "4/12/2021",
-            startTime: "8:00am",
-            activity: "Pilates",
-            trainer: "Kim Berry",
-            customer: null,
-            price: 70.00
-        }
-    ];
+
+    let appointments = [];
+    const apptApiUrl = "https://localhost:5001/api/Appointment/GetAvailableAppointmentsByDate/"+selectedDate;
+    fetch(apptApiUrl).then(function(response){
+        console.log(response);
+        return response.json;
+    }).then(function(json){
+        //update html for every item (available appointment) in the json array
+    }).catch(function(error){
+        console.log(error);
+    })
+
+    //START ABOVE HERE
+    
     
     let html = document.getElementById("custMakeApptModal");
     /* display a button list of appointments from the selected date (get value of date selected to search for appointments with that date?), 
