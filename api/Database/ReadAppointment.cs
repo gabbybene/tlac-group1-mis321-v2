@@ -13,17 +13,21 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price,CashAmount,CardAmount,date FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE AppointmentID=@AppointmentID";
+             cmd.CommandText = @"SELECT AppointmentID,COALESCE(CustomerID,0),a.TrainerID,a.ActivityID,starttime,endtime,Price,CashAmount,CardAmount,date FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE AppointmentID=@AppointmentID";
+            // cmd.CommandText = @"SELECT AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price,CashAmount,CardAmount,date FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE AppointmentID=@AppointmentID";
             cmd.Parameters.AddWithValue("@AppointmentID",id);
             cmd.Prepare();
             MySqlDataReader rdr = cmd.ExecuteReader();
-            if (rdr.Read()){
+
+            Appointment appt = new Appointment();
+            while (rdr.Read()){
                 IReadCustomer readCust = new ReadCustomer();
                 IReadTrainer readTrn = new ReadTrainer();
                 IReadActivity readAct = new ReadActivity();
-                return new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4).TimeOfDay, endTime=rdr.GetDateTime(5).TimeOfDay,appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)};
+                Appointment temp = new Appointment(){appointmentId=rdr.GetInt32(0),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(1)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4).TimeOfDay, endTime=rdr.GetDateTime(5).TimeOfDay,appointmentCost=(rdr.GetDouble(6)),amountPaidByCash=rdr.GetDouble(7), amountPaidByCard=rdr.GetDouble(8),appointmentDate=rdr.GetDateTime(9)};
+                appt = temp;
             }
-            return null;        
+            return appt;       
         }
         public List<Appointment> ReadAll(){
             List<Appointment> returnList = new List<Appointment>();
@@ -72,10 +76,6 @@ namespace api.Database{
             //Open the connection
             using var con = new MySqlConnection(cs);
             con.Open();
-
-            //I (Gabby) commented these lines out and updated lines 52-53 instead because there were errors
-            // cmd.Connection = con;
-            // cmd.CommandText = @"SELECT DISTINCT AppointmentDate,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerId = null ORDER BY Appointment asc";
             
             //Statement
             string stm = @"SELECT DISTINCT date FROM Appointment WHERE CustomerID IS NULL ORDER BY date asc";
@@ -99,7 +99,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT AppointmentDate,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE TrainerId=@TrainerId and date=@date";
+            cmd.CommandText = @"SELECT date,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE TrainerId=@TrainerId and date=@date ORDER BY starttime ASC";
             cmd.Parameters.AddWithValue("@TrainerId",trainerId);
             cmd.Parameters.AddWithValue("@date",date);
             cmd.Prepare();
@@ -128,7 +128,7 @@ namespace api.Database{
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
             // cmd.CommandText = @"SELECT * FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID=@CustomerId";
-            cmd.CommandText = @"SELECT date,startTime, endTime, AppointmentID, a.TrainerID, CustomerID, a.ActivityID, CashAmount, CardAmount, Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID=@CustomerId";
+            cmd.CommandText = @"SELECT date,startTime, endTime, AppointmentID, a.TrainerID, CustomerID, a.ActivityID, CashAmount, CardAmount, Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE CustomerID=@CustomerId ORDER BY a.date ASC";
             
             cmd.Parameters.AddWithValue("@CustomerId",customerId);
             cmd.Prepare();

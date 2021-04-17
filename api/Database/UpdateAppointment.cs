@@ -28,19 +28,23 @@ namespace api.Database{
                 cmd.ExecuteNonQuery();
             }
         }
-        public void UpdateAddCustomerId(Appointment appt,int custID){
+        public void UpdateAddCustomerId(int[] idArray){
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
             con.Open();
             using var cmd = new MySqlCommand();
 
-            cmd.CommandText = @"UPDATE appointment SET customerID=@custID) WHERE AppointmentID=@apptID;";
-            cmd.Parameters.AddWithValue("@custID", custID);
-            cmd.Parameters.AddWithValue("@apptID", appt.appointmentId);
+            cmd.CommandText = @"UPDATE appointment SET CustomerID=@custID WHERE AppointmentID=@apptID;";
+            //in id array, idArray[0] is custID, and idArray[1] is apptID
+            cmd.Parameters.AddWithValue("@custID", idArray[0]);
+            cmd.Parameters.AddWithValue("@apptID", idArray[1]);
+            // cmd.Parameters.AddWithValue("@custID", appt.appointmentCustomer.customerId);
+            // cmd.Parameters.AddWithValue("@apptID", appt.appointmentId);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
-        }
+        }        
+        
         public void UpdateDeleteCustomerId(Appointment appt){
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);

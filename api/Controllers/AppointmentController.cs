@@ -26,8 +26,9 @@ namespace api.Controllers
 
         // GET: api/Appointment/5
         [EnableCors("AnotherPolicy")]
-        [HttpGet("{id}", Name = "GetAppointment")]
-        public Appointment Get(int id)
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public Appointment GetAppointmentByID(int id)
         {
             IReadAppointment ra = new ReadAppointment();
             return ra.Read(id);
@@ -93,21 +94,20 @@ namespace api.Controllers
             ua.Update(a);
         }
         
-        
-        // Update Appointments by adding a Customer to appointment
-        [Route("[action]/{customerid}")]
+        // PUT: add Customer to appointment
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{ids}")]
         [HttpPut]
-        //[HttpPut("{customerid}", Name = "UpdateByAddingCustomerId")]
-          public void PutByAddingCustomerId(int id, [FromBody] Appointment a)
+        public void PutByAddingCustomerId(int[] ids)
         {
-            UpdateAppointment ua = new UpdateAppointment();
-            System.Console.WriteLine("made it to the update.");
-            ua.UpdateAddCustomerId(a,id);
+            IUpdateAppointment ua = new UpdateAppointment();
+            System.Console.WriteLine("made it to the update");
+            ua.UpdateAddCustomerId(ids);
         }
        
        
         // Update Appointments by Deleting a customer from appointment 
-
+        [EnableCors("AnotherPolicy")]
         [HttpPut("{customerid}", Name = "UpdateByDeletingCustomerId")]
         public void PutByDeletingCustomerId(int id, [FromBody] Appointment a)
         {
