@@ -108,12 +108,14 @@ namespace api.Controllers
        
         // Update Appointments by Deleting a customer from appointment 
         [EnableCors("AnotherPolicy")]
-        [HttpPut("{customerid}", Name = "UpdateByDeletingCustomerId")]
-        public void PutByDeletingCustomerId(int id, [FromBody] Appointment a)
+        [Route("[action]/{ids}")]
+        [HttpPut]
+        // [HttpPut("{ids}", Name = "UpdateByDeletingCustomerId")]
+        public void PutByDeletingCustomerId(int[] ids/*int id, [FromBody] Appointment a*/)
         {
             UpdateAppointment ua = new UpdateAppointment();
             System.Console.WriteLine("made it to the update.");
-            ua.UpdateDeleteCustomerId(a);
+            ua.UpdateDeleteCustomerId(ids);
         }
 
         // DELETE: api/Appointment/5

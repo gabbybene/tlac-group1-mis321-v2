@@ -180,16 +180,49 @@ function showEditCustApptModal(apptID){
 }
 
 function cancelCustApptOnClick(apptID){
-    //get that appointment with the id from the database. For now, a static appointment below. 
-    const apptApiUrl = "https://localhost:5001/api/Appointment/"+apptID;
+    //get customerID and create a body Object to send in the PUT request
+    let customerId = getCustomerId();
+    let bodyObj = [customerId, apptID];
+    const cancelApptApiUrl = "https://localhost:5001/api/Appointment/PutByDeletingCustomerID/"+bodyObj;
+    //make an int[] to send into the put request. [0]=custID, [1]=apptID
+    fetch(cancelApptApiUrl, {
+        method: "PUT",
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify(bodyObj)
+    })
+    .then(function(response){
+        //when they cancel the appointment, change the modal html to show that the apointment was canceled, and change button to close.
+        let html = " <div class=\"modal-content\"><span class=\"close\" onclick=\"apptCanceledCloseModal()\">&times;</span>";
+        html += "<h1 class=\"modal-header\">Appoitment Canceled</h1><br>";
+        html += "<div class=\"row text-center\"><h2>This appointment has been canceled.</h2></div>"; 
+        html += "<div class=\"row text-center\"><h2>Click the button to return to your dashboard to search for other appointments.</h2></div>";
+        html += "<br><button class=\"btn btn-action\" onclick=\"apptCanceledCloseModal()\">Close</button>";
+        document.getElementById("editCustApptModal").innerHTML = html;
+    })
     //use the customer's id to remove them from the appointment. Then save that appointment back to the database. 
-    //when they cancel the appointment, change the modal html to show that the apointment was canceled, and change button to close.
-    let html = " <div class=\"modal-content\"><span class=\"close\" onclick=\"closeEditCustApptModal()\">&times;</span>";
-    html += "<h1 class=\"modal-header\">Appoitment Canceled</h1><br>";
-    html += "<div class=\"row text-center\"><h2>This appointment has been canceled.</h2></div>"; 
-    html += "<div class=\"row text-center\"><h2>Click the button to return to your dashboard to search for other appointments.</h2></div>";
-    html += "<br><button class=\"btn btn-action\" onclick=\"closeEditCustApptModal()\">Close</button>";
-    document.getElementById("editCustApptModal").innerHTML = html;
+}
+
+function apptCanceledCloseModal(){
+    //if customer canceled an appointment, reload their confirmed appts & the available appt calendar, THEN close the modal
+    let id = getCustomerId();
+    let customer = [];
+    const customerApiUrl = "https://localhost:5001/api/Customer/GetCustomerByID/"+id;
+    fetch(customerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        customer = json;
+        getConfirmedAppointments(customer);
+        getAvailableAppointmentCalendar(currentMonth, currentYear);
+        //close the modal
+        var modal = document.getElementById("editCustApptModal");
+        modal.style.display = "none";
+    }).catch(function(error){
+        console.log(error);
+    }) 
 }
 
 function closeEditCustApptModal(){
@@ -503,9 +536,22 @@ function addCustToAppointment(apptID){
 }
 
 function closeMakeAppointmentModal(){
-    var modal = document.getElementById("custMakeApptModal");
-    modal.style.display = "none";
-    handleCustomerDashboardOnLoad();
+    //if customer made an appointment, reload the the calendar & available appointments, then close the modal
+    let id = getCustomerId();
+    let customer = [];
+    const customerApiUrl = "https://localhost:5001/api/Customer/GetCustomerByID/"+id;
+    fetch(customerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        customer = json;
+        getConfirmedAppointments(customer);
+        getAvailableAppointmentCalendar(currentMonth, currentYear);
+        var modal = document.getElementById("custMakeApptModal");
+        modal.style.display = "none";
+    }).catch(function(error){
+        console.log(error);
+    }) 
 }
 
 window.onclick = function(event){
