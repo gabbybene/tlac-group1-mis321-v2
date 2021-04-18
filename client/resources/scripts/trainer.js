@@ -5,8 +5,6 @@
 are included in this JS file.
 */
 
-//TEMPORARY: a list of trainer's appointments, some confirmed, some not
-
 
 //get dates for use later
 var today = new Date();
@@ -15,108 +13,175 @@ var currentYear = today.getFullYear();
 
 //Check https://github.com/niinpatel/calendarHTML-Javascript/blob/master/scripts.js for a possible JS calendar
 function handleTrainerDashboardOnLoad(){ //load each part of dashboard
-    getTrainerAppointments();
+    let id = getTrainerId();
+    let trainer = [];
+    const trainerApiUrl = "https://localhost:5001/api/Trainer/GetTrainerByID/"+id;
+    fetch(trainerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        trainer = json;
+        getConfirmedAppointments(trainer);
+        getTrainerCalendar(currentMonth, currentYear);
+        getTrainerProfileForm(trainer);
 
-    getTrainerCalendar(currentMonth, currentYear);
+    }).catch(function(error){
+        console.log(error);
+    }) 
+}
+//     getTrainerAppointments();
+
+//     getTrainerCalendar(currentMonth, currentYear);
     
-    getTrainerProfileForm();
+//     getTrainerProfileForm();
+// }
+
+function getTrainerId(){
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id = urlParams.get("id");
+    return id;
 }
 
-function getTrainerAppointments(){
+function getConfirmedAppointments(trainer){
     //get any trainer appointments that have "customer" !=null and trainerID matches trainerID
-    let confirmedAppts = getConfirmedAppointments();
     let html = "";
-    if(confirmedAppts.length == 0) {
-        //set up some html to say they have no confirmed appointments at this time 
+    const apptApiUrl = "https://localhost:5001/api/Appointment/GetConfirmedAppointmentsForTrainer/"+trainer.trainerId;
+    fetch(apptApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        if(json[0] == undefined){
+            console.log("no appointments found");
+             //will return the empty []
+            html += "<h2>You don't have any upcoming appointments scheduled at this time.</h2>";
+        }
+        else{
+            //if there are appointments found w/ that customerId
+            for(var i in json){
+                //stringify, then re-parse to an object **couldn't get the start and end times to read without doing this**
+                var tempStr = JSON.stringify(json[i]);
+                var object = JSON.parse(tempStr);
+                //format date and time
+                let apptDate = getFormattedDate(object.appointmentDate);
+                let startTime = getFormattedTime(object.startTime.hours, object.startTime.minutes);
+                let endTime = getFormattedTime(object.endTime.hours, object.endTime.minutes);
+                let activity =  object.appointmentTrainer.trainerActivities[0].activityName;
+                let customerName = object.appointmentCustomer.fName+ " " + object.appointmentCustomer.lName;
+                //print buttons with appt details
+                html += "<button type=\"button btn\" class=\"list-group-item list-group-item-action\" onclick=\"showEditTrainerApptModal("+object.appointmentId+")\">";
+                html += apptDate + " at " + startTime + "-" + endTime + " | Activity: " + activity + " | Customer: " + customerName +"</button>";
+            }
+        }
+        //set the innerHTML of custApptList
+        document.getElementById("trainerApptList").innerHTML = html;
+    }).catch(function(error){
+        console.log(error);
+    }) 
+}
+
+function getFormattedDate(date){
+    //take a date from json and convert to mm/dd/yyyy
+    let myDate = date.slice(0,10); //get first 10 characters of json string
+    let splitDate = myDate.split('-'); //split at -
+    let newMonth = parseInt(splitDate[1]);
+    newMonth = +newMonth; //remove leading zero if exists
+    let newDay = parseInt(splitDate[2]);
+    newDay = +newDay; //remove leading zero if exists
+    let newDate = [newMonth, newDay, splitDate[0]]; //make new date with correct order
+    newDate = newDate.join("/"); //join back together with /
+    return newDate;
+}
+
+function getFormattedTime(hours, minutes){
+    let formattedHours = "";
+    let formattedMinutes = "";
+    let suffix = "AM";
+    if(hours >= 12){
+        suffix = "PM";
+        if(hours % 12 != 0){
+            hours = hours % 12;
+        }
+    }
+    formattedHours = hours.toString();
+    if(minutes < 10){
+        formattedMinutes = minutes.toString();
+        if(formattedMinutes == "0"){
+            formattedMinutes = "00";
+        }
+        else {
+            formattedMinutes = "0" + minutes;
+        }
     }
     else {
-        for(let i = 0; i < confirmedAppts.length; i++) {
-            //create buttons with the appointment information, onclick = cancelApptOnClick()
-            html += "<button type=\"button btn\" class=\"list-group-item list-group-item-action\" onclick=\"showEditTrainerApptModal("+confirmedAppts[i].apptID+")\">";
-            html += confirmedAppts[i].date + " at " + confirmedAppts[i].startTime + " | Activity: " + confirmedAppts[i].activity + " | Customer: " + confirmedAppts[i].customer + "</button>";
-        }
+        formattedMinutes = minutes.toString();
     }
-    document.getElementById("trainerApptList").innerHTML = html;
+    return (formattedHours + ":" + formattedMinutes + suffix);
 }
-
-function getConfirmedAppointments(){
-    //TEMPORARY: static appointments for testing
-    let testAppointments = [
-        {
-            apptID: 1,
-            "date": "4/6/2021",
-            "startTime" : "10:00am",
-            "endTime" : "11:00am",
-            "activity": "Cardio",
-            "customer": "none",
-            "price": 50.00
-        },
-        {
-            apptID: 2,
-            "date": "4/6/2021",
-            "startTime": "12:00pm",
-            "activity": "Strength Training",
-            "customer": "Callie Jones",
-            "price": 75.00
-        },
-        {
-            apptID: 3,
-            "date": "4/8/2021",
-            "startTime": "4:00pm",
-            "activity": "Cardio",
-            "customer": "none",
-            "price": 50.00
-        },
-        {
-            apptID: 4,
-            "date": "4/10/2021",
-            "startTime": "6:00pm",
-            "activity": "Kickboxing",
-            "customer": "Princess Smith",
-            "price": 60.00
-        }
-    ];
-
-    var confirmedAppts = [];
-    for(var appt of testAppointments) {
-        if(appt.customer != "none") {
-            confirmedAppts.push(appt);
-        }
-    }
-    return confirmedAppts;
-}
+      
 
 /* EDIT TRAINER APPOINTMENT MODAL SCRIPTS */
 function showEditTrainerApptModal(apptID){
-    //get appointment with that ID from the database. For now, I'll put one static appointment here
-    let appointment = {
-        apptID: 1,
-        date: "4/13/2021",
-        startTime: "8:00AM",
-        endTime: "9:00AM",
-        activity:"Cardio",
-        trainer: "Josh Hargrave",
-        customer: "Anna Smith",
-        price: 55.00
-    };
+    //get appointment by ID, then populate and show the modal
+        //Make API call to get appointment with the passed-in ID from the database
+        const apptApiUrl = "https://localhost:5001/api/Appointment/GetAppointmentByID/"+apptID;
+        fetch(apptApiUrl).then(function(response){
+            console.log(response);
+            return response.json();
+        }).then(function(json){
+            //stringify, then re-parse to an object **couldn't get the start and end times to read without doing this**
+            var tempStr = JSON.stringify(json);
+            var object = JSON.parse(tempStr);
+            //simplify object format with only the needed items
+            var appt = {
+                apptDate: getFormattedDate(object.appointmentDate),
+                startTime: getFormattedTime(object.startTime.hours, object.startTime.minutes),
+                endTime: getFormattedTime(object.endTime.hours, object.endTime.minutes),
+                activity:  object.appointmentTrainer.trainerActivities[0].activityName,
+                customerName: object.appointmentCustomer.fName+ " " + object.appointmentCustomer.lName,
+                price: object.appointmentCost,
+            }
+            
+            //set up HTML 
+            let html = "<div class=\"modal-content\"><span class=\"close\" onclick=\"closeEditCustApptModal()\">&times;</span>";
+            html += "<h1 class=\"modal-header text-center\">Appoitment Details</h1><br>";
+            html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Date/Time:</h3></div><div class=\"col-md-8\"><h3>";
+            html += appt.apptDate + " at " + appt.startTime + " - " +  appt.endTime  +"</h3></div></div>";
+            html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Customer:</h3></div><div class=\"col-md-8\"><h3>"+ appt.customerName+"</h3></div></div>";
+            html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Activity:</h3></div><div class=\"col-md-8\"><h3>"+ appt.activity+"</h3></div></div>";
+            html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Price:</h3></div><div class=\"col-md-8\"></h3>$"+appt.price+"</h3></div></div>";
+            html += "<br><div class=\"row text-center\"><button class=\"btn btn-action btn-warning\" id=\"cancelApptButton\" onclick=\"cancelTrainerAppt("+apptID+")\">Cancel This Appointment</button></div></div>";
+    
+            //set inner HTML of modal
+            document.getElementById("editTrainerApptModal").innerHTML = html;
+    
+            //Show Modal
+            var modal = document.getElementById("editTrainerApptModal");
+            modal.style.display = "block";
+            var span = document.getElementsByClassName("close")[0];
+        }).catch(function(error){
+            console.log(error);
+        })
 
-    var modal = document.getElementById("editTrainerApptModal");
-    modal.style.display = "block";
 
-    var span = document.getElementsByClassName("close")[0];
+    // var modal = document.getElementById("editTrainerApptModal");
+    // modal.style.display = "block";
+
+    // var span = document.getElementsByClassName("close")[0];
 
         
-    let html = "<div class=\"modal-content\"><span class=\"close\" onclick=\"closeEditTrainerApptModal()\">&times;</span>";
-    html += "<h1 class=\"modal-header text-center\">Appoitment Details</h1><br>";
-    html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Date/Time:</h3></div><div class=\"col-md-8\"><h3>";
-    html += appointment.date + " at " + appointment.startTime + "-" +  appointment.endTime  +"</h3></div></div>";
-    html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Customer:</h3></div><div class=\"col-md-8\"><h3>"+appointment.customer+"</h3></div></div>";
-    html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Activity:</h3></div><div class=\"col-md-8\"><h3>"+appointment.activity+"</h3></div></div>";
-    html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Price:</h3></div><div class=\"col-md-8\"></h3>$"+appointment.price+"</h3></div></div>";
-    html += "<br><div class=\"row text-center\"><button class=\"btn btn-action btn-warning\" id=\"cancelApptButton\" onclick=\"cancelTrainerAppt("+appointment.apptID+")\">Cancel This Appointment</button></div>";
+    // let html = "<div class=\"modal-content\"><span class=\"close\" onclick=\"closeEditTrainerApptModal()\">&times;</span>";
+    // html += "<h1 class=\"modal-header text-center\">Appoitment Details</h1><br>";
+    // html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Date/Time:</h3></div><div class=\"col-md-8\"><h3>";
+    // html += appointment.date + " at " + appointment.startTime + "-" +  appointment.endTime  +"</h3></div></div>";
+    // html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Customer:</h3></div><div class=\"col-md-8\"><h3>"+appointment.customer+"</h3></div></div>";
+    // html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Activity:</h3></div><div class=\"col-md-8\"><h3>"+appointment.activity+"</h3></div></div>";
+    // html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Price:</h3></div><div class=\"col-md-8\"></h3>$"+appointment.price+"</h3></div></div>";
+    // html += "<br><div class=\"row text-center\"><button class=\"btn btn-action btn-warning\" id=\"cancelApptButton\" onclick=\"cancelTrainerAppt("+appointment.apptID+")\">Cancel This Appointment</button></div>";
 
-    document.getElementById("editTrainerApptModal").innerHTML = html;
+    // document.getElementById("editTrainerApptModal").innerHTML = html;
 }
+
 function closeEditTrainerApptModal(){
     var modal = document.getElementById("editTrainerApptModal");
     modal.style.display = "none";
@@ -131,24 +196,48 @@ window.onclick = function(event){
 
 function cancelTrainerAppt(apptID) {
     //tell user the appt is canceled with a close button
-    let appointment = {
-        apptID: 1,
-        date: "4/13/2021",
-        startTime: "8:00AM",
-        endTime: "9:00AM",
-        activity:"Cardio",
-        trainer: "Josh Hargrave",
-        customer: "Anna Smith",
-        price: 55.00
-    };
-    //use the customer's id to remove them from the appointment. Then save that appointment back to the database. 
+    const cancelApptApiUrl = "https://localhost:5001/api/Appointment/"+apptID;
+    //make an int[] to send into the put request. [0]=custID, [1]=apptID
+    fetch(cancelApptApiUrl, {
+        method: "DELETE",
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify({
+            appointmentId: apptID
+        })
+    })
+    .then(function(response){
     //when they cancel the appointment, change the modal html to show that the apointment was canceled, and change button to close.
-    let html = " <div class=\"modal-content\"><span class=\"close\" onclick=\"closeEditTrainerApptModal()\">&times;</span>";
+    let html = " <div class=\"modal-content\"><span class=\"close\" onclick=\"apptCanceledCloseModal()\">&times;</span>";
     html += "<h1 class=\"modal-header text-center\">Appoitment Canceled</h1><br>";
     html += "<div class=\"row text-center\"><h2>This appointment has been canceled.</h2></div>"; 
     html += "<div class=\"row text-center\"><h2>Click the button to return to your dashboard to add more appointment availability.</h2></div>";
-    html += "<br><div class=\"row text-center\"><button class=\"btn btn-action\" onclick=\"closeEditTrainerApptModal()\">Close</button></div>";
+    html += "<br><div class=\"row text-center\"><button class=\"btn btn-action\" onclick=\"apptCanceledCloseModal()\">Close</button></div>";
     document.getElementById("editTrainerApptModal").innerHTML = html;
+    })
+}
+
+function apptCanceledCloseModal(){
+    //reload the confirmedAppointments and TrainerCalendar sections to reflect the update
+    let id = getTrainerId();
+    let trainer = [];
+    const trainerApiUrl = "https://localhost:5001/api/Trainer/GetTrainerByID/"+id;
+    fetch(trainerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        trainer = json;
+        getConfirmedAppointments(trainer);
+        getTrainerCalendar(currentMonth, currentYear);
+        //then close the modal
+        var modal = document.getElementById("editTrainerApptModal");
+        modal.style.display = "none";
+
+    }).catch(function(error){
+        console.log(error);
+    }) 
 }
 
 
@@ -295,24 +384,9 @@ function closeEditAvailabilityModal(){
 }
 
 /* EDIT TRAINER PROFILE SECTION */
-function getTrainerProfileForm(){
+function getTrainerProfileForm(trainer){
     //do we have to pass in an id?
 
-    //FOR TESTING: static trainer
-    let trainer = {
-        id: 1,
-        emailAddress: "gnmoody@crimson.ua.edu",
-        password: "abc123",
-        firstName: "Gabby",
-        lastName: "Benefield",
-        birthDate: "1994-11-12",
-        gender: "female",
-        activities: [
-            {activityName:"cardio", 
-            activityPrice: 65.00},
-            {activityName: "strength training", 
-            activityPrice: 75.00}]
-    };
 
     //fill in everything but the password. Trainer should be required to enter their current password to make changes.
     document.getElementById("currEmail").value = trainer.emailAddress;

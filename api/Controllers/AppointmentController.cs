@@ -64,6 +64,17 @@ namespace api.Controllers
             return ra.ReadAvailableAppointmentsByDateForTrainer(trainerId,date);
         }
 
+        // Get Confirmed Appointments for Trainer
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public List<Appointment> GetConfirmedAppointmentsForTrainer(int id){
+            ReadAppointment ra = new ReadAppointment();
+            return ra.ReadConfirmedAppointmentsForTrainer(id);
+        }
+
+        
+
         //Get a Customer's Confirmed Appointments
         [EnableCors("AnotherPolicy")]
         [Route("[action]/{customerId}")]

@@ -83,14 +83,15 @@
       <h1 class="wow fadeInUp">Customer Login</h1>
     <!--login form-->
       <hr>
-        <form class="login-form" id="logreg-forms">
+        <form class="login-form" id="logreg-forms" onsubmit="return false">
           <h2 class="login-heading">Login</h2>
           <label for="customerEmail">Email Address:</label>
           <input type="email" name="email" id="customerEmail" class="form-control" placeholder="Email address" autofocus="" required="">
           <label for="customerPassword">Password:</label>
           <input type="password" name="password" id="customerPassword" class="form-control" placeholder="Password" required="">
           <div class="text-center" id="custSignInErrorMsg"></div>
-          <button class="btn btn-success btn-block" type="button" id="btn-signin" onclick="handleCustomerSignIn()">
+          <button class="btn btn-success btn-block" type="submit" id="btn-signin" onclick="handleCustomerSignIn()">
+            <!-- onclick="handleCustomerSignIn()" -->
           <i class="fas fa-sign-in-alt"></i> Sign in</button>
           <hr>
           <p style="font-style: italic;">New to our gym?</p>
@@ -108,28 +109,28 @@
     <h1 class="wow fadeInUp">New Customer</h1>
     <!--Begin New Customer Form-->
     <hr>
-      <form id="new-customer-form"> <!--id="logreg-forms" will change styling-->
+      <form id="new-customer-form" id="logreg-forms"> <!--id="logreg-forms" will change styling-->
         <h2 class="login-heading">Welcome! Are you ready to Train Like A Champion?</h2>
         <div id="newUserLoginInfo" class="new-user-form-inputs form-group"> <!--Email and Password-->
           <h4 style="font-style: italic">Your email address and password will be used to log in in the future.</h4>
             <label for="custEmail">Email Address</label>
-            <input type="email" id="custEmail" class="form-control" placeholder="Enter email address" required="" autofocus="">
+            <input type="email" name="custEmail" id="custEmail" class="form-control" placeholder="Enter email address" required="" autofocus="">
             <label for="custPassword">Password</label>
-            <input type="password" id="custPassword" class="form-control" placeholder="Password" required="">
+            <input type="password" name="custPassword" id="custPassword" class="form-control" placeholder="Password" required="">
         </div>
         <hr>
         <h3>Tell us about yourself:</h4>
         <div class="new-user-form-inputs"> <!--First Name-->
           <label for="custFirstName">First Name</label>
-          <input type="text" id="custFirstName" class="form-control form-floating" placeholder="First Name" required>
+          <input type="text" name="custFirstName" id="custFirstName" class="form-control form-floating" placeholder="First Name" required>
         </div>
         <div class="new-user-form-inputs"> <!--Last Name-->
           <label for="custLastName">Last Name</label>
-          <input type="text" id="custLastName" class="form-control form-floating" placeholder="Last Name" required>
+          <input type="text" name="custLastName" id="custLastName" class="form-control form-floating" placeholder="Last Name" required>
         </div>
         <div class="new-user-form-inputs"> <!--Date of Birth-->
           <label for="birthDate">Date of Birth</label>
-          <input type="date" id="custBirthDate" class="form-control form-floating" placeholder="Date of Birth (MM/DD/YYYY)" required>
+          <input type="date" name="custBirthDate" id="custBirthDate" class="form-control form-floating" placeholder="Date of Birth (MM/DD/YYYY)" required>
         </div>
         <div class="new-user-form-inputs"> <!--Gender-->
           <label for="custGender">Gender: How do you identify?</label>
@@ -153,25 +154,25 @@
             <h3>What activites do you prefer to do?</h3>
             <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="4" id="cardio" checked>
+              <input class="form-check-input" type="checkbox" value="4" name="cardoi" id="cardio" checked>
               <label class="form-check-label" for="cardio">
                 Cardio
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="14" id="strengthTraining" checked>
+              <input class="form-check-input" type="checkbox" value="14" name="strengthTraining" id="strengthTraining" checked>
               <label class="form-check-label" for="strengthTraining">
                 Strength Training
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="24" id="kickboxing" checked>
+              <input class="form-check-input" type="checkbox" value="24" name="kickboxing" id="kickboxing" checked>
               <label class="form-check-label" for="kickboxing">
                 Kickboxing
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="34" id="yoga" checked>
+              <input class="form-check-input" type="checkbox" value="34" name="yoga" id="yoga" checked>
               <label class="form-check-label" for="yoga">
                 Yoga
               </label>
@@ -189,7 +190,7 @@
           </div>
           <div class="row">
             <label for="referrerName" style="padding-left: 24px;">If so, who:</label>
-            <input type="text" id="referrerName" placeholder="Referrer's Name" disabled>
+            <input type="text" name="referrerName" id="referrerName" placeholder="Referrer's Name" disabled>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="notReferred" checked>
@@ -200,7 +201,8 @@
           <!--IF THEY SELECT YES, POPUP TEXT BOX TO GET REFERRER'S NAME-->
         </div>
         <div class="row text-center">
-          <button class="btn btn-success btn-lg" type="button" id="btn-new" onclick="handleCreateNewCustOnClick()">
+          <button class="btn btn-success btn-lg" type="button" id="btn-new" onclick="validateNewCustomerInputs()">
+            <!-- onclick="handleCreateNewCustOnClick()" -->
             <i class="fas fa-sign-in-alt"></i>Create Account</button>
         </div>
         <!--UPDATE THE FORM ABOVE THIS LINE-->
@@ -217,14 +219,14 @@
       <h1 class="wow fadeInUp">Trainer Login</h1>
     <!--login form-->
       <hr>
-        <form class="login-form" id="logreg-forms">
+        <form class="login-form" id="logreg-forms" onsubmit="return false">
           <h2 class="login-heading">Login</h2>
           <label for="trainerEmail">Email Address:</label>
           <input type="email" id="trainerEmail" class="form-control" placeholder="Email address" required autofocus="">
           <label for="trainerPassword">Password:</label>
           <input type="password" id="trainerPassword" class="form-control" placeholder="Password" required>
           <div class="text-center" id="trainerSignInErrorMsg"></div>
-          <button class="btn btn-success btn-block" type="button" id="btn-signin" onclick="handleTrainerSignIn()">
+          <button class="btn btn-success btn-block" type="submit" id="btn-signin" onclick="handleTrainerSignIn()">
           <i class="fas fa-sign-in-alt"></i> Sign in</button>
           <hr>
           <p style="font-style: italic">New to training with us?</p>
@@ -291,7 +293,7 @@
             <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
             <div class="row form-check"> <!--Cardio-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="cardio" onclick="activitySelected(id)">
+                <input class="form-check-input" type="checkbox" value="" id="cardio" onclick="toggleActivitySelected(id)">
                 <label class="form-check-label" for="cardio">Cardio</label>
               </div>
               <div class="col-sm-6">
@@ -301,7 +303,7 @@
             </div>
             <div class="row form-check"> <!--Strength Training-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="strengthTraining" onclick="activitySelected(id)">
+                <input class="form-check-input" type="checkbox" value="" id="strengthTraining" onclick="toggleActivitySelected(id)">
                 <label class="form-check-label" for="strengthTraining">Strength Training</label>
               </div>
               <div class="col-sm-6">
@@ -311,7 +313,7 @@
             </div>
             <div class="row form-check"> <!--Kickboxing-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="kickboxing" onclick="activitySelected(id)">
+                <input class="form-check-input" type="checkbox" value="" id="kickboxing" onclick="toggleActivitySelected(id)">
                 <label class="form-check-label" for="kickboxing">Kickboxing</label>
               </div>
               <div class="col-sm-6">
@@ -321,7 +323,7 @@
             </div>
             <div class="row form-check"> <!--Pilates-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="pilates" onclick="activitySelected(id)">
+                <input class="form-check-input" type="checkbox" value="" id="pilates" onclick="toggleActivitySelected(id)">
                 <label class="form-check-label" for="pilates">Pilates</label>
               </div>
               <div class="col-sm-6">

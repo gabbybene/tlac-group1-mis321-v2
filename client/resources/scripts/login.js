@@ -81,13 +81,79 @@ function handleCustomerSignIn()
     }).catch(function(error){
         console.log(error);
     }) 
-
 }
+
+function validateNewCustomerInputs(){
+    try{
+        let email = document.getElementById("custEmail").value;
+        let password = document.getElementById("custPassword").value;
+        let fName = document.getElementById("custFirstName").value;
+        let lName = document.getElementById("custLastName").value;
+        let dob = document.getElementById("custBirthDate").value;
+        let referred = false;;
+        if(document.getElementById("yesReferred").checked){
+            referred = true;
+        }
+        let referrerName = document.getElementById("referrerName").value;
+
+        //if all required fields are empty
+        if((email == null || email == "") && (password == null || password == "") && (fName ==  null || fName == "") && (lName == null || lName == "") && (dob == null || dob == "" || dob.toString() > "2008-01-01")){
+            alert("Email, Password, First Name, Last Name, and Date of Birth are required.");
+        }
+        else {
+            if(email == null || email == ""){
+                alert("Email is required.");
+                document.getElementById("custEmail").focus();
+                // return false;
+            }
+            if(password == null || password == ""){
+                alert("Password is required.");
+                document.getElementById("custPassword").focus();
+                // return false;
+            }
+            if(fName ==  null || fName == ""){
+                alert("First Name is required.");
+                document.getElementById("custFirstName").focus();
+                // return false;
+            }
+            if(lName == null || lName == ""){
+                alert("Last Name is required.");
+                document.getElementById("custLastName").focus();
+                // return false;
+            }
+            if(dob == null || dob == "" || dob.toString() > "2008-01-01"){
+                if(dob == null || dob == ""){
+                    alert("Date of Birth is required..");
+                }
+                else {
+                    alert("Date of Birth must be greater than 01/01/2008");
+                }
+                document.getElementById("custBirthDate").focus();
+                // return false;
+            }
+            if(referred && (referrerName == null || referrerName == "")){
+                alert("If you were referred by a friend, their name is required.");
+                document.getElementById("referrerName").focus();
+            }
+            else {
+                handleCreateNewCustOnClick();
+            }
+        }
+        
+    }
+    catch(e) {
+        console.log(e);
+        // return false;
+    }
+    // return true;
+}
+
 
 
 function handleCreateNewCustOnClick(){
     const customerApiUrl = "https://localhost:5001/api/Customer";
 
+    
     //get customer data
     let inputEmail = document.getElementById("custEmail").value;
     let inputPassword = document.getElementById("custPassword").value;
@@ -166,6 +232,20 @@ function handleCreateNewCustOnClick(){
         sendCustomerToDashboard(inputEmail);
         console.log(response);
     })
+
+
+    // //make api call to CREATE customer
+    // fetch(customerApiUrl, {
+    //     method: "POST",
+    //     headers: {
+    //         "Accept": 'application/json',
+    //         "Content-Type": 'application/json'
+    //     },
+    //     body: JSON.stringify(bodyObj)
+    // }).then(function(response){
+    //     sendCustomerToDashboard(inputEmail);
+    //     console.log(response);
+    // })
 
     
 }
@@ -336,8 +416,9 @@ window.onclick = function(event){
 
 /* NOTE: this is only enabling the price input field when the checkbox is first checked.  
 It is not disabiling it once it goes from checked to unchecked */
-function activitySelected(inputID){
+function toggleActivitySelected(inputID){
 /* only enable price input fields if its corresponding checkbox is checked */
+
     if(document.getElementById(inputID).checked){
         //if box gets checked, enable its price input field
         console.log(inputID + " is now checked");
@@ -346,7 +427,7 @@ function activitySelected(inputID){
     else{
         console.log(inputID + " is now unchecked");
         //if deselected, disable the price input field
-        document.getElementById(inputID+"Price").disabled = true;
+        document.getElementById(inputID+"Price").setAttribute("disabled", true);
     } 
 
 }
