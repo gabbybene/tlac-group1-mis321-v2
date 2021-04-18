@@ -30,15 +30,14 @@ namespace api.Database{
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
-
+            cmd.Parameters.AddWithValue("@CustID", i.customerId);
             cmd.Parameters.AddWithValue("@act",null);
             IDeleteActivity deleteObj = new DeleteActivity();
             deleteObj.DeletePreferredActivitities(i.customerId);
             foreach(Activity act in i.customerActivities){          
-                cmd.CommandText = @"INSERT into prefers (CustID,ActivityID) VALUES CustID=@CustID,@act)";      
+                cmd.CommandText = @"INSERT into prefers (CustID,ActivityID) VALUES (@CustID,@act)";      
                 // cmd.CommandText = @"INSERT into prefers (CustID,ActivityID) VALUES ((SELECT CustID from Customer where AccountID=@AcctID),@act)";
                 // cmd.Parameters.AddWithValue("@AcctID", i.email);
-                cmd.Parameters.AddWithValue("@CustID", i.customerId);
                 cmd.Parameters["@act"].Value= act.activityId;
                 cmd.Connection=con;
                 cmd.Prepare();
