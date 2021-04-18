@@ -93,8 +93,15 @@ namespace api.Controllers
         public void Post([FromBody] Appointment a)
         {
             IWriteAppointment wa = new WriteAppointment();
-            System.Console.WriteLine("made it to the post.");
             wa.Write(a);
+        }
+
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{startTime}/{endTime}")]
+        [HttpPost]
+        public void WriteAvailableAppointment(Appointment i, string startTime, string endTime){
+            WriteAppointment wa = new WriteAppointment();
+            wa.WriteAvailableAppointment(i, startTime, endTime);
         }
 
         // PUT: api/Appointment/5

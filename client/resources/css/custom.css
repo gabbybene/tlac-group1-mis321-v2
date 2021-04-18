@@ -321,4 +321,5 @@ button.list-group-item {
 } */
 #editAvailTable td {
     line-height: 36px;
+    max-width:fit-content;
 }

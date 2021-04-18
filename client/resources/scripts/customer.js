@@ -561,17 +561,17 @@ window.onclick = function(event){
 /* GET / UPDATE CUSTOMER PROFILE SECTION */
 function getCustomerProfileForm(customer){
 
-    let dateAndTime = customer.birthDate;
+    // let dateAndTime = customer.birthDate;
     // let birthDateOnly = dateAndTime.slice(0,10);
+    let birthDateOnly = customer.birthDate.slice(0,10);
    
     document.getElementById("currEmail").value = customer.email;
     document.getElementById("inputFName").value = customer.fName;
     document.getElementById("inputLName").value = customer.lName;
-    document.getElementById("birthDate").value = customer.birthDate.slice(0,10);
+    document.getElementById("birthDate").value = birthDateOnly;
     document.getElementById("custGender").value = customer.gender;
     document.getElementById("fitnessGoals").value = customer.fitnessGoals;
-    console.log("activityId of the first activity is:");
-    console.log(customer.customerActivities[0].activityId);
+
     for(var i in customer.customerActivities){ //update checked status of activities
         if(customer.customerActivities[i].activityId == 4){ // 4 = cardio
             console.log("cardio value: " + document.getElementById("cardio").value);
@@ -629,6 +629,8 @@ function custEditProfile(){
         let inputFirstName = document.getElementById("inputFName").value;
         let inputLastName = document.getElementById("inputLName").value;
         let dob = document.getElementById("birthDate").value;
+        console.log("dob is:");
+        console.log(dob);
         let inputGender = document.getElementById("custGender").value;
         let inputFitnessGoals;
         //handle fitness goals
@@ -639,25 +641,20 @@ function custEditProfile(){
             inputFitnessGoals = null;
         }
         let inputActivityIDs = [];
-        console.log("length of inputActivityIDs:" + inputActivityIDs.length);
         //handle preferred activities
-        if(document.getElementById("editCardio".checked)){
-            console.log("cardio checked");
+        if(document.getElementById("cardio").checked){
             let cardio = document.getElementById("cardio").value;
             inputActivityIDs.push(parseInt(cardio));
         }
         if(document.getElementById("strengthTraining").checked){
-            console.log("strengthTraining checked");
             let strengthTraining = document.getElementById("strengthTraining").value;
             inputActivityIDs.push(parseInt(strengthTraining));
         }
         if(document.getElementById("kickboxing").checked){
-            console.log("kickboxing checked");
             let kickboxing = document.getElementById("kickboxing").value;
             inputActivityIDs.push(parseInt(kickboxing));
         }
         if(document.getElementById("yoga").checked){
-            console.log("yoga checked");
             let yoga = document.getElementById("yoga").value;
             inputActivityIDs.push(parseInt(yoga));
         }

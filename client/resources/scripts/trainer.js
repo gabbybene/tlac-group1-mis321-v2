@@ -327,8 +327,8 @@ function showEditAvailabilityModal(selectedDate){
         console.log(response);
         return response.json();
     }).then(function(json){
-        console.log("json[0].startTime ");
-        console.log(json[0].startTime.hours + ":" + json[0].startTime.minutes);
+        // console.log("json[0].startTime ");
+        // console.log(json[0].startTime.hours + ":" + json[0].startTime.minutes);
         let apptArray = [];
         for(var i in json){
             //for every json object, create simplified object with only the needed items (ID, date, startTime, endTime, ActivityId, Price)
@@ -349,7 +349,6 @@ function showEditAvailabilityModal(selectedDate){
                 price: object.appointmentCost //MIGHT MAKE THIS BASED ON THE DIFF BETWEEN STARTTIME AND ENDTIME?
             }
         }
-        console.log("TEST: start time is " + apptArray[0].fullStartTime);
         //set up html
         let html = "<div class=\"modal-dialog modal-lg\"><div class=\"modal-content editTrainerAvailModal\">";
         html += "<span class=\"close\" onclick=\"closeEditAvailabilityModal()\">&times;</span>";
@@ -363,12 +362,31 @@ function showEditAvailabilityModal(selectedDate){
             for(var i in apptArray){
                 html += "<tr><td><input disabled type=\"time\" id=startTime-"+apptArray[i].apptID+" name=\"startTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullStartTime+" min=\"06:00\" max=\"18:00\"></td>"; //start time, START DISABLED
                 html += "<td><input disabled type=\"time\" id=endTime-"+apptArray[i].apptID+" name=\"endTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullEndTime+" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
-                html += "<td><select disabled id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+"><option value=\"4\">Cardio</option><option value=\"14\">Strength Training</option><option value=\"24\">Kickboxing</option><option value=\"34\">Yoga</option></select></td>"; //activity, START DISABLED
+                html += "<td><select disabled id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+"><option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
                 html += "<td><input disabled type=\"text\" name=\"price-"+apptArray[i].apptID+"\" value="+apptArray[i].price+" style=\"max-width:80px;\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
                 html += "<td id=\"editAvailApptBtn\"><button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+apptArray[i].apptID+")\">Edit</button></td>"; //Button for EDIT
                 html += "<td><button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+apptArray[i].apptID+")\">Delete</button></td>"; //Button for DELETE
                 html += "</tr>"; //end row
                 count++;
+
+                //add disabled attributes to activities trainers don't say they can do
+                //get trainer to get their activities
+                const trainerApiUrl = 
+                for(var j in trainer.trainerActivities){
+                    if(trainer.trainerActivities[j].activityId == 4)
+                    {
+                        document.getElementById("carOpt"+apptArray[i].apptID).disabled = false;
+                    }
+                    if(trainer.trainerActivities[j].activityId == 14){
+                        document.getElementById("stOpt"+apptArray[i].apptID).disabled = false;
+                    }
+                    if(trainer.trainerActivities[j].activityId == 24){
+                        document.getElementById("kbOpt"+apptArray[i].apptID).disabled = false;
+                    }
+                    if(trainer.trainerActivities[j].activityId == 34){
+                        document.getElementById("yoOpt"+apptArray[i].apptID).disabled = false;
+                    }
+                }
             }
         }
         else {
@@ -377,11 +395,27 @@ function showEditAvailabilityModal(selectedDate){
                 //add 3 ENABLED rows to table as above, but ids of property-count
                 html += "<tr><td><input type=\"time\" id=startTime-"+i+" name=\"startTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\"></td>"; //start time, START DISABLED
                 html += "<td><input type=\"time\" id=endTime-"+i+" name=\"endTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
-                html += "<td><select id=activity-"+i+" name=\"activities\" ><option value=\"4\">Cardio</option><option value=\"14\">Strength Training</option></td><option value=\"24\">Kickboxing</option><option value=\"34\">Yoga</option></select>"; //activity, START DISABLED
-                html += "<td><input disabled type=\"text\" name=\"price-"+i+"\" value=\"TBD\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
+                html += "<td><select id=activity-"+i+" name=\"activities\" ><option disabled id=\"carOpt"+count+"\" value=\"4\">Cardio</option><option disabled id=\"stOpt"+count+"\" value=\"14\">Strength Training</option><option disabled id=\"kbOpt"+count+"\" value=\"24\">Kickboxing</option><option disabled id=\"yoOpt"+count+"\" value=\"34\">Yoga</option></select>"; //activity, START DISABLED
+                html += "<td><input disabled type=\"text\" name=\"price-"+i+"\" value=\"\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
                 html += "<td id=\"editAvailApptBtn\"><button class=\"btn btn-success\" type=\"button\" onclick=\"validateNewAppt("+count+")\">Save</button></td>"; //SAVE button, send in count to be able to access each input and validate/submit
                 html += "<td></td>"; //BLANK td
                 count++; //increment count as with i so it stays updated
+
+                for(var j in trainer.trainerActivities){
+                    if(trainer.trainerActivities[j].activityId == 4)
+                    {
+                        document.getElementById("carOpt"+count).disabled = false;
+                    }
+                    if(trainer.trainerActivities[j].activityId == 14){
+                        document.getElementById("stOpt"+count).disabled = false;
+                    }
+                    if(trainer.trainerActivities[j].activityId == 24){
+                        document.getElementById("kbOpt"+count).disabled = false;
+                    }
+                    if(trainer.trainerActivities[j].activityId == 34){
+                        document.getElementById("yoOpt"+count).disabled = false;
+                    }
+                }                
             }
             //count++
         }
@@ -409,6 +443,11 @@ function showEditAvailabilityModal(selectedDate){
 }
 function addRow(count){
     //the following should go in an AddRow() method
+    if(count % 10 == 4){ //if 4 is the last digit of the number, it's the same as an existing apptID
+        count++;
+        addRow(count);
+    }
+    else {
         let newRow = document.createElement('tr');
         newRow.id = "row-"+count;
         let rowHtml = "<td><input type=\"time\" id=startTime-"+count+" name=\"startTime"+count+"\" value=\"\" min=\"06:00\" max=\"18:00\"></td>";
@@ -419,12 +458,13 @@ function addRow(count){
         count++; //increment count
         newRow.innerHTML = rowHtml;
         editAvailTable.appendChild(newRow);
+    }
 }
 
 function enableApptEdit(apptID){
     //enable startTime-apptID, endTime-apptID, and activity-apptID
     document.getElementById("startTime-"+apptID).disabled = false;
-    document.getElementById("endTime-"+apptID).dsabled = false;
+    document.getElementById("endTime-"+apptID).dsabled = !disabled;
     document.getElementById("activity-"+apptID).disabled = false;
     //change edit button to a save button
     let html = "<button class=\"btn btn-success\" type=\"button\" onclick=\"editAvailableAppt("+apptID+")\">Save Changes</button>";
@@ -496,29 +536,29 @@ function getTrainerProfileForm(trainer){
 
 
     //fill in everything but the password. Trainer should be required to enter their current password to make changes.
-    document.getElementById("currEmail").value = trainer.emailAddress;
-    document.getElementById("inputFName").value = trainer.firstName;
-    document.getElementById("inputLName").value = trainer.lastName;
+    document.getElementById("currEmail").value = trainer.email;
+    document.getElementById("inputFName").value = trainer.fName;
+    document.getElementById("inputLName").value = trainer.lName;
     document.getElementById("birthDate").value = trainer.birthDate;
     document.getElementById("gender").value = trainer.gender;
  
-    for(var i in trainer.activities){ //update checked status of activities
-        if(trainer.activities[i].activityName == "cardio"){
+    for(var i in trainer.trainerAtivities){ //update checked status of activities
+        if(trainer.trainerActivities[i].activityId == 4){
             document.getElementById("cardio").checked = true;
             document.getElementById("cardioPrice").value = trainer.activities[i].activityPrice;
             document.getElementById("cardioPrice").disabled = false;        
         }
-        else if(trainer.activities[i].activityName == "strength training"){
+        else if(trainer.trainerActivities[i].activityId == 14){
             document.getElementById("strengthTraining").checked = true;
             document.getElementById("strengthTrainingPrice").value = trainer.activities[i].activityPrice;
             document.getElementById("strengthTrainingPrice").disabled = false;
         }
-        else if(trainer.activities[i].activityName == "kickboxing"){
+        else if(trainer.trainerActivities[i].activityId == 24){
             document.getElementById("kickboxing").checked = true;
             document.getElementById("kickboxingPrice").value = trainer.activities[i].activityPrice;
             document.getElementById("kickboxingPrice").disabled = false;
         }
-        else if(trainer.activities[i].activityName == "yoga"){
+        else if(trainer.trainerActivities[i].activityId == 34){
             document.getElementById("yoga").checked = true;
             document.getElementById("yogaPrice").value = trainer.activities[i].activityPrice;
             document.getElementById("yogaPrice").disabled = false;

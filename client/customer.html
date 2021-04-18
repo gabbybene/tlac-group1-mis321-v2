@@ -129,8 +129,6 @@
                   </div> <!--end row-->
                   <div class="row"></div>
                   <div class="row"> <!--Password-->
-                    <small class="text-muted" id="mustEnterCurrPasswordMsg" style="padding-top: 10px; display: none;">You must enter your current password to make changes.</small>
-                    <small class="text-muted" id="incorrectPasswordMsg" style="padding-top: 10px; display: none;">Current Password is incorrect.</small>
                     <p style="padding-top: 10px;">Enter your current password to make changes to your profile:</p>
                     <div class="col-sm-6">
                       <label for="currPassword">Current Password</label>
@@ -159,11 +157,11 @@
                     <div class="col-sm-6"> <!--Gender-->
                       <label for="custGender">Gender: How do you identify?</label>
                       <select style="padding-top: 10px; padding-bottom: 2px; width: 100%;" name="custGender" id="custGender" required>
-                        <option value="male">Man</option>
-                        <option value="female">Woman</option>
-                        <option value="transgender">Transgender</option>
-                        <option value="nonbinary">Non-binary / Non-conforming</option>
-                        <option value="noResponse">I'd rather not say</option>
+                        <option value="Male">Man</option>
+                        <option value="Female">Woman</option>
+                        <option value="Transgender">Transgender</option>
+                        <option value="Nonbinary">Non-binary / Non-conforming</option>
+                        <option value="NoResponse">I'd rather not say</option>
                       </select>
                       <!-- <label for="gender">Gender</label>
                       <input type="text" id="gender" class="form-control form-floating" placeholder="Gender" required=""> -->
@@ -182,8 +180,8 @@
                         <h3>What activites do you prefer to do?</h3>
                         <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
                         <div class="form-check"> <!--Cardio-->
-                          <input class="form-check-input" type="checkbox" value="4" id="editCardio">
-                          <label class="form-check-label" for="editCardio">Cardio</label>
+                          <input class="form-check-input" type="checkbox" value="4" id="cardio">
+                          <label class="form-check-label" for="cardio">Cardio</label>
                         </div>
                         <div class="form-check"> <!--Strength Training-->
                           <input class="form-check-input" type="checkbox" value="14" id="strengthTraining">
@@ -219,7 +217,8 @@
                       </div>
                     </div> 
                   </div> <!--end row-->
-                  <div class="row text-center" id="custEditProfileErrorMsg"></div>
+                  <div class="row text-center" id="custEditProfileErrorMsg"><small class="text-muted" id="mustEnterCurrPasswordMsg" style="padding-top: 10px; display: none;">You must enter your current password to make changes.</small>
+                    <small class="text-muted" id="incorrectPasswordMsg" style="padding-top: 10px; display: none;">Current Password is incorrect.</small></div>
                   <div class="row text-center"> <!--save changes button-->
                     <button class="btn btn-lg btn-success" type="button" id="btnEditProfile" onclick="custEditProfile()">Submit Profile Changes</button>
                   </div>
