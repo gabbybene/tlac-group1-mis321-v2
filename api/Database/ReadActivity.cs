@@ -21,6 +21,22 @@ namespace api.Database{
             }
             return null;
         }
+        public List<Activity> GetTrainerActivities(int trnID){
+            List<Activity> returnList = new List<Activity>();
+            ConnectionString cs = new ConnectionString();
+            using var con = new MySqlConnection(cs.cs);
+            con.Open();
+            using var cmd = new MySqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = @"SELECT c.ActivityID,ActivityName,Price FROM CanDo c JOIN Activity a on c.activityID=a.activityID WHERE TrainerID=@trainerID";
+            cmd.Parameters.AddWithValue("@TrainerID",trnID);
+            cmd.Prepare();
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while(rdr.Read()){
+                returnList.Add(new Activity(){activityId=rdr.GetInt32(0),activityName=rdr.GetString(1),trainerPriceForActivity=rdr.GetDouble(2)});
+            }
+            return returnList;
+        }
         public Activity GetTrainerActivity(int trnID,int actID){
             ConnectionString cs = new ConnectionString();
             using var con = new MySqlConnection(cs.cs);
