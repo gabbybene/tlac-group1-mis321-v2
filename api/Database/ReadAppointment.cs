@@ -99,7 +99,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT date,AppointmentID,CustomerID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE TrainerId=@TrainerId and date=@date ORDER BY starttime ASC";
+            cmd.CommandText = @"SELECT date,AppointmentID,a.TrainerID,a.ActivityID,starttime,endtime,Price FROM Appointment a JOIN Cando c on a.TrainerID=c.TrainerID AND a.activityID=c.activityID WHERE a.TrainerID=@TrainerId AND date=@date AND a.CustomerID IS NULL ORDER BY starttime ASC";
             cmd.Parameters.AddWithValue("@TrainerId",trainerId);
             cmd.Parameters.AddWithValue("@date",date);
             cmd.Prepare();
@@ -112,7 +112,8 @@ namespace api.Database{
             IReadActivity readAct = new ReadActivity();
             while (rdr.Read())
             {
-                Appointment temp = new Appointment(){appointmentId=rdr.GetInt32(1),appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(2)),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(3)),appointmentActivity=readAct.Read(rdr.GetInt32(4)), startTime=rdr.GetDateTime(5).TimeOfDay, endTime=rdr.GetDateTime(6).TimeOfDay,appointmentCost=(rdr.GetDouble(7)),amountPaidByCash=rdr.GetDouble(8), amountPaidByCard=rdr.GetDouble(9)};
+                //appointmentCustomer=readCust.GetCustomerByID(rdr.GetInt32(2)),amountPaidByCash=rdr.GetDouble(8), amountPaidByCard=rdr.GetDouble(9)};
+                Appointment temp = new Appointment(){appointmentId=rdr.GetInt32(1),appointmentTrainer=readTrn.GetTrainerByID(rdr.GetInt32(2)),appointmentActivity=readAct.Read(rdr.GetInt32(3)), startTime=rdr.GetDateTime(4).TimeOfDay, endTime=rdr.GetDateTime(5).TimeOfDay,appointmentCost=(rdr.GetDouble(6))};
                 myAppointments.Add(temp);
 
             }

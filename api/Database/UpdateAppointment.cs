@@ -60,5 +60,20 @@ namespace api.Database{
             cmd.Prepare();
             cmd.ExecuteNonQuery();
         }
+
+        public void UpdateAvailableAppointment(Appointment a){
+            ConnectionString cs = new ConnectionString();
+            using var con = new MySqlConnection(cs.cs);
+            con.Open();
+            using var cmd = new MySqlCommand();
+
+            cmd.CommandText = @"UPDATE appointment SET ActivityID=@actID, startTime=@start,endTime=@end WHERE AppointmentID=@apptID";
+            cmd.Parameters.AddWithValue("@ActivityID", a.appointmentActivity.activityId);
+            cmd.Parameters.AddWithValue("@startTime", a.startTime);
+            cmd.Parameters.AddWithValue("@endTime", a.endTime);
+            cmd.Connection = con;
+            cmd.Prepare();
+            cmd.ExecuteNonQuery();
+        }
     }
 }

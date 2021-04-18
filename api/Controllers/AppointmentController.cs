@@ -57,11 +57,13 @@ namespace api.Controllers
 
         // GetAvailableAppointmentsByDate for individual trainer
         [EnableCors("AnotherPolicy")]
-        [HttpGet("{date}", Name = "GetAvailableAppointmentsByDateForTrainer")]
-        public List<Appointment> GetAvailableAppointmentsByDateForTrainer(int trainerId, DateTime date)
+        [Route("[action]/{id}/{date}")]
+        [HttpGet]
+        // [HttpGet("{date}", Name = "GetAvailableAppointmentsByDateForTrainer")]
+        public List<Appointment> GetAvailableAppointmentsByDateForTrainer(int id, DateTime date)
         {
             ReadAppointment ra = new ReadAppointment();
-            return ra.ReadAvailableAppointmentsByDateForTrainer(trainerId,date);
+            return ra.ReadAvailableAppointmentsByDateForTrainer(id,date);
         }
 
         // Get Confirmed Appointments for Trainer
@@ -103,6 +105,15 @@ namespace api.Controllers
             IUpdateAppointment ua = new UpdateAppointment();
             System.Console.WriteLine("made it to the update.");
             ua.Update(a);
+        }
+
+        //PUT: update available appointment
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/")]
+        [HttpPut]
+        public void PutAvailableAppointment([FromBody] Appointment a){
+            UpdateAppointment ua = new UpdateAppointment();
+            ua.UpdateAvailableAppointment(a);
         }
         
         // PUT: add Customer to appointment
