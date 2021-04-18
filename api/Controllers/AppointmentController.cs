@@ -108,14 +108,23 @@ namespace api.Controllers
         }
 
         //PUT: update available appointment
+        // [EnableCors("AnotherPolicy")]
+        // [Route("[action]/")]
+        // [HttpPut]
+        // public void PutAvailableAppointment([FromBody] Appointment a){
+        //     UpdateAppointment ua = new UpdateAppointment();
+        //     ua.UpdateAvailableAppointment(a);
+        // }
+
+        //PUT: update available appt w/ startTime, endTime, and Activity
         [EnableCors("AnotherPolicy")]
-        [Route("[action]/")]
+        [Route("[action]/{apptId}/{startTime}/{endTime}/{activityId}")]
         [HttpPut]
-        public void PutAvailableAppointment([FromBody] Appointment a){
+        public void PutAvailableAppointment(int apptId, string startTime, string endTime, int activityId){
             UpdateAppointment ua = new UpdateAppointment();
-            ua.UpdateAvailableAppointment(a);
+            ua.UpdateAvailableAppointment(apptId, startTime, endTime, activityId);
         }
-        
+
         // PUT: add Customer to appointment
         [EnableCors("AnotherPolicy")]
         [Route("[action]/{ids}")]

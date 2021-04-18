@@ -318,34 +318,7 @@ function previousMonth() {
 }
 
 function showEditAvailabilityModal(selectedDate){
-    // when trainer clicks on a calendar date, pop up that date with any existing availability (unconfirmed appointments - or distinguish between confirmed and available?) they have.
-    // Populate a form with maybe 4 slots for start time, activity (radio buttons)
-    // include an "add" button, that user could click + to add more input fields
-    // At the bottom, include an "update availability" button to add those open appointments to the database
-    // var modal = document.getElementById("trainerEditAvailabilityModal");
-    // modal.style.display = "block";
-    // var span = document.getElementsByClassName("close")[0];
-
-    // let selectedDate = value; //selectedDate is MM/DD/YYYY format
-    // let html = "";
-    // //start with 5 input rows
-    // let idCount = 0;
-    // for(let i = 0; i < 5; i++){
-    //     html += "<div class=\"row\"><div class=\"col-md-4\"><label for=startTime"+idCount+">Choose a start time:</label><input type=\"time\" id=startTime"+idCount+" name=\"startTime\"min=\"06:00\" max=\"18:00\"></div>";
-    //     html += "<div class=\"col-md-4\"><label for=startTime"+idCount+">Choose an end time:</label><input type=\"time\" id=startTime"+idCount+" name=\"endTime\"min=\"06:00\" max=\"18:00\" ></div>";
-    //     html += "<div class=\"col-md-4\"><label for=activity"+idCount+">Choose an activity:</label><select id=activity"+idCount+" name=\"activities\"><option value=\"cardio\">Cardio</option><option value=\"strengthTraining\">Strength Training</option>";
-    //     html += "<option value=\"kickboxing\">Kickboxing</option><option value=\"yoga\">Yoga</option></select></div></div>";
-    //     idCount++;
-    // }
-    // //empty div to add additional rows of input fields
-    // html += "<div id=\"extraRows\"></div>"
-    // //ADD A BUTTON TO ADD MORE INPUT FIELDS
-    // html += "<hr><div class=\"row text-center\"><button class=\"btn btn-lg btn-default\" onclick=\"addMoreRows("+idCount+")\">Add More Availability +</button></div><hr>";
-    // html += "<div class=\"row text-center\"><button class=\"btn btn-lg btn-success\" onclick=\"addAvailability()\">Add Appointment Availability</button></div>";
-    // html += "</div></div>"; //closes modal-content and modal-dialog divs
-    // document.getElementById("trainerEditAvailabilityModal").innerHTML = html;
-
-    //add the following back to the HTML: div class=modal-dialog (& close), div class=modal-content (& close), span class="close"(&close)
+    // when trainer clicks on a calendar date, pop up that date with any existing availabile appointments they have.
 
     //get any AVAILABLE appointments associated w/ TrainerID on that date
     let trainerId = getTrainerId();
@@ -354,12 +327,15 @@ function showEditAvailabilityModal(selectedDate){
         console.log(response);
         return response.json();
     }).then(function(json){
+        console.log("json[0].startTime ");
+        console.log(json[0].startTime.hours + ":" + json[0].startTime.minutes);
         let apptArray = [];
         for(var i in json){
-            //for every json object, create simplified object with only the needed items (ID, date, startTime, endTime, Activity, Price)
+            //for every json object, create simplified object with only the needed items (ID, date, startTime, endTime, ActivityId, Price)
             //stringify, then re-parse to an object **couldn't get the start and end times to read without doing this**
             var tempStr = JSON.stringify(json[i]);
             var object = JSON.parse(tempStr);
+            console.log(object.startTime.hours + ":" + object.startTime.minutes);
             
             //add to apptArray
             apptArray[i] = {
@@ -369,9 +345,8 @@ function showEditAvailabilityModal(selectedDate){
                 fullEndTime: getFullTime(object.endTime.hours, object.endTime.minutes),
                 // startTime: getFormattedTime(object.startTime.hours, object.startTime.minutes), //e.g. 9:00AM, 2:00PM, etc.
                 // endTime: getFormattedTime(object.endTime.hours, object.endTime.minutes),
-                activity:  object.appointmentTrainer.trainerActivities[0].activityName,
-                // customerName: object.appointmentCustomer.fName+ " " + object.appointmentCustomer.lName,
-                price: object.appointmentCost //MIGHT MAKE THIS BASED ON THE DIFF BETWEEN STARTTIME AND ENDTIME
+                activityId:  object.appointmentTrainer.trainerActivities[0].activityId,
+                price: object.appointmentCost //MIGHT MAKE THIS BASED ON THE DIFF BETWEEN STARTTIME AND ENDTIME?
             }
         }
         console.log("TEST: start time is " + apptArray[0].fullStartTime);
@@ -388,7 +363,7 @@ function showEditAvailabilityModal(selectedDate){
             for(var i in apptArray){
                 html += "<tr><td><input disabled type=\"time\" id=startTime-"+apptArray[i].apptID+" name=\"startTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullStartTime+" min=\"06:00\" max=\"18:00\"></td>"; //start time, START DISABLED
                 html += "<td><input disabled type=\"time\" id=endTime-"+apptArray[i].apptID+" name=\"endTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullEndTime+" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
-                html += "<td><select disabled id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activity+"><option value=\"4\">Cardio</option><option value=\"14\">Strength Training</option><option value=\"24\">Kickboxing</option><option value=\"34\">Yoga</option></select></td>"; //activity, START DISABLED
+                html += "<td><select disabled id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+"><option value=\"4\">Cardio</option><option value=\"14\">Strength Training</option><option value=\"24\">Kickboxing</option><option value=\"34\">Yoga</option></select></td>"; //activity, START DISABLED
                 html += "<td><input disabled type=\"text\" name=\"price-"+apptArray[i].apptID+"\" value="+apptArray[i].price+" style=\"max-width:80px;\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
                 html += "<td id=\"editAvailApptBtn\"><button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+apptArray[i].apptID+")\">Edit</button></td>"; //Button for EDIT
                 html += "<td><button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+apptArray[i].apptID+")\">Delete</button></td>"; //Button for DELETE
@@ -402,7 +377,7 @@ function showEditAvailabilityModal(selectedDate){
                 //add 3 ENABLED rows to table as above, but ids of property-count
                 html += "<tr><td><input type=\"time\" id=startTime-"+i+" name=\"startTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\"></td>"; //start time, START DISABLED
                 html += "<td><input type=\"time\" id=endTime-"+i+" name=\"endTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
-                html += "<td><select id=activity-"+i+" name=\"activities\"><option value=\"4\">Cardio</option><option value=\"14\">Strength Training</option></td><option value=\"24\">Kickboxing</option><option value=\"34\">Yoga</option></select>"; //activity, START DISABLED
+                html += "<td><select id=activity-"+i+" name=\"activities\" ><option value=\"4\">Cardio</option><option value=\"14\">Strength Training</option></td><option value=\"24\">Kickboxing</option><option value=\"34\">Yoga</option></select>"; //activity, START DISABLED
                 html += "<td><input disabled type=\"text\" name=\"price-"+i+"\" value=\"TBD\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
                 html += "<td id=\"editAvailApptBtn\"><button class=\"btn btn-success\" type=\"button\" onclick=\"validateNewAppt("+count+")\">Save</button></td>"; //SAVE button, send in count to be able to access each input and validate/submit
                 html += "<td></td>"; //BLANK td
@@ -457,28 +432,24 @@ function enableApptEdit(apptID){
 }
 
 function editAvailableAppt(apptID){
+    console.log("appt id is " + apptID);
+   
     //get values from startTime-id, endTime-id, activity-id, and price-id, create new appt object with that and send in a PUT request
     let startTime = document.getElementById("startTime-"+apptID).value;
-    let splitStartTime = startTime.split(":");
+    let newStartTime = "0001-01-01 " + startTime + ":00";
+
     let endTime = document.getElementById("endTime-"+apptID).value;
-    let splitEndTime = endTime.split(":");
+    let newEndTime = "0001-01-01 " + endTime + ":00";
+
     let newActivityID = document.getElementById("activity-"+apptID).value;
     // make new body object to send in put request
     let bodyObj = {
         appointmentId: apptID,
-        startTime: {
-            hours: splitStartTime[0],
-            minutes: splitStartTime[1]
-        },
-        endTime: {
-            hours: splitEndTime[0],
-            minutes: splitEndTime[1],
-        },   
-        appointmentActivity: {
-            activityId: newActivityID
-        }
+        startTime: newStartTime,
+        endTime: newEndTime,
+        activityId: newActivityID
     }
-    const putApptApiUrl = "https://localhost:5001/api/Appointment/UpdateAvailableAppointment/";
+    const putApptApiUrl = "https://localhost:5001/api/Appointment/PutAvailableAppointment/"+apptID+"/"+newStartTime+"/"+newEndTime+"/"+newActivityID;
     fetch(putApptApiUrl, {
         method: "PUT",
         headers: {
@@ -488,7 +459,7 @@ function editAvailableAppt(apptID){
         body: JSON.stringify(bodyObj)
     })
     .then(function(response){
-
+        console.log(response);
     })
 
     //then disable the fields again and change the Save button back to an edit button
