@@ -73,7 +73,7 @@
 }
 
 /* modal content/box */
-.modal-content{
+.modal-content {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
@@ -304,4 +304,21 @@ button.list-group-item {
 #mustEnterCurrPasswordMsg {
     color: red;
     font-style: italic;
+    padding-left: 24px;
+}
+
+#trainerEditAvailabilityModal {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.modal-lg {
+    width: 100%;
+}
+
+/* #editAvailTable .btn-secondary, .btn-danger, input[type="time"], input[type="text"], select {
+    line-height: 36px;
+} */
+#editAvailTable td {
+    line-height: 36px;
 }
