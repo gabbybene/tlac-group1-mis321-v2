@@ -142,7 +142,7 @@
     border-radius: 4px;
 } */
 
-#trainerGender, #trainerBirthDate, #custGender, #custBirthDate {
+#trainerGender, #trainerBirthDate, #custGender, #custBirthDate #gender, #editCustProfile #birthDate{
     padding-top: 10px;
     padding-bottom: 2px;
     display: block;
@@ -299,4 +299,9 @@ button.list-group-item {
     color: red;
     font-style: italic;
     padding-left: 24px;
+}
+
+#mustEnterCurrPasswordMsg {
+    color: red;
+    font-style: italic;
 }

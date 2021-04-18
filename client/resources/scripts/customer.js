@@ -20,7 +20,6 @@ function handleCustomerDashboardOnLoad(){ //load each part of dashboard
         return response.json();
     }).then(function(json){
         customer = json;
-        // getCustomerAppointments(customer);
         getConfirmedAppointments(customer);
         getAvailableAppointmentCalendar(currentMonth, currentYear);
         getCustomerProfileForm(customer);
@@ -61,6 +60,7 @@ function getConfirmedAppointments(customer){
     //Get appointments from DB that match the customer ID In the url & have a date of today or in the future.
     //return that array of appointment objects
     // var confirmedAppts = [];
+    console.log("customer id is " + customer.customerId);
     let html = "";
     const apptApiUrl = "https://localhost:5001/api/Appointment/GetConfirmedAppointmentsForCustomer/"+customer.customerId;
     fetch(apptApiUrl).then(function(response){
@@ -270,7 +270,6 @@ function getAvailableAppointmentCalendar(currentMonth, currentYear){
             let newDate = [newMonth, newDay, splitDate[0]]; //make new date with correct order
             newDate = newDate.join("/"); //join back together with /
             distinctDateArray[i] = newDate; //set to distinctArray[i] 
-            console.log("new distinctDateArray["+i+"] is " + distinctDateArray[i]);
         }
 
     //BUILD CALENDAR
@@ -282,7 +281,6 @@ function getAvailableAppointmentCalendar(currentMonth, currentYear){
         }
         let found = false;
         //<td> with dates for that month
-        console.log("made it to mon: " + mon);
         while(d.getMonth() == mon) {
             let fullDate = (d.getMonth()+1) + "/" + d.getDate() + "/" + d.getFullYear();
             //if month of a date in the array doesn't match the month of fullDate, remove it from distinctDatearray
@@ -572,9 +570,10 @@ function getCustomerProfileForm(customer){
     document.getElementById("inputFName").value = customer.fName;
     document.getElementById("inputLName").value = customer.lName;
     document.getElementById("birthDate").value = birthDateOnly;
-    document.getElementById("gender").value = customer.gender;
+    document.getElementById("custGender").value = customer.gender;
     document.getElementById("fitnessGoals").value = customer.fitnessGoals;
-
+    console.log("activityId of the first activity is:");
+    console.log(customer.customerActivities[0].activityId);
     for(var i in customer.customerActivities){ //update checked status of activities
         if(customer.customerActivities[i].activityId == 4){ // 4 = cardio
             document.getElementById("cardio").checked = true;
@@ -601,4 +600,107 @@ function handleReferredByOnClick(){
     if(document.getElementById("yesReferred").checked == true){
         document.getElementById("referrerName").disabled = false;
     }
+}
+
+function custEditProfile(){
+    //get current customer object
+    let id = getCustomerId();
+    let customer = [];
+    const customerApiUrl = "https://localhost:5001/api/Customer/";
+    fetch(customerApiUrl).then(function(response){
+        console.log(response);
+        return response.json();
+    }).then(function(json){
+        customer = json;
+
+        //get values of items in the form
+        //customer MUST enter currPassword in order to make changes
+        let inputPassword;
+        if(document.getElementById("currPassword").value == null){
+            document.getElementById("mustEnterCurrPasswordMsg").style.display = "block";
+        }
+        else if(document.getElementById("currPassword").value != customer.pasword){
+            document.getElementById("incorrectPasswordMsg").style.display = "block";
+        }
+        else {
+            inputPassword = document.getElementById("currPassword").value;
+        }
+        let inputEmail = document.getElementById("newEmail").value;
+
+        let inputFirstName = document.getElementById("inputFName").value;
+        let inputLastName = document.getElementById("inputLName").value;
+        let dob = document.getElementById("birthDate").value;
+        let inputGender = document.getElementById("custGender").value;
+        let inputFitnessGoals;
+        //handle fitness goals
+        if(document.getElementById("fitnessGoals").value != null){
+        inputFitnessGoals = document.getElementById("fitnessGoals").value;
+        }
+        else{
+            inputFitnessGoals = null;
+        }
+        let inputActivityIDs = [];
+        //handle preferred activities
+        if(document.getElementById("cardio".checked)){
+            let cardio = document.getElementById("cardio").value;
+            inputActivityIDs.push(parseInt(cardio));
+        }
+        if(document.getElementById("strengthTraining").checked){
+            let strengthTraining = document.getElementById("strengthTraining").value;
+            inputActivityIDs.push(parseInt(strengthTraining));
+        }
+        if(document.getElementById("kickboxing").checked){
+            let kickboxing = document.getElementById("kickboxing").value;
+            inputActivityIDs.push(parseInt(kickboxing));
+        }
+        if(document.getElementById("yoga").checked){
+            let yoga = document.getElementById("yoga").value;
+            inputActivityIDs.push(parseInt(yoga));
+        }
+        let activityArray = [];
+        if(inputActivityIDs[0] != null){
+            for(var i in inputActivityIDs){
+                activityArray[i] = {
+                    activityId: inputActivityIDs[i]
+                }
+            }
+        }
+        for(var i in activityArray){
+            console.log("activityArray["+i+"]:" + activityArray[i].activityId);
+        }
+
+        //If yesReferred is checked, get referrerName
+        if(document.getElementById("yesReferred").checked){
+            let referredByName = document.getElementById("referrerName");
+        }
+
+        var bodyObj = {
+            customerId: id,
+            password: inputPassword,
+            birthDate: dob, 
+            gender: inputGender,
+            fitnessGoals: inputFitnessGoals,
+            PhoneNo: "5554443333", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
+            fName: inputFirstName,
+            lName: inputLastName,
+            email: inputEmail,
+            customerActivities: activityArray
+            // referredBy: referredByName,
+        };
+
+        //make api call to UPDATE customer
+        fetch(customerApiUrl, {
+            method: "PUT",
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(bodyObj)
+        }).then(function(response){
+            getCustomerProfileForm(customer);
+            console.log(response);
+        })
+    }).catch(function(error){
+        console.log(error);
+    }) 
 }

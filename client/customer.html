@@ -127,8 +127,11 @@
                       <input type="email" id="newEmail" class="form-control" placeholder="New Email">
                     </div>
                   </div> <!--end row-->
+                  <div class="row"></div>
                   <div class="row"> <!--Password-->
-                    <p style="padding-top: 10px;">To change your password, enter your current password and your new password:</p>
+                    <small class="text-muted" id="mustEnterCurrPasswordMsg" style="padding-top: 10px; display: none;">You must enter your current password to make changes.</small>
+                    <small class="text-muted" id="incorrectPasswordMsg" style="padding-top: 10px; display: none;">Current Password is incorrect.</small>
+                    <p style="padding-top: 10px;">Enter your current password to make changes to your profile:</p>
                     <div class="col-sm-6">
                       <label for="currPassword">Current Password</label>
                       <input type="password" id="currPassword" placeholder="Enter Current Password" class="form-control" required="">
@@ -154,8 +157,16 @@
                       <input type="date" id="birthDate" class="form-control form-floating" placeholder="Date of Birth (MM/DD/YYYY)" required="">
                     </div>
                     <div class="col-sm-6"> <!--Gender-->
-                      <label for="gender">Gender</label>
-                      <input type="text" id="gender" class="form-control form-floating" placeholder="Gender" required="">
+                      <label for="custGender">Gender: How do you identify?</label>
+                      <select style="padding-top: 10px; padding-bottom: 2px; width: 100%;" name="custGender" id="custGender" required>
+                        <option value="male">Man</option>
+                        <option value="female">Woman</option>
+                        <option value="transgender">Transgender</option>
+                        <option value="nonbinary">Non-binary / Non-conforming</option>
+                        <option value="noResponse">I'd rather not say</option>
+                      </select>
+                      <!-- <label for="gender">Gender</label>
+                      <input type="text" id="gender" class="form-control form-floating" placeholder="Gender" required=""> -->
                     </div>
                   </div> <!--end row-->
                   <div class="row">
@@ -171,26 +182,25 @@
                         <h3>What activites do you prefer to do?</h3>
                         <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
                         <div class="form-check"> <!--Cardio-->
-                          <input class="form-check-input" type="checkbox" value="" id="cardio">
+                          <input class="form-check-input" type="checkbox" value="4" id="cardio">
                           <label class="form-check-label" for="cardio">Cardio</label>
                         </div>
                         <div class="form-check"> <!--Strength Training-->
-                          <input class="form-check-input" type="checkbox" value="" id="strengthTraining">
+                          <input class="form-check-input" type="checkbox" value="14" id="strengthTraining">
                           <label class="form-check-label" for="strengthTraining">Strength Training</label>
                         </div>
                         <div class="form-check"> <!--Kickboxing-->
-                          <input class="form-check-input" type="checkbox" value="" id="kickboxing">
+                          <input class="form-check-input" type="checkbox" value="24" id="kickboxing">
                           <label class="form-check-label" for="kickboxing">Kickboxing</label>
                         </div>
                         <div class="form-check"> <!--Yoga-->
-                          <input class="form-check-input" type="checkbox" value="" id="yoga">
+                          <input class="form-check-input" type="checkbox" value="34" id="yoga">
                           <label class="form-check-label" for="yoga">Yoga</label>
                         </div>
                       </div>
                     </div>
-                    </div>
                     <div class="col-sm-6"> <!--referred by-->
-                      <div id="referredBy"> <!--Get Referred By-->
+                      <div id="referredBy" style="padding: 10px 0px 10px 0px"> <!--Get Referred By-->
                         <h3>Were you referred by a friend?</h3>
                         <div class="form-check"> <!--FIGURE OUT HOW TO TOGGLE DISABLED FOR REFFERERNAME INPUT-->
                           <div class="row">
@@ -209,8 +219,9 @@
                       </div>
                     </div> 
                   </div> <!--end row-->
+                  <div class="row text-center" id="custEditProfileErrorMsg"></div>
                   <div class="row text-center"> <!--save changes button-->
-                    <button class="btn btn-lg btn-success" type="submit" id="btnEditProfile" onclick="custEditProfile()">Submit Profile Changes</button>
+                    <button class="btn btn-lg btn-success" type="button" id="btnEditProfile" onclick="custEditProfile()">Submit Profile Changes</button>
                   </div>
                 </form> <!--end customer profile form-->
              </div> <!--end custProfileForm container-->

@@ -96,14 +96,42 @@ function handleCreateNewCustOnClick(){
     let dob = document.getElementById("custBirthDate").value;
     let inputGender = document.getElementById("custGender").value;
     let inputFitnessGoals;
-    console.log("birthDate is " + dob);
+    //handle fitness goals
     if(document.getElementById("fitnessGoals").value != null){
         inputFitnessGoals = document.getElementById("fitnessGoals").value;
     }
     else{
         inputFitnessGoals = null;
     }
-    //To-do: handle preferred activities
+    let inputActivityIDs = [];
+    //handle preferred activities
+    if(document.getElementById("cardio".checked)){
+        let cardio = document.getElementById("cardio").value;
+        inputActivityIDs.push(parseInt(cardio));
+    }
+    if(document.getElementById("strengthTraining").checked){
+        let strengthTraining = document.getElementById("strengthTraining").value;
+        inputActivityIDs.push(parseInt(strengthTraining));
+    }
+    if(document.getElementById("kickboxing").checked){
+        let kickboxing = document.getElementById("kickboxing").value;
+        inputActivityIDs.push(parseInt(kickboxing));
+    }
+    if(document.getElementById("yoga").checked){
+        let yoga = document.getElementById("yoga").value;
+        inputActivityIDs.push(parseInt(yoga));
+    }
+    let activityArray = [];
+    if(inputActivityIDs[0] != null){
+        for(var i in inputActivityIDs){
+            activityArray[i] = {
+                activityId: inputActivityIDs[i]
+            }
+        }
+    }
+    for(var i in activityArray){
+        console.log("activityArray["+i+"]:" + activityArray[i].activityId);
+    }
 
     //If yesReferred is checked, get referrerName
     if(document.getElementById("yesReferred").checked){
@@ -121,9 +149,11 @@ function handleCreateNewCustOnClick(){
         PhoneNo: "5554443333", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
         fName: inputFirstName,
         lName: inputLastName,
-        email: inputEmail
+        email: inputEmail,
+        customerActivities: activityArray
         // referredBy: referredByName,
     };
+
     //make api call to CREATE customer
     fetch(customerApiUrl, {
         method: "POST",
@@ -133,12 +163,11 @@ function handleCreateNewCustOnClick(){
         },
         body: JSON.stringify(bodyObj)
     }).then(function(response){
-        console.log("made it to the POST");
+        sendCustomerToDashboard(inputEmail);
         console.log(response);
-        
     })
 
-    sendCustomerToDashboard(inputEmail);
+    
 }
 
 function sendCustomerToDashboard(email){
@@ -149,7 +178,7 @@ function sendCustomerToDashboard(email){
         return response.json();
     }).then(function(json){
         let customerId = json.customerId;
-        window.location.href = "./customer.html?customerId="+customerId;
+        window.location.href = "./customer.html?id="+customerId;
         //console.log("customerId is " + customerId);
     }).catch(function(error){
         console.log(error);

@@ -53,10 +53,10 @@ namespace api.Controllers
             wc.Write(c);
         }
 
-        // PUT: api/Customer/5
+        // PUT: api/Customer/
         [EnableCors("AnotherPolicy")]
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Customer c)
+        [HttpPut]
+        public void Put([FromBody] Customer c)
         {
             IUpdateCustomer uc = new UpdateCustomer();
             System.Console.WriteLine("made it to the update.");
