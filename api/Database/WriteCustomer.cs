@@ -42,7 +42,7 @@ namespace api.Database{
             }
             if(i.referredBy!=null){
                 cmd.CommandText = @"UPDATE customer SET Refer_CustID=(SELECT CustID from Customer where AccountID=@referrer) WHERE AccountID=@email)";
-                cmd.Parameters.AddWithValue("@referrer", i.referredBy.customerId);
+                cmd.Parameters.AddWithValue("@referrer", i.referredBy.email);
             }
         }
     }
