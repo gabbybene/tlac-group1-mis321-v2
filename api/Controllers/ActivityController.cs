@@ -40,6 +40,14 @@ namespace api.Controllers
             return ra.GetTrainerActivities(id);
         }
 
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{id}")]
+        [HttpGet]
+        public List<int> GetTrainerActivities(int id){
+            IReadActivity ra = new ReadActivity();
+            return ra.GetTrainerActivities(id);
+        }
+
         // POST: api/Activity
         [EnableCors("AnotherPolicy")]
         [HttpPost]
