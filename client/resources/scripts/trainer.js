@@ -371,22 +371,24 @@ function showEditAvailabilityModal(selectedDate){
 
                 //add disabled attributes to activities trainers don't say they can do
                 //get trainer to get their activities
-                const trainerApiUrl = 
-                for(var j in trainer.trainerActivities){
-                    if(trainer.trainerActivities[j].activityId == 4)
-                    {
-                        document.getElementById("carOpt"+apptArray[i].apptID).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 14){
-                        document.getElementById("stOpt"+apptArray[i].apptID).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 24){
-                        document.getElementById("kbOpt"+apptArray[i].apptID).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 34){
-                        document.getElementById("yoOpt"+apptArray[i].apptID).disabled = false;
-                    }
-                }
+                const trainerApiUrl = "";
+                //do fetch for the trainer or the can-do activities, then check the following:
+                                                                                                                        //START HERE//
+                // for(var j in trainer.trainerActivities){
+                //     if(trainer.trainerActivities[j].activityId == 4)
+                //     {
+                //         document.getElementById("carOpt"+apptArray[i].apptID).disabled = false;
+                //     }
+                //     if(trainer.trainerActivities[j].activityId == 14){
+                //         document.getElementById("stOpt"+apptArray[i].apptID).disabled = false;
+                //     }
+                //     if(trainer.trainerActivities[j].activityId == 24){
+                //         document.getElementById("kbOpt"+apptArray[i].apptID).disabled = false;
+                //     }
+                //     if(trainer.trainerActivities[j].activityId == 34){
+                //         document.getElementById("yoOpt"+apptArray[i].apptID).disabled = false;
+                //     }
+                // }
             }
         }
         else {
@@ -401,21 +403,22 @@ function showEditAvailabilityModal(selectedDate){
                 html += "<td></td>"; //BLANK td
                 count++; //increment count as with i so it stays updated
 
-                for(var j in trainer.trainerActivities){
-                    if(trainer.trainerActivities[j].activityId == 4)
-                    {
-                        document.getElementById("carOpt"+count).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 14){
-                        document.getElementById("stOpt"+count).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 24){
-                        document.getElementById("kbOpt"+count).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 34){
-                        document.getElementById("yoOpt"+count).disabled = false;
-                    }
-                }                
+                //do fetch for the trainer or can-do activities, then check the following:
+                // for(var j in trainer.trainerActivities){
+                //     if(trainer.trainerActivities[j].activityId == 4)
+                //     {
+                //         document.getElementById("carOpt"+count).disabled = false;
+                //     }
+                //     if(trainer.trainerActivities[j].activityId == 14){
+                //         document.getElementById("stOpt"+count).disabled = false;
+                //     }
+                //     if(trainer.trainerActivities[j].activityId == 24){
+                //         document.getElementById("kbOpt"+count).disabled = false;
+                //     }
+                //     if(trainer.trainerActivities[j].activityId == 34){
+                //         document.getElementById("yoOpt"+count).disabled = false;
+                //     }
+                // }                
             }
             //count++
         }
@@ -533,35 +536,41 @@ function getFullTime(hours, minutes){
 /* EDIT TRAINER PROFILE SECTION */
 function getTrainerProfileForm(trainer){
     //do we have to pass in an id?
+    let trainerBirthDateOnly = trainer.birthDate.slice(0,10);
 
 
     //fill in everything but the password. Trainer should be required to enter their current password to make changes.
     document.getElementById("currEmail").value = trainer.email;
     document.getElementById("inputFName").value = trainer.fName;
     document.getElementById("inputLName").value = trainer.lName;
-    document.getElementById("birthDate").value = trainer.birthDate;
+    document.getElementById("birthDate").value = trainerBirthDateOnly;
     document.getElementById("gender").value = trainer.gender;
  
     for(var i in trainer.trainerAtivities){ //update checked status of activities
         if(trainer.trainerActivities[i].activityId == 4){
             document.getElementById("cardio").checked = true;
-            document.getElementById("cardioPrice").value = trainer.activities[i].activityPrice;
+            document.getElementById("cardioPrice").value = trainer.activities[i].trainerPriceForActivity;
             document.getElementById("cardioPrice").disabled = false;        
         }
         else if(trainer.trainerActivities[i].activityId == 14){
             document.getElementById("strengthTraining").checked = true;
-            document.getElementById("strengthTrainingPrice").value = trainer.activities[i].activityPrice;
+            document.getElementById("strengthTrainingPrice").value = trainer.activities[i].trainerPriceForActivity;
             document.getElementById("strengthTrainingPrice").disabled = false;
         }
         else if(trainer.trainerActivities[i].activityId == 24){
             document.getElementById("kickboxing").checked = true;
-            document.getElementById("kickboxingPrice").value = trainer.activities[i].activityPrice;
+            document.getElementById("kickboxingPrice").value = trainer.activities[i].trainerPriceForActivity;
             document.getElementById("kickboxingPrice").disabled = false;
         }
         else if(trainer.trainerActivities[i].activityId == 34){
             document.getElementById("yoga").checked = true;
-            document.getElementById("yogaPrice").value = trainer.activities[i].activityPrice;
+            document.getElementById("yogaPrice").value = trainer.activities[i].trainerPriceForActivity;
             document.getElementById("yogaPrice").disabled = false;
         }
     }
+}
+
+function trainerEditProfile(){
+    //WORK THIS ONE SIMILARLY TO THE EDITCUSTOMERPROFILE()
+    //set up a bodyObj, then do a Put with the updated object
 }
