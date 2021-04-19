@@ -143,7 +143,7 @@ function showEditTrainerApptModal(apptID){
             }
             
             //set up HTML 
-            let html = "<div class=\"modal-content\"><span class=\"close\" onclick=\"closeEditCustApptModal()\">&times;</span>";
+            let html = "<div class=\"modal-content\"><span class=\"close\" onclick=\"closeEditTrainerApptModal()\">&times;</span>";
             html += "<h1 class=\"modal-header text-center\">Appoitment Details</h1><br>";
             html += "<div class=\"row\"><div class=\"col-md-4\"><h3>Date/Time:</h3></div><div class=\"col-md-8\"><h3>";
             html += appt.apptDate + " at " + appt.startTime + " - " +  appt.endTime  +"</h3></div></div>";
@@ -319,6 +319,7 @@ function previousMonth() {
 
 function showEditAvailabilityModal(selectedDate){
     // when trainer clicks on a calendar date, pop up that date with any existing availabile appointments they have.
+    console.log("selectedDate is " + selectedDate);
 
     //get any AVAILABLE appointments associated w/ TrainerID on that date
     let trainerId = getTrainerId();
@@ -364,29 +365,42 @@ function showEditAvailabilityModal(selectedDate){
                 html += "<td><input disabled type=\"time\" id=endTime-"+apptArray[i].apptID+" name=\"endTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullEndTime+" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
                 html += "<td><select disabled id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+"><option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
                 html += "<td><input disabled type=\"text\" name=\"price-"+apptArray[i].apptID+"\" value="+apptArray[i].price+" style=\"max-width:80px;\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
-                html += "<td id=\"editAvailApptBtn\"><button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+apptArray[i].apptID+")\">Edit</button></td>"; //Button for EDIT
-                html += "<td><button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+apptArray[i].apptID+")\">Delete</button></td>"; //Button for DELETE
+                html += "<td id=\"editAvailApptBtn"+apptArray[i].apptID+"\"><button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+apptArray[i].apptID+")\">Edit</button></td>"; //Button for EDIT
+                html += "<td id=\"deleteApptBtn"+apptArray[i].apptID+"\"><button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+apptArray[i].apptID+")\">Delete</button></td>"; //Button for DELETE
                 html += "</tr>"; //end row
                 count++;
 
-                //add disabled attributes to activities trainers don't say they can do
-                //get trainer to get their activities
-                const trainerApiUrl = 
-                for(var j in trainer.trainerActivities){
-                    if(trainer.trainerActivities[j].activityId == 4)
-                    {
-                        document.getElementById("carOpt"+apptArray[i].apptID).disabled = false;
+                //get trainer activity IDs to disable activity options trainers can't do
+                const trainerApiUrl = "https://localhost:5001/api/Activity/GetTrainerActivities/"+trainerId;
+                fetch(trainerApiUrl).then(function(response){
+                    console.log(response);
+                    return response.json();
+                }).then(function(json){
+                    let activityIDs = [];
+                    for(var j in json){
+                        activityIDs.push(json[j]);
+                        console.log("activityIDs["+j+"]:");
+                        console.log(activityIDs[j]);
                     }
-                    if(trainer.trainerActivities[j].activityId == 14){
-                        document.getElementById("stOpt"+apptArray[i].apptID).disabled = false;
+                    for(var k in activityIDs){
+                        //if an activity id is found, enable that select option
+                        if(activityIDs[k] == 4)
+                        {
+                            document.getElementById("carOpt"+apptArray[i].apptID).disabled = false;
+                        }
+                        else if(activityIDs[k] == 14){
+                            document.getElementById("stOpt"+apptArray[i].apptID).disabled = false;
+                        }
+                        else if(activityIDs[k].activityId == 24){
+                            document.getElementById("kbOpt"+apptArray[i].apptID).disabled = false;
+                        }
+                        else if(activityIDs[k] == 34){
+                            document.getElementById("yoOpt"+apptArray[i].apptID).disabled = false;
+                        }
                     }
-                    if(trainer.trainerActivities[j].activityId == 24){
-                        document.getElementById("kbOpt"+apptArray[i].apptID).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 34){
-                        document.getElementById("yoOpt"+apptArray[i].apptID).disabled = false;
-                    }
-                }
+                }).catch(function(error){
+                    console.log(error)
+                })
             }
         }
         else {
@@ -395,35 +409,51 @@ function showEditAvailabilityModal(selectedDate){
                 //add 3 ENABLED rows to table as above, but ids of property-count
                 html += "<tr><td><input type=\"time\" id=startTime-"+i+" name=\"startTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\"></td>"; //start time, START DISABLED
                 html += "<td><input type=\"time\" id=endTime-"+i+" name=\"endTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
-                html += "<td><select id=activity-"+i+" name=\"activities\" ><option disabled id=\"carOpt"+count+"\" value=\"4\">Cardio</option><option disabled id=\"stOpt"+count+"\" value=\"14\">Strength Training</option><option disabled id=\"kbOpt"+count+"\" value=\"24\">Kickboxing</option><option disabled id=\"yoOpt"+count+"\" value=\"34\">Yoga</option></select>"; //activity, START DISABLED
+                html += "<td><select id=activity-"+i+" name=\"activities\" ><option disabled id=\"carOpt"+i+"\" value=\"4\">Cardio</option><option disabled id=\"stOpt"+i+"\" value=\"14\">Strength Training</option><option disabled id=\"kbOpt"+count+"\" value=\"24\">Kickboxing</option><option disabled id=\"yoOpt"+count+"\" value=\"34\">Yoga</option></select>"; //activity, START DISABLED
                 html += "<td><input disabled type=\"text\" name=\"price-"+i+"\" value=\"\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
-                html += "<td id=\"editAvailApptBtn\"><button class=\"btn btn-success\" type=\"button\" onclick=\"validateNewAppt("+count+")\">Save</button></td>"; //SAVE button, send in count to be able to access each input and validate/submit
-                html += "<td></td>"; //BLANK td
+                html += "<td id=\"editAvailApptBtn"+i+"\"><button class=\"btn btn-success\" type=\"button\" onclick=\"validateNewAppt("+i+","+selectedDate+")\">Save</button></td>"; //SAVE button, send in count to be able to access each input and validate/submit
+                html += "<td id=\"deleteApptBtn"+i+"\"></td>"; //BLANK td
                 count++; //increment count as with i so it stays updated
+                
 
-                for(var j in trainer.trainerActivities){
-                    if(trainer.trainerActivities[j].activityId == 4)
-                    {
-                        document.getElementById("carOpt"+count).disabled = false;
+                //get list of activityIds to disable activity select options trainers say they can't do
+                const trainerApiUrl = "https://localhost:5001/api/Activity/GetTrainerActivities/"+trainerId;
+                fetch(trainerApiUrl).then(function(response){
+                    console.log(response);
+                    return response.json();
+                }).then(function(json){
+                    let activityIDs = [];
+                    for(var j in json){
+                        activityIDs.push(json[j]);
+                        console.log("activityIDs["+j+"]:");
+                        console.log(activityIDs[j]);
                     }
-                    if(trainer.trainerActivities[j].activityId == 14){
-                        document.getElementById("stOpt"+count).disabled = false;
+                    for(var k in activityIDs){
+                        //if an activity id is found, enable that select option
+                        if(activityIDs[k] == 4)
+                        {
+                            document.getElementById("carOpt"+i).disabled = false;
+                        }
+                        else if(activityIDs[k] == 14){
+                            document.getElementById("stOpt"+i).disabled = false;
+                        }
+                        else if(activityIDs[k].activityId == 24){
+                            document.getElementById("kbOpt"+i).disabled = false;
+                        }
+                        else if(activityIDs[k] == 34){
+                            document.getElementById("yoOpt"+i).disabled = false;
+                        }
                     }
-                    if(trainer.trainerActivities[j].activityId == 24){
-                        document.getElementById("kbOpt"+count).disabled = false;
-                    }
-                    if(trainer.trainerActivities[j].activityId == 34){
-                        document.getElementById("yoOpt"+count).disabled = false;
-                    }
-                }                
+                }).catch(function(error){
+                    console.log(error)
+                })
             }
-            //count++
         }
         //set up table close
         html += "</tbody></table>";
 
         //add a div with centered button for "add more rows", onclick call AddMoreRows(count)
-        html += "<div class=\"row text-center\"><button class=\"btn btn-lg btn-primary\" onclick=\"addRow("+count+")\">Add More Rows</button></div>";
+        html += "<div class=\"row text-center\"><button class=\"btn btn-lg btn-primary\" onclick=\"addRow("+count, selectedDate+")\">Add More Rows</button></div>";
         //close modal-content and modal-dialog divs
         html += "</div></div>";
         //addMoreRows sends in count to populate new table row
@@ -441,7 +471,7 @@ function showEditAvailabilityModal(selectedDate){
     })
 
 }
-function addRow(count){
+function addRow(count, selectedDate){
     //the following should go in an AddRow() method
     if(count % 10 == 4){ //if 4 is the last digit of the number, it's the same as an existing apptID
         count++;
@@ -452,23 +482,60 @@ function addRow(count){
         newRow.id = "row-"+count;
         let rowHtml = "<td><input type=\"time\" id=startTime-"+count+" name=\"startTime"+count+"\" value=\"\" min=\"06:00\" max=\"18:00\"></td>";
         rowHtml += "<td><input type=\"time\" id=endTime-"+count+" name=\"endTime"+count+"\" value=\"\" min=\"06:00\" max=\"18:00\" ></td>";
-        rowHtml += "<td><select id=activity-"+count+" name=\"activities\"><option value=\"4\">Cardio</option><option value=\"14\">Strength Training</option><option value=\"24\">Kickboxing</option><option value=\"34\">Yoga</option></select></td>"; 
+        rowHtml += "<td><select id=activity-"+count+" name=\"activities\"><option disabled id=\"carOpt"+count+"\" value=\"4\">Cardio</option><option disabled id=\"stOpt"+count+"\" value=\"14\">Strength Training</option><option disabled id=\"kbOpt"+count+"\" value=\"24\">Kickboxing</option><option id=\"yoOpt"+count+"\" disabled value=\"34\">Yoga</option></select></td>"; 
         rowHtml += "<td><input disabled type=\"text\" name=\"price-"+count+"\" value=\"\" style=\"max-width:80px;\"></td>";
-        rowHtml +="<td id=\"editAvailApptBtn\"><button class=\"btn btn-success\" type=\"button\" onclick=\"validateNewAppt("+count+")\">Save</button></td><td></td>"; //final td is blank because it's new
-        count++; //increment count
+        rowHtml +="<td id=\"editAvailApptBtn"+count+"\"><button class=\"btn btn-success\" type=\"button\" onclick=\"validateNewAppt("+count, selectedDate+")\">Save</button></td><td id=\"deleteApptBtn"+count+"\"></td>"; //final td is blank because it's new
+
+        //set inner HTML and add row
         newRow.innerHTML = rowHtml;
         editAvailTable.appendChild(newRow);
+
+        //get trainer activity ids based on what they can do, update disabled select options as needed
+        let trainerId = getTrainerId();
+        const trainerApiUrl = "https://localhost:5001/api/Activity/GetTrainerActivities/"+trainerId;
+        fetch(trainerApiUrl).then(function(response){
+            console.log(response);
+            return response.json();
+        }).then(function(json){
+            let activityIDs = [];
+            for(var i in json){
+                activityIDs.push(json[i]);
+                console.log("activityIDs["+i+"]:");
+                console.log(activityIDs[i]);
+            }
+            console.log("count at line 505 is " + count);
+            for(var j in activityIDs){
+                //if an activity id is found, enable that select option
+                if(activityIDs[j] == 4)
+                {
+                    document.getElementById("carOpt"+(count-1)).disabled = false;
+                }
+                else if(activityIDs[j] == 14){
+                    document.getElementById("stOpt"+(count-1)).disabled = false;
+                }
+                else if(activityIDs[j].activityId == 24){
+                    document.getElementById("kbOpt"+(count-1)).disabled = false;
+                }
+                else if(activityIDs[j] == 34){
+                    document.getElementById("yoOpt"+(count-1)).disabled = false;
+                }
+            }
+        }).catch(function(error){
+            console.log(error)
+        })
+
+        count++; //increment count
     }
 }
 
 function enableApptEdit(apptID){
     //enable startTime-apptID, endTime-apptID, and activity-apptID
     document.getElementById("startTime-"+apptID).disabled = false;
-    document.getElementById("endTime-"+apptID).dsabled = !disabled;
+    document.getElementById("endTime-"+apptID).dsabled = false;
     document.getElementById("activity-"+apptID).disabled = false;
     //change edit button to a save button
     let html = "<button class=\"btn btn-success\" type=\"button\" onclick=\"editAvailableAppt("+apptID+")\">Save Changes</button>";
-    document.getElementById("editAvailApptBtn").innerHTML = html;
+    document.getElementById("editAvailApptBtn"+apptID).innerHTML = html;
 }
 
 function editAvailableAppt(apptID){
@@ -503,6 +570,60 @@ function editAvailableAppt(apptID){
     })
 
     //then disable the fields again and change the Save button back to an edit button
+}
+
+function validateNewAppt(i, selectedDate){
+    //get values of startTime-i, endTime-i, activity-i, price-i
+    let startTime = document.getElementById("startTime-"+i).value;
+    console.log("start time is " + startTime);
+    let endTime = document.getElementById("endTime-"+i).value;
+    let activityId = document.getElementById("activity-"+i).value;
+    console.log("activity Id is " + activityId);
+    let price = document.getElementById("price-"+i).value;
+    console.log("price is ");
+    console.log(price);
+    //create new bodyObj to send as appt
+    var bodyObj = {
+        appointmentDate: selectedDate,
+        appointmentTrainer: {
+            trainerId: getTrainerId(),
+            trainerActivities: [{
+                activityId: activityId
+            }]
+        },
+        appointmentCost: price
+
+    }
+    //make post call to create new appt with bodyObj, startTime, and endTime
+    const apptApiUrl = "https://localhost:5001/api/Appointment/WriteAvailableAppointment/"+startTime+"/"+endTime;
+    fetch(apptApiUrl, {
+        method: "POST",
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify(bodyObj)
+    })
+    .then(function(response){
+        console.log(response);
+        //update i's row fields to be disabled and the save and delete button
+        document.getElementById("startTime-"+i).disabled = true;
+        document.getElementById("endTime-"+i).disabled = true;
+        document.getElementById("activity-"+i).disabled = true;
+
+        //GET NEW APPT ID, SET THE ENABLEAPPTEDIT() AND DELETEAPPOINTMENT() TO THOSE IDs INSTEAD OF I
+        //update save button to edit
+        let newSaveBtn = "<button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+i+")\">Edit</button>";
+        document.getElementById("editAvailApptBtn"+i).innerHTML = newSaveBtn;
+        //add delete button 
+        let newDeleteBtn = "<button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+i+")\">Delete</button>";
+        document.getElementById("deleteApptBtn"+i).innerHTML = newDeleteBtn;
+
+    })
+}
+
+function deleteAppointment(apptID){
+    //delete appointment by ID
 }
 
 
