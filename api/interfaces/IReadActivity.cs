@@ -7,6 +7,6 @@ namespace api.interfaces
     {
         Activity Read(int id);
         List<Activity> ReadAll();
-        List<Activity> GetTrainerActivities(int trnID);
+        List<int> GetTrainerActivities(int trainerId);
     }
 }
