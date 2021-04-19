@@ -31,14 +31,14 @@ namespace api.Controllers
             IReadActivity ra = new ReadActivity();
             return ra.Read(id);
         }
-        [EnableCors("AnotherPolicy")]
-        [Route("[action]/{id}")]
-        [HttpGet]
-        public List<Activity> GetTrainerActivities(int id)
-        {
-            IReadActivity ra = new ReadActivity();
-            return ra.GetTrainerActivities(id);
-        }
+        // [EnableCors("AnotherPolicy")]
+        // [Route("[action]/{id}")]
+        // [HttpGet]
+        // public List<Activity> GetTrainerActivities(int id)
+        // {
+        //     IReadActivity ra = new ReadActivity();
+        //     return ra.GetTrainerActivities(id);
+        // }
 
         [EnableCors("AnotherPolicy")]
         [Route("[action]/{id}")]
