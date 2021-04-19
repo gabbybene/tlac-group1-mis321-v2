@@ -577,49 +577,56 @@ function validateNewAppt(i, selectedDate){
     let startTime = document.getElementById("startTime-"+i).value;
     console.log("start time is " + startTime);
     let endTime = document.getElementById("endTime-"+i).value;
-    let activityId = document.getElementById("activity-"+i).value;
-    console.log("activity Id is " + activityId);
-    let price = document.getElementById("price-"+i).value;
-    console.log("price is ");
-    console.log(price);
-    //create new bodyObj to send as appt
-    var bodyObj = {
-        appointmentDate: selectedDate,
-        appointmentTrainer: {
-            trainerId: getTrainerId(),
-            trainerActivities: [{
-                activityId: activityId
-            }]
-        },
-        appointmentCost: price
-
+    //if endTime is <= startTime, show error message
+    if(endTime <= startTime){
+        alert("End time must be later than start time.");
+        document.getElementById("endTime-"+i).focus();
     }
-    //make post call to create new appt with bodyObj, startTime, and endTime
-    const apptApiUrl = "https://localhost:5001/api/Appointment/WriteAvailableAppointment/"+startTime+"/"+endTime;
-    fetch(apptApiUrl, {
-        method: "POST",
-        headers: {
-            "Accept": 'application/json',
-            "Content-Type": 'application/json'
-        },
-        body: JSON.stringify(bodyObj)
-    })
-    .then(function(response){
-        console.log(response);
-        //update i's row fields to be disabled and the save and delete button
-        document.getElementById("startTime-"+i).disabled = true;
-        document.getElementById("endTime-"+i).disabled = true;
-        document.getElementById("activity-"+i).disabled = true;
-
-        //GET NEW APPT ID, SET THE ENABLEAPPTEDIT() AND DELETEAPPOINTMENT() TO THOSE IDs INSTEAD OF I
-        //update save button to edit
-        let newSaveBtn = "<button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+i+")\">Edit</button>";
-        document.getElementById("editAvailApptBtn"+i).innerHTML = newSaveBtn;
-        //add delete button 
-        let newDeleteBtn = "<button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+i+")\">Delete</button>";
-        document.getElementById("deleteApptBtn"+i).innerHTML = newDeleteBtn;
-
-    })
+    else {
+        let activityId = document.getElementById("activity-"+i).value;
+        console.log("activity Id is " + activityId);
+        let price = document.getElementById("price-"+i).value;
+        console.log("price is ");
+        console.log(price);
+        //create new bodyObj to send as appt
+        var bodyObj = {
+            appointmentDate: selectedDate,
+            appointmentTrainer: {
+                trainerId: getTrainerId(),
+                trainerActivities: [{
+                    activityId: activityId
+                }]
+            },
+            appointmentCost: price
+    
+        }
+        //make post call to create new appt with bodyObj, startTime, and endTime
+        const apptApiUrl = "https://localhost:5001/api/Appointment/WriteAvailableAppointment/"+startTime+"/"+endTime;
+        fetch(apptApiUrl, {
+            method: "POST",
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(bodyObj)
+        })
+        .then(function(response){
+            console.log(response);
+            //update i's row fields to be disabled and the save and delete button
+            document.getElementById("startTime-"+i).disabled = true;
+            document.getElementById("endTime-"+i).disabled = true;
+            document.getElementById("activity-"+i).disabled = true;
+    
+            //GET NEW APPT ID, SET THE ENABLEAPPTEDIT() AND DELETEAPPOINTMENT() TO THOSE IDs INSTEAD OF I
+            //update save button to edit
+            let newSaveBtn = "<button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+i+")\">Edit</button>";
+            document.getElementById("editAvailApptBtn"+i).innerHTML = newSaveBtn;
+            //add delete button 
+            let newDeleteBtn = "<button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+i+")\">Delete</button>";
+            document.getElementById("deleteApptBtn"+i).innerHTML = newDeleteBtn;
+        })
+    }
+    
 }
 
 function deleteAppointment(apptID){
