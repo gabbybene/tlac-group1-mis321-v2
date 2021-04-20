@@ -12,7 +12,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT * FROM Trainer t JOIN Account a ON t.AcctID=a.AcctID WHERE a.AcctID=@AcctID";
+            cmd.CommandText = @"SELECT trainerid,fname,lname,dob,gender,t.acctid,a.acctid,a.password,phone FROM Trainer t JOIN Account a ON t.AcctID=a.AcctID WHERE a.AcctID=@AcctID";
             cmd.Parameters.AddWithValue("@AcctID",emailAddress);
             cmd.Prepare();
             
@@ -31,7 +31,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT * FROM Trainer t JOIN Account a ON t.AcctID=a.AcctID WHERE trainerID=@trainerID";
+            cmd.CommandText = @"SELECT trainerid,fname,lname,dob,gender,t.acctid,a.acctid,a.password,phone FROM Trainer t JOIN Account a ON t.AcctID=a.AcctID WHERE trainerID=@trainerID";
             cmd.Parameters.AddWithValue("@trainerID",id);
             cmd.Prepare();
             using MySqlDataReader rdr = cmd.ExecuteReader();
@@ -50,7 +50,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
             cmd.Connection = con;
-            cmd.CommandText = @"SELECT * FROM Trainer t JOIN Account a ON t.AcctID=a.AcctID";
+            cmd.CommandText = @"SELECT trainerid,fname,lname,dob,gender,t.acctid,a.acctid,a.password,phone FROM Trainer t JOIN Account a ON t.AcctID=a.AcctID";
             using MySqlDataReader rdr = cmd.ExecuteReader();
 
             List<Trainer> allTrainers = new List<Trainer>();

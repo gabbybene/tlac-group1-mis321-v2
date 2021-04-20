@@ -11,17 +11,14 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
 
-            //this is how the update can be done in one query?
-            // cmd.CommandText = @"UPDATE account a, trainer t SET a.AcctID=@AcctID, t.AcctID=@AcctID, a.Password=@password,  t.fName=@fname, t.lName=@lname, t.DOB=@dob, t.Gender=@gender WHERE a.AcctID=@AcctID";
-            cmd.CommandText = @"UPDATE account SET AcctID=@AcctID, Password=@password WHERE AcctID=@AcctID";
-            cmd.Parameters.AddWithValue("@AcctID", i.email);
+            cmd.CommandText = @"UPDATE account SET AcctID=@email, Password=@password WHERE AcctID=(SELECT AcctID from Trainer WHERE TrainerID=@trnid);";
+            cmd.Parameters.AddWithValue("@trnid", i.trainerId);
+            cmd.Parameters.AddWithValue("@email", i.email);
             cmd.Parameters.AddWithValue("@password", i.password);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
-
-            cmd.CommandText = @"UPDATE trainer SET AcctID=@email, fName=@fname, lName=@lname, DOB=@dob, Gender=@gender WHERE AcctID=@email";
-            cmd.Parameters.AddWithValue("@email", i.email);
+            cmd.CommandText = @"UPDATE trainer SET fname=@fname, lname=@lname, DOB=@dob, gender=@gender, phone=@phone WHERE AcctID=@email";
             cmd.Parameters.AddWithValue("@fname", i.fName);
             cmd.Parameters.AddWithValue("@lname", i.lName);
             cmd.Parameters.AddWithValue("@dob", i.birthDate);
