@@ -21,12 +21,13 @@ namespace api.Database{
             cmd.Prepare();
             cmd.ExecuteNonQuery();
 
-            cmd.CommandText = @"INSERT into customer (fname, lname, DOB, gender, AccountID, phone) VALUES (@fname,@lname,@dob,@gender, (SELECT AcctID FROM Account WHERE AcctID=@email), @phone)";
+            cmd.CommandText = @"INSERT into customer (fname, lname, DOB, gender, AccountID, phone, fitnessGoal) VALUES (@fname,@lname,@dob,@gender, (SELECT AcctID FROM Account WHERE AcctID=@email), @phone, @goal)";
             cmd.Parameters.AddWithValue("@fname", i.fName);
             cmd.Parameters.AddWithValue("@lname", i.lName);
             cmd.Parameters.AddWithValue("@dob", i.birthDate);
             cmd.Parameters.AddWithValue("@gender", i.gender);
             cmd.Parameters.AddWithValue("@phone", i.phoneNo);
+            cmd.Parameters.AddWithValue("@goal", i.fitnessGoals);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
@@ -38,6 +39,10 @@ namespace api.Database{
                 cmd.Connection=con;
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
+            }
+            if(i.referredBy!=null){
+                cmd.CommandText = @"UPDATE customer SET Refer_CustID=(SELECT CustID from Customer where AccountID=@referrer) WHERE AccountID=@email)";
+                cmd.Parameters.AddWithValue("@referrer", i.referredBy.email);
             }
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using api.models;
 using api.interfaces;
 using MySql.Data.MySqlClient;
@@ -17,12 +18,15 @@ namespace api.Database{
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
-            cmd.CommandText = @"UPDATE customer SET fName=@fname, lName=@lname, DOB=@dob, Gender=@gender, Phone=@phone WHERE AccountID=@AcctID";
+            cmd.CommandText = @"UPDATE customer SET fName=@fname, lName=@lname, DOB=@dob, Gender=@gender, Phone=@phone, fitnessGoal=@goal WHERE CustID=@cust";
             cmd.Parameters.AddWithValue("@fname", i.fName);
             cmd.Parameters.AddWithValue("@lname", i.lName);
             cmd.Parameters.AddWithValue("@dob", i.birthDate);
             cmd.Parameters.AddWithValue("@gender", i.gender);
             cmd.Parameters.AddWithValue("@phone", i.phoneNo);
+            cmd.Parameters.AddWithValue("@goal", i.fitnessGoals);
+            cmd.Parameters.AddWithValue("@cust", i.customerId);
+            Console.WriteLine(i.fitnessGoals);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();
@@ -37,6 +41,10 @@ namespace api.Database{
                 cmd.Connection=con;
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
+            }
+            if(i.referredBy!=null){
+                cmd.CommandText = @"UPDATE customer SET Refer_CustID=(SELECT CustID from Customer where AccountID=@referrer) WHERE CustID=@cust)";
+                cmd.Parameters.AddWithValue("@referrer", i.referredBy.email);
             }
         }
 
