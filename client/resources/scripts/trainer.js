@@ -14,6 +14,8 @@ var currentYear = today.getFullYear();
 //Check https://github.com/niinpatel/calendarHTML-Javascript/blob/master/scripts.js for a possible JS calendar
 function handleTrainerDashboardOnLoad(){ //load each part of dashboard
     let id = getTrainerId();
+    //update href of MyAccount in navbar
+    
     // let trainer = [];
     const trainerApiUrl = "https://localhost:5001/api/Trainer/GetTrainerByID/"+id;
     fetch(trainerApiUrl).then(function(response){
@@ -39,6 +41,12 @@ function getTrainerId(){
     return id;
 }
 
+function getDashboardHref(){
+    let trainerId = getTrainerId();
+    let dashboardUrl = "./trainer.html?id="+trainerId;
+    return dashboardUrl;
+}
+
 
 function getConfirmedAppointments(trainer){
     //get any trainer appointments that have "customer" !=null and trainerID matches trainerID
@@ -50,7 +58,6 @@ function getConfirmedAppointments(trainer){
         return response.json();
     }).then(function(json){
         if(json[0] == undefined){
-            console.log("no appointments found");
              //will return the empty []
             html += "<h2>You don't have any upcoming appointments scheduled at this time.</h2>";
         }
@@ -64,7 +71,7 @@ function getConfirmedAppointments(trainer){
                 let apptDate = getFormattedDate(object.appointmentDate);
                 let startTime = getFormattedTime(object.startTime.hours, object.startTime.minutes);
                 let endTime = getFormattedTime(object.endTime.hours, object.endTime.minutes);
-                let activity =  object.appointmentTrainer.trainerActivities[0].activityName;
+                let activity =  object.appointmentActivity.activityName;
                 let customerName = object.appointmentCustomer.fName+ " " + object.appointmentCustomer.lName;
                 //print buttons with appt details
                 html += "<button type=\"button btn\" class=\"list-group-item list-group-item-action\" onclick=\"showEditTrainerApptModal("+object.appointmentId+")\">";
@@ -135,7 +142,7 @@ function showEditTrainerApptModal(apptID){
                 apptDate: getFormattedDate(object.appointmentDate),
                 startTime: getFormattedTime(object.startTime.hours, object.startTime.minutes),
                 endTime: getFormattedTime(object.endTime.hours, object.endTime.minutes),
-                activity:  object.appointmentTrainer.trainerActivities[0].activityName,
+                activity:  object.appointmentActivity.activityName,
                 customerName: object.appointmentCustomer.fName+ " " + object.appointmentCustomer.lName,
                 price: object.appointmentCost,
             }
@@ -317,25 +324,20 @@ function previousMonth() {
 
 function showEditAvailabilityModal(selectedDate){
     // when trainer clicks on a calendar date, pop up that date with any existing availabile appointments they have.
-    console.log("selectedDate is " + selectedDate);
 
-    //get any AVAILABLE appointments associated w/ TrainerID on that date
-    // let trainerId = getTrainerId();
+    //get any AVAILABLE appointments associated w/ TrainerID on that datet
     let trainerId = getTrainerId();
     const apptApiUrl = "https://localhost:5001/api/Appointment/GetAvailableAppointmentsByDateForTrainer/"+trainerId+"/"+selectedDate;
     fetch(apptApiUrl).then(function(response){
         console.log(response);
         return response.json();
     }).then(function(json){
-        // console.log("json[0].startTime ");
-        // console.log(json[0].startTime.hours + ":" + json[0].startTime.minutes);
         let apptArray = [];
         for(var i in json){
             //for every json object, create simplified object with only the needed items (ID, date, startTime, endTime, ActivityId, Price)
             //stringify, then re-parse to an object **couldn't get the start and end times to read without doing this**
             var tempStr = JSON.stringify(json[i]);
             var object = JSON.parse(tempStr);
-            console.log(object.startTime.hours + ":" + object.startTime.minutes);
             
             //add to apptArray
             apptArray[i] = {
@@ -343,10 +345,8 @@ function showEditAvailabilityModal(selectedDate){
                 apptDate: getFormattedDate(object.appointmentDate),
                 fullStartTime: getFullTime(object.startTime.hours, object.startTime.minutes), //e.g. 09:00, 14:00, etc
                 fullEndTime: getFullTime(object.endTime.hours, object.endTime.minutes),
-                // startTime: getFormattedTime(object.startTime.hours, object.startTime.minutes), //e.g. 9:00AM, 2:00PM, etc.
-                // endTime: getFormattedTime(object.endTime.hours, object.endTime.minutes),
-                activityId:  object.appointmentTrainer.trainerActivities[0].activityId,
-                price: object.appointmentCost //MIGHT MAKE THIS BASED ON THE DIFF BETWEEN STARTTIME AND ENDTIME?
+                activityId:  object.appointmentActivity.activityId,
+                price: object.appointmentCost 
             }
         }
         //set up starter HTML with table and headers
@@ -361,18 +361,16 @@ function showEditAvailabilityModal(selectedDate){
         //if appointments were found, set up a table with those appointment details
         if(apptArray.length > 0){
             for(var i in apptArray){
-                html += "<tr><td><input disabled type=\"time\" id=startTime-"+apptArray[i].apptID+" name=\"startTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullStartTime+" min=\"06:00\" max=\"18:00\"></td>"; //start time, START DISABLED
-                html += "<td><input disabled type=\"time\" id=endTime-"+apptArray[i].apptID+" name=\"endTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullEndTime+" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
-                console.log("id of the endTime is ")
+                html += "<tr><td><input type=\"time\" id=startTime-"+apptArray[i].apptID+" name=\"startTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullStartTime+" min=\"06:00\" max=\"18:00\" ></td>"; //start time, START DISABLED
+                html += "<td><input type=\"time\" id=endTime-"+apptArray[i].apptID+" name=\"endTime"+apptArray[i].apptID+"\" value="+apptArray[i].fullEndTime+" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
                 html += getActivityCellsForAppt(apptArray, i, trainerId);
                 // html += "<td><select id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+" onchange=\"updateApptPrice("+i+","+trainerId+")\"><option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
-                html += "<td><input disabled type=\"text\" name=\"price-"+apptArray[i].apptID+"\" id=\"price-"+apptArray[i].apptID+"\" value="+apptArray[i].price+" style=\"max-width:80px;\" value=\"\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
+                html += "<td><input type=\"text\" name=\"price-"+apptArray[i].apptID+"\" id=\"price-"+apptArray[i].apptID+"\" value="+apptArray[i].price+" style=\"max-width:80px;\" value=\"\" disabled></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
                 html += "<td id=\"editAvailApptBtn"+apptArray[i].apptID+"\"><button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+apptArray[i].apptID+")\">Edit</button></td>"; //Button for EDIT
                 html += "<td id=\"deleteApptBtn"+apptArray[i].apptID+"\"><button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteAppointment("+apptArray[i].apptID+", \'"+ selectedDate+"\')\">Delete</button></td>"; //Button for DELETE
                 html += "</tr>"; //end row
-                console.log("activityId");
-                console.log(apptArray[i].activityId);
-                // updateSelectedActivity(apptArray[i].activityId, apptArray[i].apptID);
+       
+                //update which activities are disabled
                 updateDisabledActivities(apptArray[i].apptID);
 
             }
@@ -384,7 +382,7 @@ function showEditAvailabilityModal(selectedDate){
                 html += "<tr><td><input type=\"time\" id=startTime-"+i+" name=\"startTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\"></td>"; //start time, START DISABLED
                 html += "<td><input type=\"time\" id=endTime-"+i+" name=\"endTime"+i+"\" value=\"\" min=\"06:00\" max=\"18:00\" ></td>"; //end time, START DISABLED
                 html += "<td><select id=activity-"+i+" name=\"activities\" onchange=\"updateApptPrice("+i+","+trainerId+")\" value=\"\" ><option disabled id=\"carOpt"+i+"\" value=\"4\">Cardio</option><option disabled id=\"stOpt"+i+"\" value=\"14\">Strength Training</option><option disabled id=\"kbOpt"+count+"\" value=\"24\">Kickboxing</option><option disabled id=\"yoOpt"+count+"\" value=\"34\">Yoga</option></select>"; //activity, START DISABLED
-                html += "<td><input disabled type=\"text\" name=\"price-"+i+"\" id=\"price-"+i+"\" value=\"\" style=\"max-width:80px;\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
+                html += "<td><input type=\"text\" name=\"price-"+i+"\" id=\"price-"+i+"\" value=\"\" style=\"max-width:80px;\"></td>"; //Price: auto-calculated. TEXT DISPLAY, DISABLED.
                 html += "<td id=\"editAvailApptBtn"+i+"\"><button class=\"btn btn-success\" type=\"button\" onclick=\"validateNewAppt("+i+", \'"+ selectedDate+"\')\">Save</button></td>"; //SAVE button, send in count to be able to access each input and validate/submit
                 html += "<td id=\"deleteApptBtn"+i+"\"></td>"; //BLANK td
                 count++; //increment count as with i so it stays updated
@@ -399,10 +397,17 @@ function showEditAvailabilityModal(selectedDate){
         //close modal-content and modal-dialog divs
         html += "</div></div>";
         //addMoreRows sends in count to populate new table row
-        
+
+
 
         //set inner HTML of modal
         document.getElementById("editTrainerApptModal").innerHTML = html;
+
+        //disable startTime and endTime to begin with
+        // for(var i in apptArray){
+        //     document.getElementById("startTime-"+apptArray[i].apptID).disabled = true;
+        //     document.getElementById("endTime-"+apptArray[i].apptID).disabled = true;
+        // }
 
         //Show Modal
         var modal = document.getElementById("editTrainerApptModal");
@@ -414,20 +419,19 @@ function showEditAvailabilityModal(selectedDate){
 }
 
 function getActivityCellsForAppt(apptArray, i, trainerId){
-    console.log("AAPPT ACTIVITY ID ");
-    console.log(apptArray[i].activityId);
-    let html = "<td><select id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+" onchange=\"updateApptPrice("+i+","+trainerId+")\">";
+    //updates selected activity for existing appointment in each row that is populated in the table
+    let html = "<td><select id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+" onchange=\"updateApptPrice("+apptArray[i].apptID+","+trainerId+")\">";
     if(apptArray[i].activityId == 4){
-        html += "<option selected value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED"
+        html += "<option selected value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\" value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED"
     }
     if(apptArray[i].activityId == 14){
-        "<option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option select id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
+        html += "<option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option selected id=\"stOpt"+apptArray[i].apptID+"\" value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
     }
     if(apptArray[i].activityId == 24){
-        "<option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option selected value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
+        html += "<option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\" value=\"14\">Strength Training</option><option selected value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
     }
     if(apptArray[i].activityId == 34){
-        html += "<option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option selected value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
+        html += "<option disabled value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\" value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option selected value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED
     }
     return html;
 }
@@ -516,10 +520,8 @@ function updateApptPrice(i, trainerId){
     }).then(function(json){
         for(var j in json){
             let dropdown = document.getElementById("activity-"+i);
-            let selectedValue = dropdown.options[dropdown.selectedIndex].value;
-            console.log("selected value: ");
-            console.log(selectedValue);
-            // let selectedValue = document.getElementById("activity-"+i).value;
+            let selectedValue = dropdown.value;
+
             if(json[j].activityId == selectedValue){
                 if(selectedValue == "4"){
                     //if select is cardio, update price value to cardio price
@@ -535,7 +537,7 @@ function updateApptPrice(i, trainerId){
                 }
                 else {
                     //if yoga, update to yoga price
-                    document.getElementById("price-"+i).value = json[j].trainerPriceForActivity;
+                    document.getElementById("price-"+apptArray[i].apptID).value = json[j].trainerPriceForActivity;
                 }
             }
         }
@@ -546,9 +548,10 @@ function updateApptPrice(i, trainerId){
 }
 
 function enableApptEdit(apptID){
+    /* CURRENTLY NOT WORKING because endTime-apptID will not enable for some reason */
     //enable startTime-apptID, endTime-apptID, and activity-apptID
     document.getElementById("startTime-"+apptID).disabled = false;
-    document.getElementById("endTime-"+apptID).dsabled = false;
+    document.getElementById("endTime-"+apptID).disabled = false;
     document.getElementById("activity-"+apptID).disabled = false;
     //change edit button to a save button
     let html = "<button class=\"btn btn-success\" type=\"button\" onclick=\"editAvailableAppt("+apptID+")\">Save Changes</button>";
@@ -557,8 +560,8 @@ function enableApptEdit(apptID){
 
 
 function editAvailableAppt(apptID){
-    console.log("appt id is " + apptID);
-    //get values from startTime-id, endTime-id, activity-id, and price-id, create new appt object with that and send in a PUT request
+    /* get values from startTime-id, endTime-id, activity-id, and price-id, 
+    create new appt object with that and send in a PUT request */
     let startTime = document.getElementById("startTime-"+apptID).value;
     let newStartTime = "0001-01-01T" + startTime + ":00";
 
@@ -566,7 +569,7 @@ function editAvailableAppt(apptID){
     let newEndTime = "0001-01-01T" + endTime + ":00";
 
     let newActivityID = document.getElementById("activity-"+apptID).value;
-    // make new body object to send in put request
+    // make new body object to send in PUT request
     let bodyObj = {
         appointmentId: apptID,
         startTime: newStartTime,
@@ -586,11 +589,12 @@ function editAvailableAppt(apptID){
         console.log(response);
     })
 
-    //then disable the fields again and change the Save button back to an edit button
-    document.getElementById("startTime-"+apptID).disabled = true;
-    document.getElementById("endTime-"+apptID).dsabled = true;
-    document.getElementById("activity-"+apptID).disabled = true;
-    let html = "<button class=\"btn btn-success\" type=\"button\" onclick=\"enableApptEdit("+apptID+")\">Edit</button>";
+    /* NOT WORKING RIGHT NOW because endTime-apptID won't enable and disable like startTime and activity */
+    //then disabapptArray[i].apptIle the fields again and change the Save button back to an edit button
+    // document.getElementById("startTime-"+apptID).disabled = true;
+    // document.getElementById("endTime-"+apptID).dsabled = true;
+    // document.getElementById("activity-"+apptID).disabled = true;
+    let html = "<button class=\"btn btn-secondary\" type=\"button\" onclick=\"enableApptEdit("+apptID+")\">Edit</button>";
     document.getElementById("editAvailApptBtn"+apptID).innerHTML = html;
 
 }
@@ -612,7 +616,8 @@ function validateNewAppt(i, date){
         let dropdown = document.getElementById("activity-"+i);
         let selectedActivity = dropdown.options[dropdown.selectedIndex].value;
         let activityId = selectedActivity;
-        // let activityId = document.getElementById("activity-"+i).value;
+        console.log('selected activity: ');
+        console.log(selectedActivity);
         let price = document.getElementById("price-"+i).value;
         //create new bodyObj to send as appt
         var bodyObj = {
@@ -626,8 +631,8 @@ function validateNewAppt(i, date){
             appointmentCost: price
     
         }
-        console.log("activityId of the new appt: " + activityId);
-        //make post call to create new appt with bodyObj, startTime, and endTime
+        console.log("activityId of the new appt: " + bodyObj.appointmentActivity.activityId);
+        //make POST call to create new appt with bodyObj, startTime, and endTime
         const apptApiUrl = "https://localhost:5001/api/Appointment/WriteAvailableAppointment/"+newStartTime+"/"+newEndTime;
         fetch(apptApiUrl, {
             method: "POST",
@@ -668,7 +673,7 @@ function deleteAppointment(apptID, date){
 
 
 function closeEditAvailabilityModal(){
-    var modal = document.getElementById("trainerEditAvailabilityModal");
+    var modal = document.getElementById("editTrainerApptModal");
     modal.style.display = "none";
 }
 
@@ -714,7 +719,7 @@ function getTrainerProfileForm(trainer){
         for(var i in json){
             if(json[i].activityId == 4){
                 document.getElementById("cardioSelect").checked = true;
-                console.log(json[i].price);
+                console.log(json[i].trainerPriceForActivity);
                 document.getElementById("cardioPrice").value = json[i].trainerPriceForActivity;
                 document.getElementById("cardioPrice").disabled = false; 
             }
@@ -741,7 +746,6 @@ function getTrainerProfileForm(trainer){
 
 
 function trainerEditProfile(){
-    //WORK THIS ONE SIMILARLY TO THE EDITCUSTOMERPROFILE()
     let id = getTrainerId();
     let trainer = [];
     const trainerApiUrl = "https://localhost:5001/api/Trainer/GetTrainerByID/"+id;
@@ -751,11 +755,9 @@ function trainerEditProfile(){
         return response.json();
     }).then(function(json){
         trainer = json;
-        console.log("got json back: trainer password is " + trainer.password);
-        
         //set up a bodyObj for trainer, then do a Put with the updated object
+
         //trainer MUST enter current password to make changes
-        
         if(document.getElementById("currPassword").value == undefined){
             document.getElementById("mustEnterCurrPasswordMsg").style.display = "block";
         }
@@ -766,76 +768,6 @@ function trainerEditProfile(){
             //only proceed if trainer entered the correct currPassword
             let bodyObj = getUpdatedTrainerObj(trainer);
             
-            // if(document.getElementById("newPassword").value != undefined){
-            //     inputPassword = document.getElementById("currPassword").value;
-            // }
-            // else {
-            //     //if they've entered a new password, set inputPassword to that
-            //     inputPassword = document.getElementById("newPassword").value;
-            // }
-            
-            // let inputEmail;
-            // if(document.getElementById("newEmail").value == undefined){
-            //     inputEmail = document.getElementById("currEmail");
-            // }
-            // else {
-            //     inputEmail = document.getElementById("newEmail").value;
-            // }
-
-            // let inputFirstName = document.getElementById("inputFName").value;
-            // let inputLastName = document.getElementById("inputLName").value;
-            // let dob = document.getElementById("birthDate").value;
-            // let inputGender = document.getElementById("trainerGender").value;
-    
-            // let activities = [];
-            // if(document.getElementById("cardioSelect").checked){
-            //     if(document.getElementById("cardioPrice").value > 0){
-            //         activities.push({
-            //             activityId: document.getElementById("cardioSelect").value,
-            //             trainerPriceForActivity: document.getElementById("cardioPrice").value
-            //         });
-            //     }
-            // }
-            // if(document.getElementById("stSelect").checked){
-            //     if(document.getElementById("strengthTrainingPrice").value > 0){
-            //         activities.push({
-            //             activityId: document.getElementById("stSelect").value,
-            //             trainerPriceForActivity: document.getElementById("strengthTrainingPrice").value
-            //         });
-            //     }
-            // }
-            // if(document.getElementById("kbSelect").checked){
-            //     if(document.getElementById("kickboxingPrice").value > 0){
-            //         activities.push({
-            //             activityId: document.getElementById("kbSelect").value,
-            //             trainerPriceForActivity: document.getElementById("kickboxingPrice").value
-            //         });
-            //     }
-            // }
-            // if(document.getElementById("yogaSelect").checked){
-            //     if(document.getElementById("yogaPrice".value > 0)){
-            //         activities.push({
-            //             activityId: document.getElementById("yogaSelect").value,
-            //             trainerPriceForActivity: document.getElementById("yogaPrice").value
-            //         });
-            //     }
-            // }
-            // if(activities.length == 0){
-            //     document.getElementById("mustSelectActivitiesErrorMsg").style.display = "block";
-            // }
-            // console.log(id);
-            // bodyObj = {
-            //     trainerId: getTrainerId(),
-            //     password: inputPassword,
-            //     birthDate: dob,
-            //     gender: inputGender,
-            //     phoneNo: "7775554321", //dummy phoneNo until the forom gets updated
-            //     trainerActivities: activities,
-            //     fName: inputFirstName,
-            //     lName: inputLastName,
-            //     email: inputEmail,
-            // }
-           
             //PUT new trainer object
             const putTrainerApiUrl = "https://localhost:5001/api/Trainer/";
             fetch(putTrainerApiUrl, {
@@ -849,7 +781,16 @@ function trainerEditProfile(){
             .then(function(response){
                 console.log(response);
                 //reload trainer profile form
-                getTrainerProfileForm(trainer);
+                const getTrainerApiUrl = "https://localhost:5001/api/Trainer/GetTrainerByID/"+trainer.trainerId;
+                fetch(getTrainerApiUrl).then(function(response){
+                    console.log(response);
+                    return response.json();
+                }).then(function(json){
+                    getTrainerProfileForm(json);
+                }).catch(function(error){
+                    console.log(error);
+                })
+                
             })
         }
     }).catch(function(error){
@@ -859,30 +800,30 @@ function trainerEditProfile(){
 
 function getUpdatedTrainerObj(){
     //gets and validates values from editTrainerProfile form, returns a formatted object we can send in PUT request
+    //handle password
     let inputPassword;
-    if(document.getElementById("newPassword").value == undefined){
+    if(document.getElementById("newPassword").value == undefined || document.getElementById("newPassword").value == ""){
         inputPassword = document.getElementById("currPassword").value;
     }
     else {
         //if they've entered a new password, set inputPassword to that
         inputPassword = document.getElementById("newPassword").value;
     }
-    
+    //handle email
     let inputEmail;
-    if(document.getElementById("newEmail").value == undefined){
-        console.log("new email is undefined");
-        inputEmail = document.getElementById("currEmail");
+    if(document.getElementById("newEmail").value == undefined || document.getElementById("newEmail").value == ""){
+        inputEmail = document.getElementById("currEmail").value;
     }
     else {
-        console.log("new email is " + document.getElementById("newEmail").value);
         inputEmail = document.getElementById("newEmail").value;
     }
-
+    //handle firstName, lastName, dob, gender
     let inputFirstName = document.getElementById("inputFName").value;
     let inputLastName = document.getElementById("inputLName").value;
     let dob = document.getElementById("birthDate").value;
     let inputGender = document.getElementById("trainerGender").value;
 
+    //handle activities by creating an array to put in the bodyObj
     let activities = [];
     if(document.getElementById("cardioSelect").checked){
         if(document.getElementById("cardioPrice").value > 0){
@@ -909,7 +850,7 @@ function getUpdatedTrainerObj(){
         }
     }
     if(document.getElementById("yogaSelect").checked){
-        if(document.getElementById("yogaPrice".value > 0)){
+        if(document.getElementById("yogaPrice").value > 0){
             activities.push({
                 activityId: document.getElementById("yogaSelect").value,
                 trainerPriceForActivity: document.getElementById("yogaPrice").value
@@ -917,18 +858,23 @@ function getUpdatedTrainerObj(){
         }
     }
     if(activities.length == 0){
+        //if no activities are selected, display error message
         document.getElementById("mustSelectActivitiesErrorMsg").style.display = "block";
     }
-    bodyObj = {
-        trainerId: getTrainerId(),
-        password: inputPassword,
-        birthDate: dob,
-        gender: inputGender,
-        phoneNo: "7775554321", //dummy phoneNo until the forom gets updated
-        trainerActivities: activities,
-        fName: inputFirstName,
-        lName: inputLastName,
-        email: inputEmail
+    //create bodyObj to send in PUT request back in EditTrainerProfile()
+    else {
+        bodyObj = {
+            trainerId: getTrainerId(),
+            password: inputPassword,
+            birthDate: dob,
+            gender: inputGender,
+            phoneNo: "7775554321", //dummy phoneNo until the forom gets updated
+            trainerActivities: activities,
+            fName: inputFirstName,
+            lName: inputLastName,
+            email: inputEmail
+        }
+        return bodyObj;
     }
-    return bodyObj;
+
 }
