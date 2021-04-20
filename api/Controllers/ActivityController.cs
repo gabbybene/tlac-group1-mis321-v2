@@ -25,28 +25,24 @@ namespace api.Controllers
         }
 
         // GET: api/Activity/5
+        [EnableCors("AnotherPolicy")]
         [HttpGet("{id}", Name = "GetActivity")]
         public Activity Get(int id)
         {
             IReadActivity ra = new ReadActivity();
             return ra.Read(id);
         }
-        // [EnableCors("AnotherPolicy")]
-        // [Route("[action]/{id}")]
-        // [HttpGet]
-        // public List<Activity> GetTrainerActivities(int id)
-        // {
-        //     IReadActivity ra = new ReadActivity();
-        //     return ra.GetTrainerActivities(id);
-        // }
 
+        //GET:  activityID and price associated with a TrainerID
         [EnableCors("AnotherPolicy")]
         [Route("[action]/{id}")]
         [HttpGet]
-        public List<int> GetTrainerActivities(int id){
+        public List<Activity> GetTrainerActivities(int id)
+        {
             IReadActivity ra = new ReadActivity();
             return ra.GetTrainerActivities(id);
         }
+
 
         // POST: api/Activity
         [EnableCors("AnotherPolicy")]

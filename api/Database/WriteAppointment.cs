@@ -32,12 +32,14 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
 
-            cmd.CommandText = @"INSERT into appointment (TrainerID,date,starttime, endtime,ActivityID) VALUES (@trainer,@date,@starttime,@endtime,@actid;";
+            cmd.CommandText = @"INSERT into appointment (TrainerID,date,starttime, endtime,ActivityID) VALUES (@trainer,@date,@starttime,@endtime,@actid);";
             cmd.Parameters.AddWithValue("@trainer", i.appointmentTrainer.trainerId);
             cmd.Parameters.AddWithValue("@date", i.appointmentDate);
             cmd.Parameters.AddWithValue("@starttime", startTime);
             cmd.Parameters.AddWithValue("@endtime", endTime);
             cmd.Parameters.AddWithValue("@actid", i.appointmentActivity.activityId);
+
+            //How do we keep track of the appointment cost?
             cmd.Connection = con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();

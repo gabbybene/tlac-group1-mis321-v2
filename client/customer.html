@@ -157,11 +157,11 @@
                     <div class="col-sm-6"> <!--Gender-->
                       <label for="custGender">Gender: How do you identify?</label>
                       <select style="padding-top: 10px; padding-bottom: 2px; width: 100%;" name="custGender" id="custGender" required>
-                        <option value="Male">Man</option>
-                        <option value="Female">Woman</option>
-                        <option value="Transgender">Transgender</option>
-                        <option value="Nonbinary">Non-binary / Non-conforming</option>
-                        <option value="NoResponse">I'd rather not say</option>
+                        <option value="male">Man</option>
+                        <option value="female">Woman</option>
+                        <option value="trans">Transgender</option>
+                        <option value="nonbi">Non-binary / Non-conforming</option>
+                        <option value="norsp">I'd rather not say</option>
                       </select>
                       <!-- <label for="gender">Gender</label>
                       <input type="text" id="gender" class="form-control form-floating" placeholder="Gender" required=""> -->
@@ -180,19 +180,19 @@
                         <h3>What activites do you prefer to do?</h3>
                         <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
                         <div class="form-check"> <!--Cardio-->
-                          <input class="form-check-input" type="checkbox" value="4" id="cardio">
+                          <input class="form-check-input" type="checkbox" id="cardio" value="4">
                           <label class="form-check-label" for="cardio">Cardio</label>
                         </div>
                         <div class="form-check"> <!--Strength Training-->
-                          <input class="form-check-input" type="checkbox" value="14" id="strengthTraining">
+                          <input class="form-check-input" type="checkbox"  id="strengthTraining" value="14">
                           <label class="form-check-label" for="strengthTraining">Strength Training</label>
                         </div>
                         <div class="form-check"> <!--Kickboxing-->
-                          <input class="form-check-input" type="checkbox" value="24" id="kickboxing">
+                          <input class="form-check-input" type="checkbox"  id="kickboxing" value="24">
                           <label class="form-check-label" for="kickboxing">Kickboxing</label>
                         </div>
                         <div class="form-check"> <!--Yoga-->
-                          <input class="form-check-input" type="checkbox" value="34" id="yoga">
+                          <input class="form-check-input" type="checkbox"  id="yoga" value="34">
                           <label class="form-check-label" for="yoga">Yoga</label>
                         </div>
                       </div>
@@ -206,8 +206,8 @@
                             <label class="form-check-label" for="yesReferred">Yes</label>
                           </div>
                           <div class="row">
-                            <label for="referrerName" style="padding-left: 24px;">If so, who:</label>
-                            <input type="text" id="referrerName" placeholder="Referrer's Name" disabled>
+                            <label for="referrerName" style="padding-left: 24px;">If so, what is their email?</label>
+                            <input type="text" id="referrerName" placeholder="Referrer's Email" disabled>
                           </div>
                         </div>
                         <div class="row form-check">
