@@ -635,7 +635,7 @@ function custEditProfile(){
             
             //If yesReferred is checked, get referrer's email (& id of referrerName) 
             if(document.getElementById("yesReferred").checked){
-                let referredByEmail = document.getElementById("referrerName");
+                let referredByEmail = document.getElementById("referrerName").value;
                 let referredById;
                 const findReferredApiUrl = "https://localhost:5001/api/Customer/"+referredByEmail;
                 fetch(findReferredApiUrl).then(function(response){
@@ -643,10 +643,15 @@ function custEditProfile(){
                     return response.json();
                 }).then(function(json){
                     //set referred by Id to the customer id that was found
+                    console.log("json.customerId is ");
+                    console.log(json.customerId);
                     referredById = json.customerId;
 
                     //if referredById was found, create customer object to send in body of PUT request
                     let bodyObj = getUpdatedCustomerObj();
+
+                    console.log("TEST");
+                    console.log(JSON.stringify(bodyObj));
 
                     const putCustApiUrl = "https://localhost:5001/api/Customer/PutCustomerWithReferredBy/"+referredById;
                     //make api call to UPDATE customer

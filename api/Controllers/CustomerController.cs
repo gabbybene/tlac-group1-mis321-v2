@@ -53,6 +53,20 @@ namespace api.Controllers
             wc.Write(c);
         }
 
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{id}")]
+        [HttpPost]
+        public void PostWithReferredBy([FromBody] Customer c, int id)
+        {
+            //get referredBy Customer to add to the customer sending into the Update() method
+            IReadCustomer rc = new ReadCustomer();
+            c.referredBy = rc.GetCustomerByID(id);
+            Console.WriteLine("found a customer with that id. ID is " + c.referredBy.customerId);
+
+            WriteCustomer wc = new WriteCustomer();
+            wc.Write(c);
+        }
+
         // PUT: api/Customer/
         [EnableCors("AnotherPolicy")]
         [HttpPut]
