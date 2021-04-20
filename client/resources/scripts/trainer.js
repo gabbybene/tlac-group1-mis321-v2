@@ -231,9 +231,6 @@ function apptCanceledCloseModal(){
 /* FOR CALENDAR / TRAINER AVAILABILITY SCRIPTS 
 calendar adapted from https://github.com/niinpatel/calendarHTML-Javascript */
 function getTrainerCalendar(currentMonth, currentYear){
-    /* TO-DO:   
-        -get appointments with no customer id from DB */
-     
     setCalendarHeader(currentMonth, currentYear); //displays current/updated Month YYYY at top of calendar
 
     //get month and year for use below

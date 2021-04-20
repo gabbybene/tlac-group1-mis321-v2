@@ -646,7 +646,7 @@ function custEditProfile(){
                     referredById = json.customerId;
 
                     //if referredById was found, create customer object to send in body of PUT request
-                    let bodyObj = getUpdatedCustomerObj(referredById);
+                    let bodyObj = getUpdatedCustomerObj();
 
                     const putCustApiUrl = "https://localhost:5001/api/Customer/PutCustomerWithReferredBy/"+referredById;
                     //make api call to UPDATE customer
@@ -668,7 +668,7 @@ function custEditProfile(){
             else {
                 //if referredBy is not checked, get customer object to send in body of PUT request
                 let referredById = "";
-                let bodyObj = getUpdatedCustomerObj(referredById);
+                let bodyObj = getUpdatedCustomerObj();
                 const putCustApiUrl = "https://localhost:5001/api/Customer/";
                     //make api call to UPDATE customer
                     fetch(putCustApiUrl, {
@@ -679,21 +679,26 @@ function custEditProfile(){
                         },
                         body: JSON.stringify(bodyObj)
                     }).then(function(response){
-                        getCustomerProfileForm(customer);
-                        console.log(response);
+                        //get updated customer to reload form
+                        const getCustApiUrl="https://localhost:5001/api/Customer/GetCustomerByID/"+customer.customerId;
+                        fetch(getCustApiUrl).then(function(response){
+                            console.log(response);
+                            return response.json();
+                        }).then(function(json){
+                            getCustomerProfileForm(json);
+                            console.log(response);
+                        }).catch(function(error){
+                            console.log(error);
+                        })
                     })
-            }
-            // //create customer object to send in body of PUT request
-            // let bodyObj = getUpdatedCustomerObj();
-            
-            
+            }     
         }
     }).catch(function(error){
         console.log(error);
     }) 
 }
 
-function getUpdatedCustomerObj(referredById){
+function getUpdatedCustomerObj(){
     //get values from update customer profile form, create and return an object to be used in PUT request
     let inputPassword;
         if(document.getElementById("newPassword").value == undefined){
