@@ -161,12 +161,14 @@
                         <option value="nonbi">Non-binary / Non-conforming</option>
                         <option value="norsp">I'd rather not say</option>
                       </select>
-                      <!-- <label for="gender">Gender</label>
-                      <input type="text" id="gender" class="form-control form-floating" placeholder="Gender" required=""> -->
                     </div>
                   </div> <!--end row-->
                   <div class="row">
-                    <div class="col-sm-12"> <!--fitness goals-->
+                    <div class="col-sm-6"> <!--updateCustPhone-->
+                      <label for="updateCustPhone">Phone Number</label>
+                      <input type="tel" name="updateCustPhone" id="updateCustPhone" class="form-control form-floating" placeholder="numbers only (example: 1234567890)">
+                    </div>
+                    <div class="col-sm-6"> <!--fitness goals-->
                       <label for="fitnessGoals">Fitness Goals</label>
                       <!--not required-->
                       <textarea class="form-control" id="fitnessGoals" placeholder="Tell us about your goals!" rows="2" style="height:auto"></textarea>
@@ -217,6 +219,7 @@
                   </div> <!--end row-->
                   <div class="row text-center" id="custEditProfileErrorMsg"><small class="text-muted" id="mustEnterCurrPasswordMsg" style="padding-top: 10px; display: none;">You must enter your current password to make changes.</small>
                     <small class="text-muted" id="incorrectPasswordMsg" style="padding-top: 10px; display: none;">Current Password is incorrect.</small></div>
+                    <div></div>
                   <div class="row text-center"> <!--save changes button-->
                     <button class="btn btn-lg btn-success" type="button" id="btnEditProfile" onclick="custEditProfile()">Submit Profile Changes</button>
                   </div>

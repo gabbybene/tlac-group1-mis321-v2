@@ -577,6 +577,7 @@ function getCustomerProfileForm(customer){
     document.getElementById("birthDate").value = birthDateOnly;
     document.getElementById("custGender").value = customer.gender.toLowerCase();
     document.getElementById("fitnessGoals").value = customer.fitnessGoals;
+    document.getElementById("updateCustPhone").value = customer.phoneNo;
 
     for(var i in customer.customerActivities){ //update checked status of activities
         if(customer.customerActivities[i].activityId == 4){ // 4 = cardio
@@ -706,84 +707,84 @@ function custEditProfile(){
 function getUpdatedCustomerObj(){
     //get values from update customer profile form, create and return an object to be used in PUT request
     let inputPassword;
-        if(document.getElementById("newPassword").value == undefined){
-            inputPassword = document.getElementById("currPassword").value;
+    if(document.getElementById("newPassword").value == undefined){
+        inputPassword = document.getElementById("currPassword").value;
+    }
+    else {
+        //if they've entered a new password, set inputPassword to that
+        inputPassword = document.getElementById("newPassword").value;
+    }
+    //handle email
+    let inputEmail;
+    if(document.getElementById("newEmail").value == undefined){
+        inputEmail = document.getElementById("currEmail");
+    }
+    else {
+        inputEmail = document.getElementById("newEmail").value;
+    }
+    //handle firstName, lastName, dob, gender
+    let inputFirstName = document.getElementById("inputFName").value;
+    let inputLastName = document.getElementById("inputLName").value;
+    let dob = document.getElementById("birthDate").value;
+    let inputGender = document.getElementById("custGender").value; 
+    //handle fitness goals
+    let inputFitnessGoals = "";
+    if(document.getElementById("fitnessGoals").value != undefined){
+        inputFitnessGoals = document.getElementById("fitnessGoals").value;
+    }
+    //handle phoneNo
+    let inputPhoneNo = "";
+    if(document.getElementById("updateCustPhone").value != undefined){
+        console.log("result of isNaN");
+        console.log(isNaN(document.getElementById("updateCustPhone").value));
+        if(!isNaN(document.getElementById("updateCustPhone").value)){
+            //if it is a number, add its value to inputPhoneNo
+            inputPhoneNo = document.getElementById("updateCustPhone").value;
         }
-        else {
-            //if they've entered a new password, set inputPassword to that
-            inputPassword = document.getElementById("newPassword").value;
-        }
-        
-        let inputEmail;
-        if(document.getElementById("newEmail").value == undefined){
-            console.log("new email is undefined");
-            inputEmail = document.getElementById("currEmail");
-        }
-        else {
-            console.log("new email is " + document.getElementById("newEmail").value);
-            inputEmail = document.getElementById("newEmail").value;
-        }
+    }
+    console.log("inputPhoneNo is ");
+    console.log(inputPhoneNo);
 
-        let inputFirstName = document.getElementById("inputFName").value;
-        let inputLastName = document.getElementById("inputLName").value;
-        let dob = document.getElementById("birthDate").value;
-        let inputGender = document.getElementById("custGender").value;
-        let inputFitnessGoals = "";
-        //handle fitness goals
-        if(document.getElementById("fitnessGoals").value != undefined){
-            inputFitnessGoals = document.getElementById("fitnessGoals").value;
-        }
-        let inputActivityIDs = [];
-        //handle preferred activities
-        if(document.getElementById("cardio").checked === true){
-            console.log("cardio is checked");
-            let cardio = document.getElementById("cardio").value;
-            inputActivityIDs.push(parseInt(cardio))
-            console.log("pushed " + cardio);
-        }
-        if(document.getElementById("strengthTraining").checked === true){
-            console.log("st is checked");
-            let st = document.getElementById("strengthTraining").value;
-            inputActivityIDs.push(parseInt(st));
-            console.log("pushed " + st);
-        }
-        if(document.getElementById("kickboxing").checked === true){
-            console.log("kb is checked");
-            let kb = document.getElementById("kickboxing").value;
-            inputActivityIDs.push(parseInt(kb));
-            console.log("pshed " + kb);
-        }
-        if(document.getElementById("yoga").checked === true){
-            console.log("yoga is checked");
-            let yoga = document.getElementById("yoga").value;
-            inputActivityIDs.push(parseInt(yoga));
-            console.log("pushed "+yoga);
-        }
-        let activityArray = [];
-        if(inputActivityIDs.length > 0){
-            for(var i in inputActivityIDs){
-                activityArray[i] = {
-                    activityId: inputActivityIDs[i]
-                }
+    
+    //handle preferred activities
+    let inputActivityIDs = [];
+    if(document.getElementById("cardio").checked === true){
+        let cardio = document.getElementById("cardio").value;
+        inputActivityIDs.push(parseInt(cardio))
+    }
+    if(document.getElementById("strengthTraining").checked === true){
+        let st = document.getElementById("strengthTraining").value;
+        inputActivityIDs.push(parseInt(st));
+    }
+    if(document.getElementById("kickboxing").checked === true){
+        let kb = document.getElementById("kickboxing").value;
+        inputActivityIDs.push(parseInt(kb));
+    }
+    if(document.getElementById("yoga").checked === true){
+        let yoga = document.getElementById("yoga").value;
+        inputActivityIDs.push(parseInt(yoga));
+    }
+    let activityArray = [];
+    if(inputActivityIDs.length > 0){
+        for(var i in inputActivityIDs){
+            activityArray[i] = {
+                activityId: inputActivityIDs[i]
             }
         }
-        for(var i in activityArray){
-            console.log("activityArray["+i+"]:" + activityArray[i].activityId);
-        }
-
-        var bodyObj = {
-            customerId: getCustomerId(),
-            password: inputPassword,
-            birthDate: dob, 
-            gender: inputGender,
-            fitnessGoals: inputFitnessGoals,
-            PhoneNo: "5554443333", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
-            fName: inputFirstName,
-            lName: inputLastName,
-            email: inputEmail,
-            customerActivities: activityArray,
-        };
-
+    }
+    //make object to send in PUT customer
+    var bodyObj = {
+        customerId: getCustomerId(),
+        password: inputPassword,
+        birthDate: dob, 
+        gender: inputGender,
+        fitnessGoals: inputFitnessGoals,
+        phoneNo: inputPhoneNo, 
+        fName: inputFirstName,
+        lName: inputLastName,
+        email: inputEmail,
+        customerActivities: activityArray,
+    };
     return bodyObj;
 }
 
