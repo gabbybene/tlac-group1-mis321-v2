@@ -62,6 +62,21 @@ namespace api.Controllers
             System.Console.WriteLine("made it to the update.");
             uc.Update(c);
         }
+        
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/{id}")]
+        [HttpPut]
+        public void PutCustomerWithReferredBy([FromBody] Customer c, int id)
+        {
+            //get referredBy Customer to add to the customer sending into the Update() method
+            IReadCustomer rc = new ReadCustomer();
+            c.referredBy = rc.GetCustomerByID(id);
+            Console.WriteLine("found a customer with that id. ID is " + c.referredBy.customerId);
+
+            IUpdateCustomer uc = new UpdateCustomer();
+            System.Console.WriteLine("made it to the update.");
+            uc.Update(c);
+        }
 
         // DELETE: api/Customer/5
         [EnableCors("AnotherPolicy")]

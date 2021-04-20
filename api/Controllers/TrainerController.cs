@@ -55,8 +55,8 @@ namespace api.Controllers
 
         // PUT: api/Trainer/5
         [EnableCors("AnotherPolicy")]
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Trainer t)
+        [HttpPut]
+        public void Put([FromBody] Trainer t)
         {
             IUpdateTrainer ut = new UpdateTrainer();
             System.Console.WriteLine("made it to the update.");

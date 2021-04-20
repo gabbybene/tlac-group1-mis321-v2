@@ -569,7 +569,7 @@ function getCustomerProfileForm(customer){
     document.getElementById("inputFName").value = customer.fName;
     document.getElementById("inputLName").value = customer.lName;
     document.getElementById("birthDate").value = birthDateOnly;
-    document.getElementById("custGender").value = customer.gender;
+    document.getElementById("custGender").value = customer.gender.toLowerCase();
     document.getElementById("fitnessGoals").value = customer.fitnessGoals;
 
     for(var i in customer.customerActivities){ //update checked status of activities
@@ -605,7 +605,7 @@ function custEditProfile(){
     //get current customer object
     let id = getCustomerId();
     let customer = [];
-    const customerApiUrl = "https://localhost:5001/api/Customer/";
+    const customerApiUrl = "https://localhost:5001/api/Customer/GetCustomerByID/"+id;
     fetch(customerApiUrl).then(function(response){
         console.log(response);
         return response.json();
@@ -614,49 +614,134 @@ function custEditProfile(){
 
         //get values of items in the form
         //customer MUST enter currPassword in order to make changes
-        let inputPassword;
-        if(document.getElementById("currPassword").value == null){
+        console.log("currPassword value: ");
+        console.log(document.getElementById("currPassword").value );
+        if(document.getElementById("currPassword").value == undefined){
             document.getElementById("mustEnterCurrPasswordMsg").style.display = "block";
         }
-        else if(document.getElementById("currPassword").value != customer.pasword){
+        else if(document.getElementById("currPassword").value != customer.password){
             document.getElementById("incorrectPasswordMsg").style.display = "block";
         }
         else {
+            /*once they've entered their currPassword and it's correct, 
+            check if they checked referredBy, and only continue if the email the 
+            customer entered was found entered was found. */
+            
+            //If yesReferred is checked, get referrer's email (& id of referrerName) 
+            if(document.getElementById("yesReferred").checked){
+                let referredByEmail = document.getElementById("referrerName");
+                let referredById;
+                const findReferredApiUrl = "https://localhost:5001/api/Customer/"+referredByEmail;
+                fetch(findReferredApiUrl).then(function(response){
+                    console.log(response);
+                    return response.json();
+                }).then(function(json){
+                    //set referred by Id to the customer id that was found
+                    referredById = json.customerId;
+
+                    //if referredById was found, create customer object to send in body of PUT request
+                    let bodyObj = getUpdatedCustomerObj(referredById);
+
+                    const putCustApiUrl = "https://localhost:5001/api/Customer/PutCustomerWithReferredBy/"+referredById;
+                    //make api call to UPDATE customer
+                    fetch(putCustApiUrl, {
+                        method: "PUT",
+                        headers: {
+                            "Accept": 'application/json',
+                            "Content-Type": 'application/json'
+                        },
+                        body: JSON.stringify(bodyObj)
+                    }).then(function(response){
+                        getCustomerProfileForm(customer);
+                        console.log(response);
+                    })
+                }).catch(function(error){
+                    console.log(error);
+                })
+            }
+            else {
+                //if referredBy is not checked, get customer object to send in body of PUT request
+                let referredById = "";
+                let bodyObj = getUpdatedCustomerObj(referredById);
+                const putCustApiUrl = "https://localhost:5001/api/Customer/";
+                    //make api call to UPDATE customer
+                    fetch(putCustApiUrl, {
+                        method: "PUT",
+                        headers: {
+                            "Accept": 'application/json',
+                            "Content-Type": 'application/json'
+                        },
+                        body: JSON.stringify(bodyObj)
+                    }).then(function(response){
+                        getCustomerProfileForm(customer);
+                        console.log(response);
+                    })
+            }
+            // //create customer object to send in body of PUT request
+            // let bodyObj = getUpdatedCustomerObj();
+            
+            
+        }
+    }).catch(function(error){
+        console.log(error);
+    }) 
+}
+
+function getUpdatedCustomerObj(referredById){
+    //get values from update customer profile form, create and return an object to be used in PUT request
+    let inputPassword;
+        if(document.getElementById("newPassword").value == undefined){
             inputPassword = document.getElementById("currPassword").value;
         }
-        let inputEmail = document.getElementById("newEmail").value;
+        else {
+            //if they've entered a new password, set inputPassword to that
+            inputPassword = document.getElementById("newPassword").value;
+        }
+        
+        let inputEmail;
+        if(document.getElementById("newEmail").value == undefined){
+            console.log("new email is undefined");
+            inputEmail = document.getElementById("currEmail");
+        }
+        else {
+            console.log("new email is " + document.getElementById("newEmail").value);
+            inputEmail = document.getElementById("newEmail").value;
+        }
 
         let inputFirstName = document.getElementById("inputFName").value;
         let inputLastName = document.getElementById("inputLName").value;
         let dob = document.getElementById("birthDate").value;
-        console.log("dob is:");
-        console.log(dob);
         let inputGender = document.getElementById("custGender").value;
-        let inputFitnessGoals;
+        let inputFitnessGoals = "";
         //handle fitness goals
-        if(document.getElementById("fitnessGoals").value != null){
-        inputFitnessGoals = document.getElementById("fitnessGoals").value;
-        }
-        else{
-            inputFitnessGoals = null;
+        if(document.getElementById("fitnessGoals").value != undefined){
+            inputFitnessGoals = document.getElementById("fitnessGoals").value;
         }
         let inputActivityIDs = [];
         //handle preferred activities
-        if(document.getElementById("cardio").checked){
+        if(document.getElementById("cardio").checked === true){
+            console.log("cardio is checked");
             let cardio = document.getElementById("cardio").value;
-            inputActivityIDs.push(parseInt(cardio));
+            inputActivityIDs.push(parseInt(cardio))
+            console.log("pushed " + cardio);
         }
-        if(document.getElementById("strengthTraining").checked){
-            let strengthTraining = document.getElementById("strengthTraining").value;
-            inputActivityIDs.push(parseInt(strengthTraining));
+        if(document.getElementById("strengthTraining").checked === true){
+            console.log("st is checked");
+            let st = document.getElementById("strengthTraining").value;
+            inputActivityIDs.push(parseInt(st));
+            console.log("pushed " + st);
         }
-        if(document.getElementById("kickboxing").checked){
-            let kickboxing = document.getElementById("kickboxing").value;
-            inputActivityIDs.push(parseInt(kickboxing));
+        if(document.getElementById("kickboxing").checked === true){
+            console.log("kb is checked");
+            let kb = document.getElementById("kickboxing").value;
+            inputActivityIDs.push(parseInt(kb));
+            console.log("pshed " + kb);
         }
-        if(document.getElementById("yoga").checked){
+        if(document.getElementById("yoga").checked === true){
+            console.log("yoga is checked");
             let yoga = document.getElementById("yoga").value;
             inputActivityIDs.push(parseInt(yoga));
+            console.log("pushed "+yoga);
         }
         let activityArray = [];
         if(inputActivityIDs.length > 0){
@@ -670,13 +755,8 @@ function custEditProfile(){
             console.log("activityArray["+i+"]:" + activityArray[i].activityId);
         }
 
-        //If yesReferred is checked, get referrerName
-        if(document.getElementById("yesReferred").checked){
-            let referredByName = document.getElementById("referrerName");
-        }
-
         var bodyObj = {
-            customerId: id,
+            customerId: getCustomerId(),
             password: inputPassword,
             birthDate: dob, 
             gender: inputGender,
@@ -685,23 +765,9 @@ function custEditProfile(){
             fName: inputFirstName,
             lName: inputLastName,
             email: inputEmail,
-            customerActivities: activityArray
-            // referredBy: referredByName,
+            customerActivities: activityArray,
         };
 
-        //make api call to UPDATE customer
-        fetch(customerApiUrl, {
-            method: "PUT",
-            headers: {
-                "Accept": 'application/json',
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(bodyObj)
-        }).then(function(response){
-            getCustomerProfileForm(customer);
-            console.log(response);
-        })
-    }).catch(function(error){
-        console.log(error);
-    }) 
+    return bodyObj;
 }
+

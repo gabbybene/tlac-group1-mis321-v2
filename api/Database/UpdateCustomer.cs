@@ -42,7 +42,7 @@ namespace api.Database{
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
             }
-            if(i.referredBy!=null){
+            if(i.referredBy != null){
                 cmd.CommandText = @"UPDATE customer SET Refer_CustID=(SELECT CustID from Customer where AccountID=@referrer) WHERE CustID=@cust)";
                 cmd.Parameters.AddWithValue("@referrer", i.referredBy.email);
             }

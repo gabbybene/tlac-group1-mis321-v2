@@ -414,6 +414,8 @@ function showEditAvailabilityModal(selectedDate){
 }
 
 function getActivityCellsForAppt(apptArray, i, trainerId){
+    console.log("AAPPT ACTIVITY ID ");
+    console.log(apptArray[i].activityId);
     let html = "<td><select id=activity-"+apptArray[i].apptID+" name=\"activities\" value="+apptArray[i].activityId+" onchange=\"updateApptPrice("+i+","+trainerId+")\">";
     if(apptArray[i].activityId == 4){
         html += "<option selected value=\"4\" id=\"carOpt"+apptArray[i].apptID+"\">Cardio</option><option disabled id=\"stOpt"+apptArray[i].apptID+"\"value=\"14\">Strength Training</option><option disabled value=\"24\" id=\"kbOpt"+apptArray[i].apptID+"\">Kickboxing</option><option disabled value=\"34\" id=\"yoOpt"+apptArray[i].apptID+"\">Yoga</option></select></td>"; //activity, START DISABLED"
@@ -514,9 +516,9 @@ function updateApptPrice(i, trainerId){
     }).then(function(json){
         for(var j in json){
             let dropdown = document.getElementById("activity-"+i);
-            console.log("I IS ");
-            console.log(i);
             let selectedValue = dropdown.options[dropdown.selectedIndex].value;
+            console.log("selected value: ");
+            console.log(selectedValue);
             // let selectedValue = document.getElementById("activity-"+i).value;
             if(json[j].activityId == selectedValue){
                 if(selectedValue == "4"){
@@ -607,7 +609,10 @@ function validateNewAppt(i, date){
     }
     else {
         let newEndTime = "0001-01-01T" + endTime + ":00";
-        let activityId = document.getElementById("activity-"+i).value;
+        let dropdown = document.getElementById("activity-"+i);
+        let selectedActivity = dropdown.options[dropdown.selectedIndex].value;
+        let activityId = selectedActivity;
+        // let activityId = document.getElementById("activity-"+i).value;
         let price = document.getElementById("price-"+i).value;
         //create new bodyObj to send as appt
         var bodyObj = {
@@ -697,7 +702,7 @@ function getTrainerProfileForm(trainer){
     document.getElementById("inputFName").value = trainer.fName;
     document.getElementById("inputLName").value = trainer.lName;
     document.getElementById("birthDate").value = trainerBirthDateOnly;
-    document.getElementById("trainerGender").value = trainer.gender;
+    document.getElementById("trainerGender").value = trainer.gender.toLowerCase();
  
     //get activities for trainer, update checked/price fields as needed
     const activityApiUrl = "https://localhost:5001/api/Activity/GetTrainerActivities/"+trainer.trainerId;
@@ -739,100 +744,191 @@ function trainerEditProfile(){
     //WORK THIS ONE SIMILARLY TO THE EDITCUSTOMERPROFILE()
     let id = getTrainerId();
     let trainer = [];
-    const trainerApiUrl = "https://localhost:5001/api/Trainer/"+id;
+    const trainerApiUrl = "https://localhost:5001/api/Trainer/GetTrainerByID/"+id;
+    //GET Trainer by ID
     fetch(trainerApiUrl).then(function(response){
         console.log(response);
         return response.json();
     }).then(function(json){
         trainer = json;
+        console.log("got json back: trainer password is " + trainer.password);
         
         //set up a bodyObj for trainer, then do a Put with the updated object
         //trainer MUST enter current password to make changes
-        let inputPassword;
-        if(document.getElementById("currPassword").value == null){
+        
+        if(document.getElementById("currPassword").value == undefined){
             document.getElementById("mustEnterCurrPasswordMsg").style.display = "block";
         }
-        else if(document.getElementById("currPassword").value != trainer.pasword){
+        else if(document.getElementById("currPassword").value != trainer.password){
             document.getElementById("incorrectPasswordMsg").style.display = "block";
         }
         else {
-            inputPassword = document.getElementById("currPassword").value;
-        }
-        let inputEmail = document.getElementById("newEmail").value;
+            //only proceed if trainer entered the correct currPassword
+            let bodyObj = getUpdatedTrainerObj(trainer);
+            
+            // if(document.getElementById("newPassword").value != undefined){
+            //     inputPassword = document.getElementById("currPassword").value;
+            // }
+            // else {
+            //     //if they've entered a new password, set inputPassword to that
+            //     inputPassword = document.getElementById("newPassword").value;
+            // }
+            
+            // let inputEmail;
+            // if(document.getElementById("newEmail").value == undefined){
+            //     inputEmail = document.getElementById("currEmail");
+            // }
+            // else {
+            //     inputEmail = document.getElementById("newEmail").value;
+            // }
 
-        let inputFirstName = document.getElementById("inputFName").value;
-        let inputLastName = document.getElementById("inputLName").value;
-        let dob = document.getElementById("birthDate").value;
-        let inputGender = document.getElementById("trainerGender").value;
-
-        let activities = [];
-        if(document.getElementById("cardioSelect").checked){
-            if(document.getElementById("cardioPrice").value > 0){
-                activities.push({
-                    activityId: document.getElementById("cardioSelect").value,
-                    trainerPriceForActivity: document.getElementById("cardioPrice").value
-                });
-            }
+            // let inputFirstName = document.getElementById("inputFName").value;
+            // let inputLastName = document.getElementById("inputLName").value;
+            // let dob = document.getElementById("birthDate").value;
+            // let inputGender = document.getElementById("trainerGender").value;
+    
+            // let activities = [];
+            // if(document.getElementById("cardioSelect").checked){
+            //     if(document.getElementById("cardioPrice").value > 0){
+            //         activities.push({
+            //             activityId: document.getElementById("cardioSelect").value,
+            //             trainerPriceForActivity: document.getElementById("cardioPrice").value
+            //         });
+            //     }
+            // }
+            // if(document.getElementById("stSelect").checked){
+            //     if(document.getElementById("strengthTrainingPrice").value > 0){
+            //         activities.push({
+            //             activityId: document.getElementById("stSelect").value,
+            //             trainerPriceForActivity: document.getElementById("strengthTrainingPrice").value
+            //         });
+            //     }
+            // }
+            // if(document.getElementById("kbSelect").checked){
+            //     if(document.getElementById("kickboxingPrice").value > 0){
+            //         activities.push({
+            //             activityId: document.getElementById("kbSelect").value,
+            //             trainerPriceForActivity: document.getElementById("kickboxingPrice").value
+            //         });
+            //     }
+            // }
+            // if(document.getElementById("yogaSelect").checked){
+            //     if(document.getElementById("yogaPrice".value > 0)){
+            //         activities.push({
+            //             activityId: document.getElementById("yogaSelect").value,
+            //             trainerPriceForActivity: document.getElementById("yogaPrice").value
+            //         });
+            //     }
+            // }
+            // if(activities.length == 0){
+            //     document.getElementById("mustSelectActivitiesErrorMsg").style.display = "block";
+            // }
+            // console.log(id);
+            // bodyObj = {
+            //     trainerId: getTrainerId(),
+            //     password: inputPassword,
+            //     birthDate: dob,
+            //     gender: inputGender,
+            //     phoneNo: "7775554321", //dummy phoneNo until the forom gets updated
+            //     trainerActivities: activities,
+            //     fName: inputFirstName,
+            //     lName: inputLastName,
+            //     email: inputEmail,
+            // }
+           
+            //PUT new trainer object
+            const putTrainerApiUrl = "https://localhost:5001/api/Trainer/";
+            fetch(putTrainerApiUrl, {
+                method: "PUT",
+                headers: {
+                    "Accept": 'application/json',
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify(bodyObj)
+            })
+            .then(function(response){
+                console.log(response);
+                //reload trainer profile form
+                getTrainerProfileForm(trainer);
+            })
         }
-        if(document.getElementById("stSelect").checked){
-            if(document.getElementById("strengthTrainingPrice").value > 0){
-                activities.push({
-                    activityId: document.getElementById("stSelect").value,
-                    trainerPriceForActivity: document.getElementById("strengthTrainingPrice").value
-                });
-            }
-        }
-        if(document.getElementById("kbSelect").checked){
-            if(document.getElementById("kickboxingPrice").value > 0){
-                activities.push({
-                    activityId: document.getElementById("kbSelect").value,
-                    trainerPriceForActivity: document.getElementById("kickboxingPrice").value
-                });
-            }
-        }
-        if(document.getElementById("yogaSelect").checked){
-            if(document.getElementById("yogaPrice".value > 0)){
-                activities.push({
-                    activityId: document.getElementById("yogaSelect").value,
-                    trainerPriceForActivity: document.getElementById("yogaPrice").value
-                });
-            }
-        }
-        if(activities.length == 0){
-            document.getElementById("mustSelectActivitiesErrorMsg").style.display = "block";
-        }
-        console.log(id);
-        bodyObj = {
-            trainerId: getTrainerId(),
-            password: inputPassword,
-            birthDate: dob,
-            gender: inputGender,
-            phoneNo: "7775554321", //dummy phoneNo until the forom gets updated
-            trainerActivities: activities,
-            fName: inputFirstName,
-            lName: inputLastName,
-            email: inputEmail,
-        }
-       
-        //PUT new trainer object
-        fetch(trainerApiUrl, {
-            method: "PUT",
-            headers: {
-                "Accept": 'application/json',
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(bodyObj)
-        })
-        .then(function(response){
-            console.log(response);
-            //reload trainer profile form
-            getTrainerProfileForm(trainer);
-        })
     }).catch(function(error){
         console.log(error);
     })
+}
 
+function getUpdatedTrainerObj(){
+    //gets and validates values from editTrainerProfile form, returns a formatted object we can send in PUT request
+    let inputPassword;
+    if(document.getElementById("newPassword").value == undefined){
+        inputPassword = document.getElementById("currPassword").value;
+    }
+    else {
+        //if they've entered a new password, set inputPassword to that
+        inputPassword = document.getElementById("newPassword").value;
+    }
+    
+    let inputEmail;
+    if(document.getElementById("newEmail").value == undefined){
+        console.log("new email is undefined");
+        inputEmail = document.getElementById("currEmail");
+    }
+    else {
+        console.log("new email is " + document.getElementById("newEmail").value);
+        inputEmail = document.getElementById("newEmail").value;
+    }
 
+    let inputFirstName = document.getElementById("inputFName").value;
+    let inputLastName = document.getElementById("inputLName").value;
+    let dob = document.getElementById("birthDate").value;
+    let inputGender = document.getElementById("trainerGender").value;
 
- 
+    let activities = [];
+    if(document.getElementById("cardioSelect").checked){
+        if(document.getElementById("cardioPrice").value > 0){
+            activities.push({
+                activityId: document.getElementById("cardioSelect").value,
+                trainerPriceForActivity: document.getElementById("cardioPrice").value
+            });
+        }
+    }
+    if(document.getElementById("stSelect").checked){
+        if(document.getElementById("strengthTrainingPrice").value > 0){
+            activities.push({
+                activityId: document.getElementById("stSelect").value,
+                trainerPriceForActivity: document.getElementById("strengthTrainingPrice").value
+            });
+        }
+    }
+    if(document.getElementById("kbSelect").checked){
+        if(document.getElementById("kickboxingPrice").value > 0){
+            activities.push({
+                activityId: document.getElementById("kbSelect").value,
+                trainerPriceForActivity: document.getElementById("kickboxingPrice").value
+            });
+        }
+    }
+    if(document.getElementById("yogaSelect").checked){
+        if(document.getElementById("yogaPrice".value > 0)){
+            activities.push({
+                activityId: document.getElementById("yogaSelect").value,
+                trainerPriceForActivity: document.getElementById("yogaPrice").value
+            });
+        }
+    }
+    if(activities.length == 0){
+        document.getElementById("mustSelectActivitiesErrorMsg").style.display = "block";
+    }
+    bodyObj = {
+        trainerId: getTrainerId(),
+        password: inputPassword,
+        birthDate: dob,
+        gender: inputGender,
+        phoneNo: "7775554321", //dummy phoneNo until the forom gets updated
+        trainerActivities: activities,
+        fName: inputFirstName,
+        lName: inputLastName,
+        email: inputEmail
+    }
+    return bodyObj;
 }
