@@ -19,7 +19,7 @@ namespace api.Database{
             Trainer trainer = new Trainer();
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read()){
-                Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7), phoneNo=rdr.GetString(8)};
                 temp.trainerActivities = GetTrainerActivities(temp);
                 trainer = temp;
             }
@@ -37,7 +37,7 @@ namespace api.Database{
             using MySqlDataReader rdr = cmd.ExecuteReader();
             Trainer trainer = new Trainer();
             while (rdr.Read()){
-                Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7), phoneNo=rdr.GetString(8)};
                 temp.trainerActivities = GetTrainerActivities(temp);
                 trainer = temp;
             }

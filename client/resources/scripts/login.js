@@ -149,7 +149,8 @@ function validateNewCustomerInputs(){
                     }
                 }
             }
-
+            
+            
             handleCreateNewCustOnClick();
         }
     }
@@ -399,6 +400,7 @@ function validateNewTrainerInputs(){
         let fName = document.getElementById("trainerFName").value;
         let lName = document.getElementById("trainerLName").value;
         let dob = document.getElementById("trainerBirthDate").value;
+        let phoneNumber = document.getElementById("newTrainerPhone").value;
         //boolean variables for if checked
         let cardioSelected = document.getElementById("trnCardio").checked;
         let stSelected = document.getElementById("trnStrengthTraining").checked;
@@ -457,10 +459,25 @@ function validateNewTrainerInputs(){
                 else if(yoSelected && document.getElementById("trnYogaPrice").value <= 0){
                     alert("You must enter a price for Yoga.");
                 }
-                else {
-                    createNewTrainer();
-                }      
+                // else {
+                //     createNewTrainer();
+                // }      
             }
+            //error checking for phoneNumber, if entered
+            if(phoneNumber != null && phoneNumber != undefined){
+                if(isNaN(phoneNumber)){
+                    alert("Phone number must be entered as XXXXXXXXXX, with no dashes or other characters.");
+                    document.getElementById("newTrainerPhone").focus();
+                }
+                else {
+                    let tempStrArray = phoneNumber.toString().split('');
+                    if(tempStrArray.length != 10){
+                        alert("Phone number must be exactly 10 digits long, with no dashes or other characters.");
+                        document.getElementById("newTrainerPhone").focus();
+                    }
+                }
+            }
+            createNewTrainer();
         } 
     }
     catch(e) {
@@ -517,8 +534,15 @@ function createNewTrainer(){
     if(activities.length == 0){
         document.getElementById("chooseActivityErrorMessage").style.display = "block";
     }
+    //handle phone number
+    let phoneNumber="";
+    if(document.getElementById("newTrainerPhone").value != undefined && document.getElementById("newTrainerPhone").value != null){
+        phoneNumber = document.getElementById("newTrainerPhone").value;
+        console.log("value of newTrainerPhone:");
+        console.log(phoneNumber);
+    }
 
-    else {
+    // else {
         //set user inputs to a body object
         var bodyObj = {
             fName: inputFirstName,
@@ -527,6 +551,7 @@ function createNewTrainer(){
             gender: inputGender,
             email: inputEmail,
             password: inputPassword, 
+            phoneNo: phoneNumber,
             trainerActivities: activities
         };
 
@@ -543,7 +568,7 @@ function createNewTrainer(){
             console.log("made it to the post");
             sendTrainerToDashboard(inputEmail);
         })
-    }
+    // }
     
 }
 

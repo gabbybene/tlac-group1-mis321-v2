@@ -291,11 +291,16 @@
               <option value="nonbi">Non-binary / Non-conforming</option>
               <option value="norsp">I'd rather not say</option>
             </select>
-            <!-- <label for="trainerGender">Gender</label>
-            <input type="text" id="trainerGender" class="form-control form-floating" placeholder="Gender" required> -->
           </div> 
         </div> <!--end row-->
-        <div class="row"> <!--for training activities. WILL NEED TO REQUIRE AT LEAST 1 BE SELECTED--> 
+        <div class="row">
+          <div class="col-sm-6">
+            <label for="newTrainerPhone">Phone Number</label>
+              <input type="tel" name="newTrainerPhone" id="newTrainerPhone" class="form-control form-floating" placeholder="numbers only (example: 1234567890)">
+          </div>
+          <!--may have to put extra col here-->
+        </div>
+        <div class="row"> 
           <div id="trainingActivities" style="padding: 10px 0px 10px 0px">
             <h3>What activites do you prefer to train clients in?</h3>
             <p style="font-size: 10px; font-style: italic">Select all that apply:</p>

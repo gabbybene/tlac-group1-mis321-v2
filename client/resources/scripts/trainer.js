@@ -697,7 +697,6 @@ function getFullTime(hours, minutes){
 function getTrainerProfileForm(trainer){
     //do we have to pass in an id?
     let trainerBirthDateOnly = trainer.birthDate.slice(0,10);
-    console.log(trainerBirthDateOnly);
 
     //fill in everything but the password. Trainer should be required to enter their current password to make changes.
     document.getElementById("currEmail").value = trainer.email;
@@ -705,6 +704,8 @@ function getTrainerProfileForm(trainer){
     document.getElementById("inputLName").value = trainer.lName;
     document.getElementById("birthDate").value = trainerBirthDateOnly;
     document.getElementById("trainerGender").value = trainer.gender.toLowerCase();
+    document.getElementById("updateTrainerPhone").value = trainer.phoneNo;
+    console.log(trainer.phoneNo);
  
     //get activities for trainer, update checked/price fields as needed
     const activityApiUrl = "https://localhost:5001/api/Activity/GetTrainerActivities/"+trainer.trainerId;
@@ -858,20 +859,34 @@ function getUpdatedTrainerObj(){
         //if no activities are selected, display error message
         document.getElementById("mustSelectActivitiesErrorMsg").style.display = "block";
     }
-    //create bodyObj to send in PUT request back in EditTrainerProfile()
-    else {
-        bodyObj = {
-            trainerId: getTrainerId(),
-            password: inputPassword,
-            birthDate: dob,
-            gender: inputGender,
-            phoneNo: "7775554321", //dummy phoneNo until the forom gets updated
-            trainerActivities: activities,
-            fName: inputFirstName,
-            lName: inputLastName,
-            email: inputEmail
+
+    //handle phoneNo
+    let inputPhoneNo = "";
+    if(document.getElementById("updateTrainerPhone").value != undefined){
+        console.log("result of isNaN");
+        console.log(isNaN(document.getElementById("updateTrainerPhone").value));
+        if(!isNaN(document.getElementById("updateTrainerPhone").value)){
+            //if it is a number, add its value to inputPhoneNo
+            inputPhoneNo = document.getElementById("updateTrainerPhone").value;
         }
-        return bodyObj;
     }
+    console.log("inputPhoneNo is ");
+    console.log(inputPhoneNo);
+
+
+    //create bodyObj to send in PUT request back in EditTrainerProfile()
+    bodyObj = {
+        trainerId: getTrainerId(),
+        password: inputPassword,
+        birthDate: dob,
+        gender: inputGender,
+        phoneNo: inputPhoneNo,
+        trainerActivities: activities,
+        fName: inputFirstName,
+        lName: inputLastName,
+        email: inputEmail
+    }
+    return bodyObj;
+
 
 }
