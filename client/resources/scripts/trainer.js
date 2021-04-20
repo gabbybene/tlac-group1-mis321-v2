@@ -618,10 +618,10 @@ function validateNewAppt(i, date){
         var bodyObj = {
             appointmentDate: date,
             appointmentTrainer: {
-                trainerId: getTrainerId(),
-                trainerActivities: [{
-                    activityId: activityId
-                }]
+                trainerId: getTrainerId()
+            },
+            appointmentActivity: {
+                activityId: activityId
             },
             appointmentCost: price
     

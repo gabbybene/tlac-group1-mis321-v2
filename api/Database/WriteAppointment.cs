@@ -37,7 +37,7 @@ namespace api.Database{
             cmd.Parameters.AddWithValue("@date", i.appointmentDate);
             cmd.Parameters.AddWithValue("@starttime", startTime);
             cmd.Parameters.AddWithValue("@endtime", endTime);
-            cmd.Parameters.AddWithValue("@actid", i.appointmentTrainer.trainerActivities[0].activityId);
+            cmd.Parameters.AddWithValue("@actid", i.appointmentActivity.activityId);
 
             //How do we keep track of the appointment cost?
             cmd.Connection = con;
