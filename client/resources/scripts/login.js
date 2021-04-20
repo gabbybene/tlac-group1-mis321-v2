@@ -232,22 +232,6 @@ function handleCreateNewCustOnClick(){
         sendCustomerToDashboard(inputEmail);
         console.log(response);
     })
-
-
-    // //make api call to CREATE customer
-    // fetch(customerApiUrl, {
-    //     method: "POST",
-    //     headers: {
-    //         "Accept": 'application/json',
-    //         "Content-Type": 'application/json'
-    //     },
-    //     body: JSON.stringify(bodyObj)
-    // }).then(function(response){
-    //     sendCustomerToDashboard(inputEmail);
-    //     console.log(response);
-    // })
-
-    
 }
 
 function sendCustomerToDashboard(email){
@@ -341,7 +325,84 @@ function handleTrainerSignIn(){
     }) 
 }
 
-function handleCreateNewTrainerOnClick(){ 
+function validateNewTrainerInputs(){
+    try{
+        let email = document.getElementById("newTrainerEmail").value;
+        let password = document.getElementById("newTrainerPassword").value;
+        let fName = document.getElementById("trainerFName").value;
+        let lName = document.getElementById("trainerLName").value;
+        let dob = document.getElementById("trainerBirthDate").value;
+        //boolean variables for if checked
+        let cardioSelected = document.getElementById("trnCardio").checked;
+        let stSelected = document.getElementById("trnStrengthTraining").checked;
+        let kbSelected = document.getElementById("trnKickboxing").checked;
+        let yoSelected = document.getElementById("trnYoga").checked;
+
+        //if all required fields are empty
+        if((email == null || email == "") && (password == null || password == "") && (fName ==  null || fName == "") && (lName == null || lName == "") && (dob == null || dob == "" || dob.toString() > "2008-01-01")){
+            alert("Email, Password, First Name, Last Name, and Date of Birth are required.");
+        }
+        else {
+            if(email == null || email == ""){
+                alert("Email is required.");
+                document.getElementById("newTrainerEmail").focus();
+                // return false;
+            }
+            else if(password == null || password == ""){
+                alert("Password is required.");
+                document.getElementById("trainerPassword").focus();
+                // return false;
+            }
+            else if(fName ==  null || fName == ""){
+                alert("First Name is required.");
+                document.getElementById("trainerFName").focus();
+                // return false;
+            }
+            else if(lName == null || lName == ""){
+                alert("Last Name is required.");
+                document.getElementById("trainerLName").focus();
+                // return false;
+            }
+            else if(dob == null || dob == "" || dob.toString() > "2008-01-01"){
+                if(dob == null || dob == ""){
+                    alert("Date of Birth is required..");
+                }
+                else {
+                    alert("Date of Birth must be greater than 01/01/2008");
+                }
+                document.getElementById("custBirthDate").focus();
+                // return false;
+            }
+            else if(!cardioSelected && !stSelected && ! kbSelected && !yoSelected)
+            {
+                alert("You must select at least one activity and enter its price.");
+            }
+            else {
+                if(cardioSelected && document.getElementById("trnCardioPrice").value <= 0){
+                    alert("You must enter a price for Cardio.");
+                }
+                else if(stSelected && document.getElementById("trnStrengthTrainingPrice").value <= 0){
+                    alert("You must enter a price for Strength Training.");
+                }
+                else if(kbSelected && document.getElementById("trnKickboxingPrice").value <= 0){
+                    alert("You must enter a price for Kickboxing.");
+                }
+                else if(yoSelected && document.getElementById("trnYogaPrice").value <= 0){
+                    alert("You must enter a price for Yoga.");
+                }
+                else {
+                    createNewTrainer();
+                }      
+            }
+        } 
+    }
+    catch(e) {
+        console.log(e);
+        // return false;
+    }
+}
+
+function createNewTrainer(){ 
     const trainerApiUrl = "https://localhost:5001/api/Trainer";
 
     //get trainer data
@@ -353,35 +414,69 @@ function handleCreateNewTrainerOnClick(){
     let inputGender = document.getElementById("trainerGender").value;
     
     //To-do: handle training activities and price
+    let activities = [];
+    if(document.getElementById("trnCardio").checked){
+        if(document.getElementById("trnCardioPrice").value > 0){
+            activities.push({
+                activityId: document.getElementById("trnCardio").value,
+                trainerPriceForActivity: document.getElementById("trnCardioPrice").value
+            });
+        }
+    }
+    if(document.getElementById("trnStrengthTraining").checked){
+        if(document.getElementById("trnStrengthTrainingPrice").value > 0){
+            activities.push({
+                activityId: document.getElementById("trnStrengthTraining").value,
+                trainerPriceForActivity: document.getElementById("trnStrengthTrainingPrice").value
+            });
+        }
+    }
+    if(document.getElementById("trnKickboxing").checked){
+        if(document.getElementById("trnKickboxingPrice").value > 0){
+            activities.push({
+                activityId: document.getElementById("trnKickboxing").value,
+                trainerPriceForActivity: document.getElementById("trnKickboxingPrice").value
+            });
+        }
+    }
+    if(document.getElementById("trnYoga").checked){
+        if(document.getElementById("yogaPrice".value > 0)){
+            activities.push({
+                activityId: document.getElementById("trnYoga").value,
+                trainerPriceForActivity: document.getElementById("trnYogaPrice").value
+            });
+        }
+    }
+    if(activities.length == 0){
+        document.getElementById("chooseActivityErrorMessage").style.display = "block";
+    }
 
+    else {
+        //set user inputs to a body object
+        var bodyObj = {
+            fName: inputFirstName,
+            lName: inputLastName,
+            birthDate: dob,
+            gender: inputGender,
+            email: inputEmail,
+            password: inputPassword, 
+            trainerActivities: activities
+        };
 
-    //set user inputs to a body object
-    var bodyObj = {
-        fName: inputFirstName,
-        lName: inputLastName,
-        birthDate: dob,
-        gender: inputGender,
-        email: inputEmail,
-        password: inputPassword, 
-        //preferred activities []
-    };
-    
-    //make api call to create trainer
-    fetch(trainerApiUrl, {
-        method: "POST",
-        headers: {
-            "Accept": 'application/json',
-            "Content-Type": 'application/json'
-        },
-        body: JSON.stringify(bodyObj)
-    }).then(function(response){
-        console.log(response);
-        console.log("made it to the post");
-        sendTrainerToDashboard(inputEmail);
-    })
-    //create new trainer (get data and add to DB)
-    //go to trainer.html
-    //window.location.href = "./trainer.html";
+        //make api call to create trainer
+        fetch(trainerApiUrl, {
+            method: "POST",
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(bodyObj)
+        }).then(function(response){
+            console.log(response);
+            console.log("made it to the post");
+            sendTrainerToDashboard(inputEmail);
+        })
+    }
     
 }
 
@@ -393,8 +488,7 @@ function sendTrainerToDashboard(email){
         return response.json();
     }).then(function(json){
         let trainerId = json.trainerId;
-        window.location.href = "./trainer.html?trainerId="+trainerId;
-        console.log("customerId is " + trainerId);
+        window.location.href = "./trainer.html?id="+trainerId;
     }).catch(function(error){
         console.log(error);
     }) 

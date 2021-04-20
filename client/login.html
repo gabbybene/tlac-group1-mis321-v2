@@ -135,11 +135,11 @@
         <div class="new-user-form-inputs"> <!--Gender-->
           <label for="custGender">Gender: How do you identify?</label>
           <select style="padding-top: 10px; padding-bottom: 2px;" name="custGender" id="custGender" required>
-            <option value="male">Man</option>
-            <option value="female">Woman</option>
-            <option value="transgender">Transgender</option>
-            <option value="nonbinary">Non-binary / Non-conforming</option>
-            <option value="noResponse">I'd rather not say</option>
+            <option value="Male">Man</option>
+            <option value="Female">Woman</option>
+            <option value="Transgender">Transgender</option>
+            <option value="Nonbinary">Non-binary / Non-conforming</option>
+            <option value="NoResponse">I'd rather not say</option>
           </select>
           <!-- <input type="text" id="custGender" class="form-control form-floating" placeholder="Gender" required> -->
         </div>
@@ -189,8 +189,8 @@
             </label>
           </div>
           <div class="row">
-            <label for="referrerName" style="padding-left: 24px;">If so, who:</label>
-            <input type="text" name="referrerName" id="referrerName" placeholder="Referrer's Name" disabled>
+            <label for="referrerName" style="padding-left: 24px;">If so, what is their email?:</label>
+            <input type="text" name="referrerName" id="referrerName" placeholder="Referrer's Email" disabled>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="notReferred" checked>
@@ -277,11 +277,11 @@
             <!--UPDATE GENDER TO A DROPDOWN MENU-->
             <label for="trainerGender" style="display: block;">Gender: How do you identify?</label>
             <select name="trainerGender" id="trainerGender" required>
-              <option value="male">Man</option>
-              <option value="female">Woman</option>
-              <option value="transgender">Transgender</option>
-              <option value="nonbinary">Non-binary / Non-conforming</option>
-              <option value="noResponse">I'd rather not say</option>
+              <option value="Male">Man</option>
+              <option value="Female">Woman</option>
+              <option value="Transgender">Transgender</option>
+              <option value="Nonbinary">Non-binary / Non-conforming</option>
+              <option value="NoResponse">I'd rather not say</option>
             </select>
             <!-- <label for="trainerGender">Gender</label>
             <input type="text" id="trainerGender" class="form-control form-floating" placeholder="Gender" required> -->
@@ -293,49 +293,49 @@
             <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
             <div class="row form-check"> <!--Cardio-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="cardio" onclick="toggleActivitySelected(id)">
-                <label class="form-check-label" for="cardio">Cardio</label>
+                <input class="form-check-input" type="checkbox" value="4" id="trnCardio" onclick="toggleActivitySelected(id)">
+                <label class="form-check-label" for="trnCardio">Cardio</label>
               </div>
               <div class="col-sm-6">
                 <label for="cardioPrice">Price:</label>
-                <input type="number" id="cardioPrice" disabled>
+                <input type="number" id="trnCardioPrice" disabled>
               </div>
             </div>
             <div class="row form-check"> <!--Strength Training-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="strengthTraining" onclick="toggleActivitySelected(id)">
-                <label class="form-check-label" for="strengthTraining">Strength Training</label>
+                <input class="form-check-input" type="checkbox" value="14" id="trnStrengthTraining" onclick="toggleActivitySelected(id)">
+                <label class="form-check-label" for="trnStrengthTraining">Strength Training</label>
               </div>
               <div class="col-sm-6">
                 <label for="strengthTrainingPrice">Price:</label>
-                <input type="number" id="strengthTrainingPrice" disabled>
+                <input type="number" id="trnStrengthTrainingPrice" disabled>
               </div>
             </div>
             <div class="row form-check"> <!--Kickboxing-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="kickboxing" onclick="toggleActivitySelected(id)">
-                <label class="form-check-label" for="kickboxing">Kickboxing</label>
+                <input class="form-check-input" type="checkbox" value="24" id="trnKickboxing" onclick="toggleActivitySelected(id)">
+                <label class="form-check-label" for="trnKickboxing">Kickboxing</label>
               </div>
               <div class="col-sm-6">
                 <label for="kickboxingPrice">Price:</label>
-                <input type="number" id="kickboxingPrice" disabled>
+                <input type="number" id="trnKickboxingPrice" disabled>
               </div>
             </div>
-            <div class="row form-check"> <!--Pilates-->
+            <div class="row form-check"> <!--Yoga-->
               <div class="col-sm-6">
-                <input class="form-check-input" type="checkbox" value="" id="pilates" onclick="toggleActivitySelected(id)">
-                <label class="form-check-label" for="pilates">Pilates</label>
+                <input class="form-check-input" type="checkbox" value="34" id="trnYoga" onclick="toggleActivitySelected(id)">
+                <label class="form-check-label" for="trnYoga">Yoga</label>
               </div>
               <div class="col-sm-6">
-                <label for="pilatesPrice">Price:</label>
-                <input type="number" id="pilatesPrice" disabled>
+                <label for="yogaPrice">Price:</label>
+                <input type="number" id="trnYogaPrice" disabled>
               </div>
             </div>
           </div> <!--end training activities checklist-->
         </div> <!--end row-->
         <hr>
         <div class="row text-center">
-          <button class="btn btn-success btn-lg" type="button" onclick="handleCreateNewTrainerOnClick()">
+          <button class="btn btn-success btn-lg" type="button" onclick="validateNewTrainerInputs()">
             <i class="fas fa-sign-in-alt"></i>Create Account</button>
         </div>
       </form>
