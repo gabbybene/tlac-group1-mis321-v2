@@ -596,7 +596,7 @@ function getCustomerProfileForm(customer){
 
     if(customer.referredBy != null) { //update checked/referrer name if there is a referred by
         document.getElementById("yesReferred").checked = true;
-        document.getElementById("referrerName").value = customer.referredBy;
+        document.getElementById("referrerName").value = customer.referredBy.email;
         document.getElementById("referrerName").disabled = false;
     }
 }

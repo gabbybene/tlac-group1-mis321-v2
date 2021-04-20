@@ -84,17 +84,19 @@ function handleCustomerSignIn()
 }
 
 function validateNewCustomerInputs(){
+    console.log("made it to validateNewCustomerInputs")
     try{
         let email = document.getElementById("custEmail").value;
         let password = document.getElementById("custPassword").value;
         let fName = document.getElementById("custFirstName").value;
         let lName = document.getElementById("custLastName").value;
-        let dob = document.getElementById("custBirthDate").value;
+        let dob = document.getElementById("newCustBirthDate").value;
         let referred = false;;
         if(document.getElementById("yesReferred").checked){
             referred = true;
         }
         let referrerName = document.getElementById("referrerName").value;
+        let phoneNumber = document.getElementById("newCustPhone").value;
 
         //if all required fields are empty
         if((email == null || email == "") && (password == null || password == "") && (fName ==  null || fName == "") && (lName == null || lName == "") && (dob == null || dob == "" || dob.toString() > "2008-01-01")){
@@ -104,22 +106,18 @@ function validateNewCustomerInputs(){
             if(email == null || email == ""){
                 alert("Email is required.");
                 document.getElementById("custEmail").focus();
-                // return false;
             }
             if(password == null || password == ""){
                 alert("Password is required.");
                 document.getElementById("custPassword").focus();
-                // return false;
             }
             if(fName ==  null || fName == ""){
                 alert("First Name is required.");
                 document.getElementById("custFirstName").focus();
-                // return false;
             }
             if(lName == null || lName == ""){
                 alert("Last Name is required.");
                 document.getElementById("custLastName").focus();
-                // return false;
             }
             if(dob == null || dob == "" || dob.toString() > "2008-01-01"){
                 if(dob == null || dob == ""){
@@ -128,38 +126,50 @@ function validateNewCustomerInputs(){
                 else {
                     alert("Date of Birth must be greater than 01/01/2008");
                 }
-                document.getElementById("custBirthDate").focus();
-                // return false;
+                document.getElementById("newCustBirthDate").focus();
             }
             if(referred && (referrerName == null || referrerName == "")){
-                alert("If you were referred by a friend, their name is required.");
+                alert("If you were referred by a friend, their email is required.");
                 document.getElementById("referrerName").focus();
             }
+            // else {
+            //     console.log("made it to the else");
+            //     handleCreateNewCustOnClick();
+            // }
+
+            if(phoneNumber != null && phoneNumber != undefined){
+                if(isNaN(phoneNumber)){
+                    alert("Phone number must be entered as XXXXXXXXXX, with no dashes or other characters.");
+                    document.getElementById("newCustPhone").focus();
+                }
+                else {
+                    let tempStrArray = phoneNumber.toString().split('');
+                    if(tempStrArray.length != 10){
+                        alert("Phone number must be exactly 10 digits long, with no dashes or other characters.");
+                        document.getElementById("newCustPhone").focus();
+                    }
+                }
+            }
             else {
+                console.log("made it to the else");
                 handleCreateNewCustOnClick();
             }
         }
-        
     }
     catch(e) {
         console.log(e);
-        // return false;
     }
-    // return true;
 }
 
 
 
 function handleCreateNewCustOnClick(){
-    const customerApiUrl = "https://localhost:5001/api/Customer";
-
-    
     //get customer data
     let inputEmail = document.getElementById("custEmail").value;
     let inputPassword = document.getElementById("custPassword").value;
     let inputFirstName = document.getElementById("custFirstName").value;
     let inputLastName = document.getElementById("custLastName").value;
-    let dob = document.getElementById("custBirthDate").value;
+    let dob = document.getElementById("newCustBirthDate").value;
     let inputGender = document.getElementById("custGender").value;
     let inputFitnessGoals;
     //handle fitness goals
@@ -167,7 +177,15 @@ function handleCreateNewCustOnClick(){
         inputFitnessGoals = document.getElementById("fitnessGoals").value;
     }
     else{
-        inputFitnessGoals = null;
+        inputFitnessGoals = "";
+    }
+    //handle phone number
+    let phoneNumber;
+    if(document.getElementById("newCustPhone").value != undefined && document.getElementById("newCustPhone").value != null){
+        phoneNumber = document.getElementById("newCustPhone").value;
+    }
+    else {
+        phoneNumber = "";
     }
     let inputActivityIDs = [];
     //handle preferred activities
@@ -199,39 +217,91 @@ function handleCreateNewCustOnClick(){
         console.log("activityArray["+i+"]:" + activityArray[i].activityId);
     }
 
-    //If yesReferred is checked, get referrerName
+    let referredByEmail;
+    //If yesReferred is checked, get referrerName ****actually the referrer's email****
     if(document.getElementById("yesReferred").checked){
-        let referredByName = document.getElementById("referrerName");
+        document.getElementById("referrerName").disabled = false;
+        referredByEmail = document.getElementById("referrerName").value;
+    }
+    if(referredByEmail != undefined || referredByEmail != ""){
+        //if user entered a referredByEmail
+        let referredById;
+        const findReferredApiUrl = "https://localhost:5001/api/Customer/"+referredByEmail;
+        fetch(findReferredApiUrl).then(function(response){
+            console.log(response);
+            return response.json();
+        }).then(function(json){
+            //set referred by Id to the customer id that was found
+            console.log("json.customerId is ");
+            console.log(json.customerId);
+            referredById = json.customerId;
+
+            //if referredById was found, create customer object to send in body of PUT request
+            var bodyObj = {
+                password: inputPassword,
+                birthDate: dob, 
+                gender: inputGender,
+                fitnessGoals: inputFitnessGoals,
+                PhoneNo: phoneNumber, //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
+                fName: inputFirstName,
+                lName: inputLastName,
+                email: inputEmail,
+                customerActivities: activityArray
+            };
+
+            console.log("TEST");
+            console.log(JSON.stringify(bodyObj));
+
+            const postCustApiUrl = "https://localhost:5001/api/Customer/PostCustomerWithReferredBy/"+referredById;
+            //make api call to CREATE customer
+            fetch(postCustApiUrl, {
+                method: "POST",
+                headers: {
+                    "Accept": 'application/json',
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify(bodyObj)
+            }).then(function(response){
+                sendCustomerToDashboard(inputEmail);
+                console.log(response);
+            })
+        }).catch(function(error){
+            console.log(error);
+        })
+    }
+    else {
+        //if user didn't enter a referredByEmail, post customer without passing in that id
+        var bodyObj = {
+            password: inputPassword,
+            birthDate: dob, 
+            gender: inputGender,
+            fitnessGoals: inputFitnessGoals,
+            PhoneNo: "5554443333", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
+            fName: inputFirstName,
+            lName: inputLastName,
+            email: inputEmail,
+            customerActivities: activityArray
+        };
+    
+        //make api call to CREATE customer
+        const customerApiUrl = "https://localhost:5001/api/Customer";
+        fetch(customerApiUrl, {
+            method: "POST",
+            headers: {
+                "Accept": 'application/json',
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify(bodyObj)
+        }).then(function(response){
+            sendCustomerToDashboard(inputEmail);
+            console.log(response);
+        })
     }
 
-    console.log(inputPassword + " " + dob + " " + inputGender + " " + inputFirstName + " " + inputLastName + " " + inputEmail);
-    console.log("fitness goals: " + inputFitnessGoals);
 
-    var bodyObj = {
-        password: inputPassword,
-        birthDate: dob, 
-        gender: inputGender,
-        fitnessGoals: inputFitnessGoals,
-        PhoneNo: "5554443333", //putting a fake phoneNo in here for now because the form isn't set up to take in a phone number yet.
-        fName: inputFirstName,
-        lName: inputLastName,
-        email: inputEmail,
-        customerActivities: activityArray
-        // referredBy: referredByName,
-    };
+ 
 
-    //make api call to CREATE customer
-    fetch(customerApiUrl, {
-        method: "POST",
-        headers: {
-            "Accept": 'application/json',
-            "Content-Type": 'application/json'
-        },
-        body: JSON.stringify(bodyObj)
-    }).then(function(response){
-        sendCustomerToDashboard(inputEmail);
-        console.log(response);
-    })
+    
 }
 
 function sendCustomerToDashboard(email){

@@ -113,97 +113,111 @@
             <input type="password" name="custPassword" id="custPassword" class="form-control" placeholder="Password" required="">
         </div>
         <hr>
-        <h3>Tell us about yourself:</h4>
-        <div class="new-user-form-inputs"> <!--First Name-->
-          <label for="custFirstName">First Name</label>
-          <input type="text" name="custFirstName" id="custFirstName" class="form-control form-floating" placeholder="First Name" required>
-        </div>
-        <div class="new-user-form-inputs"> <!--Last Name-->
-          <label for="custLastName">Last Name</label>
-          <input type="text" name="custLastName" id="custLastName" class="form-control form-floating" placeholder="Last Name" required>
-        </div>
-        <div class="new-user-form-inputs"> <!--Date of Birth-->
-          <label for="birthDate">Date of Birth</label>
-          <input type="date" name="custBirthDate" id="custBirthDate" class="form-control form-floating" placeholder="Date of Birth (MM/DD/YYYY)" required>
-        </div>
-        <div class="new-user-form-inputs"> <!--Gender-->
-          <label for="custGender">Gender: How do you identify?</label>
-          <select style="padding-top: 10px; padding-bottom: 2px;" name="custGender" id="custGender" required>
-            <option value="male">Man</option>
-            <option value="female">Woman</option>
-            <option value="trans">Transgender</option>
-            <option value="nonbi">Non-binary / Non-conforming</option>
-            <option value="norsp">I'd rather not say</option>
-          </select>
-          <!-- <input type="text" id="custGender" class="form-control form-floating" placeholder="Gender" required> -->
-        </div>
-        <div class="new-user-form-inputs"> <!--Fitness Goals-->
-          <label for="fitnessGoals">Fitness Goals</label>
-          <!--not required-->
-          <textarea class="form-control" id="fitnessGoals" placeholder="Tell us about your goals!" rows="2" style="height:auto"></textarea>
-        </div>
-        <hr>
-        <div class="new-user-form-inputs"> <!--Perferred Activities-->
-          <div id="preferredActivities" style="padding: 10px 0px 10px 0px">
-            <h3>What activites do you prefer to do?</h3>
-            <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="4" name="cardoi" id="cardio" checked>
-              <label class="form-check-label" for="cardio">
-                Cardio
-              </label>
+          <div class="row new-user-form-inputs form-group">
+            <div class="col-sm-6"> <!--first name-->
+              <label for="custFirstName">First Name</label>
+              <input type="text" name="custFirstName" id="custFirstName" class="form-control form-floating" placeholder="First Name" required>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="14" name="strengthTraining" id="strengthTraining" checked>
-              <label class="form-check-label" for="strengthTraining">
-                Strength Training
-              </label>
+            <div class="col-sm-6"> <!--last name-->
+              <label for="custLastName">Last Name</label>
+              <input type="text" name="custLastName" id="custLastName" class="form-control form-floating" placeholder="Last Name" required>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="24" name="kickboxing" id="kickboxing" checked>
-              <label class="form-check-label" for="kickboxing">
-                Kickboxing
-              </label>
+          </div> <!--end first/last name row-->
+          <div class="row new-user-form-inputs form-group">
+            <div class="col-sm-6"> <!--date of birth-->
+              <label for="newCustBirthDate">Date of Birth</label>
+              <input type="date" name="newCustBirthDate" id="newCustBirthDate" class="form-control form-floating" placeholder="Date of Birth (MM/DD/YYYY)" required>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="34" name="yoga" id="yoga" checked>
-              <label class="form-check-label" for="yoga">
-                Yoga
-              </label>
+            <div class="col-sm-6"> <!--gender-->
+              <label for="custGender">Gender: How do you identify?</label>
+              <select style="padding-top: 10px; padding-bottom: 2px;" name="custGender" id="custGender" required>
+                <option value="male">Man</option>
+                <option value="female">Woman</option>
+                <option value="trans">Transgender</option>
+                <option value="nonbi">Non-binary / Non-conforming</option>
+                <option value="norsp">I'd rather not say</option>
+              </select>
             </div>
+          </div> <!--end dob/gender row-->
+          <div class="row new-user-form-inputs form-group">
+            <div class="col-sm-6"> <!--phone number-->
+              <label for="newCustPhone">Phone Number:</label>
+              <input type="tel" name="newCustPhone" id="newCustPhone" class="form-control form-floating">
+            </div>
+            <div class="col-sm-6"> <!--fitness goals-->
+              <label for="fitnessGoals">Fitness Goals</label>
+              <textarea class="form-control" id="fitnessGoals" placeholder="Tell us about your goals!" rows="2" style="height:auto"></textarea>
+            </div>
+          </div> <!--end phoneNo/fitness goals row-->
+          <div class="row new-user-form-inputs form-group">
+            <div class="col-sm-6">
+              <!--Perferred Activities-->
+              <div id="preferredActivities">
+                <h3>What activites do you prefer to do?</h3>
+                <p style="font-size: 10px; font-style: italic">Select all that apply:</p>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="4" name="cardoi" id="cardio" checked>
+                  <label class="form-check-label" for="cardio">
+                    Cardio
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="14" name="strengthTraining" id="strengthTraining" checked>
+                  <label class="form-check-label" for="strengthTraining">
+                    Strength Training
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="24" name="kickboxing" id="kickboxing" checked>
+                  <label class="form-check-label" for="kickboxing">
+                    Kickboxing
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="34" name="yoga" id="yoga" checked>
+                  <label class="form-check-label" for="yoga">
+                    Yoga
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div id="referredBy"> <!--Get Referred By-->
+                <h3>Were you referred by a friend?</h3>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="yesReferred" onclick="handleReferredByOnClick()">
+                  <label class="form-check-label" for="yesReferred">
+                    Yes
+                  </label>
+                </div>
+                <div class="row">
+                  <label for="referrerName" style="padding-left: 24px;">If so, what is their email?:</label>
+                  <input type="text" name="referrerName" id="referrerName" placeholder="Referrer's Email" disabled>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="notReferred" checked>
+                  <label class="form-check-label" for="notReferred">
+                    No
+                  </label>
+                </div>
+                
+              </div>
+            </div>
+          </div> <!--end activities / referredByrow-->
+          <hr>
+          <div class="row text-center">
+            <button class="btn btn-success btn-lg" type="button" id="btn-new" onclick="validateNewCustomerInputs()">
+              <!-- onclick="handleCreateNewCustOnClick()" -->
+              <i class="fas fa-sign-in-alt"></i>Create Account</button>
           </div>
-        </div>
-        <hr>
-        <div id="referredBy"> <!--Get Referred By-->
-          <h3>Were you referred by a friend?</h3>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="yesReferred" onclick="handleReferredByOnClick()">
-            <label class="form-check-label" for="yesReferred">
-              Yes
-            </label>
-          </div>
-          <div class="row">
-            <label for="referrerName" style="padding-left: 24px;">If so, what is their email?:</label>
-            <input type="text" name="referrerName" id="referrerName" placeholder="Referrer's Email" disabled>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="notReferred" checked>
-            <label class="form-check-label" for="notReferred">
-              No
-            </label>
-          </div>
-          <!--IF THEY SELECT YES, POPUP TEXT BOX TO GET REFERRER'S NAME-->
-        </div>
-        <div class="row text-center">
-          <button class="btn btn-success btn-lg" type="button" id="btn-new" onclick="validateNewCustomerInputs()">
-            <!-- onclick="handleCreateNewCustOnClick()" -->
-            <i class="fas fa-sign-in-alt"></i>Create Account</button>
-        </div>
-        <!--UPDATE THE FORM ABOVE THIS LINE-->
-      </form>
-    </hr>
-  </div> <!--end modal content div-->
-</div> <!--end new trainer form div-->
+          <!--UPDATE THE FORM ABOVE THIS LINE-->
+        </form>
+      <!-- </hr> -->
+    </div> <!--end modal content div-->
+  </div> <!--end new customer form div-->
+
+ 
+       
 
 <!--div for TRAINER LOGIN modal-->
 <div class="modal" id="trainerLoginModal">
@@ -397,16 +411,15 @@
   <!-- Wrapper--> 
 
 
-
-  <!--CHANGE WHAT'S ABOVE THIS LINE-->
-  <!--scripts-->
+<!--scripts-->
+  <script src="https://code.jquery.com/jquery-latest.js"></script> <!--latest jquery-->
+  <script type="text/Javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> <!--latest boostrap JS-->
+  <!--scripts from the template-->
   <script type="text/javascript" src="./resources/scripts/plugins.js"></script> 
   <script type="text/javascript" src="./resources/scripts/menu.js"></script> 
   <script type="text/javascript" src="./resources/scripts/custom.js"></script> 
   <script src="./resources/scripts/jquery.subscribe.js"></script>
   <!--scripts above this line came from the template-->
-  <script src="https://code.jquery.com/jquery-latest.js"></script> <!--latest jquery-->
-  <script type="text/Javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> <!--latest boostrap JS-->
   <script type="text/Javascript" src="./resources/scripts/login.js"></script> <!--custom JS for this page -->
 </body>
 </html>

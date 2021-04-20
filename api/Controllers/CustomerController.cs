@@ -56,7 +56,7 @@ namespace api.Controllers
         [EnableCors("AnotherPolicy")]
         [Route("[action]/{id}")]
         [HttpPost]
-        public void PostWithReferredBy([FromBody] Customer c, int id)
+        public void PostCustomerWithReferredBy([FromBody] Customer c, int id)
         {
             //get referredBy Customer to add to the customer sending into the Update() method
             IReadCustomer rc = new ReadCustomer();
