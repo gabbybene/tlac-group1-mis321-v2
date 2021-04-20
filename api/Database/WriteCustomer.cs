@@ -41,8 +41,11 @@ namespace api.Database{
                 cmd.ExecuteNonQuery();
             }
             if(i.referredBy!=null){
-                cmd.CommandText = @"UPDATE customer SET Refer_CustID=@referrer WHERE AccountID=@email)";
+                cmd.CommandText = @"UPDATE customer SET Refer_CustID=@referrer WHERE AccountID=@email";
                 cmd.Parameters.AddWithValue("@referrer", i.referredBy.customerId);
+                cmd.Connection=con;
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
             }
         }
     }

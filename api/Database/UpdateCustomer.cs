@@ -28,11 +28,13 @@ namespace api.Database{
                 cmd.CommandText = @"UPDATE account SET AcctID=@AcctID, WHERE AcctID=(SELECT AccountID from Customer WHERE CustID=@cust)";
                 cmd.Parameters.AddWithValue("@AcctID", i.email);
             }
-            cmd.CommandText = @"UPDATE account SET Password=@password WHERE AcctID=(SELECT AccountID from Customer WHERE CustID=@cust)";
-            cmd.Parameters.AddWithValue("@password", i.password);
-            cmd.Connection=con;
-            cmd.Prepare();
-            cmd.ExecuteNonQuery();
+            if(i.password!=""){
+                cmd.CommandText = @"UPDATE account SET Password=@password WHERE AcctID=(SELECT AccountID from Customer WHERE CustID=@cust)";
+                cmd.Parameters.AddWithValue("@password", i.password);
+                cmd.Connection=con;
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+            }
             cmd.CommandText = @"UPDATE customer SET fName=@fname, lName=@lname, DOB=@dob, Gender=@gender, Phone=@phone, fitnessGoal=@goal WHERE CustID=@cust";
             cmd.Parameters.AddWithValue("@fname", i.fName);
             cmd.Parameters.AddWithValue("@lname", i.lName);
@@ -64,8 +66,11 @@ namespace api.Database{
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
             }
-            else {
-                Console.WriteLine("Referral Null");
+            else if(i.referredBy==null){
+                cmd.CommandText = @"UPDATE customer SET Refer_CustID=null WHERE CustID=@cust";
+                cmd.Connection=con;
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
             }
         }
 
