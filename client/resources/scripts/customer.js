@@ -53,6 +53,12 @@ function getCustomerObject(){
     return customer;
 }
 
+function getCustDashboardUrl(){
+    let customerId = getCustomerId();
+    return "./customer.html?id=@"+customerId;
+
+}
+
 
 function getConfirmedAppointments(customer){
     //Get appointments from DB that match the customer ID In the url & have a date of today or in the future.
