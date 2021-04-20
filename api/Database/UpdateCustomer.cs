@@ -12,7 +12,7 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
 
-            cmd.CommandText = @"UPDATE account SET AcctID=@AcctID, Password=@password WHERE AcctID=(SELECT AcctID from Customer WHERE CustID=@cust)";
+            cmd.CommandText = @"UPDATE account SET AcctID=@AcctID, Password=@password WHERE AcctID=(SELECT AccountID from Customer WHERE CustID=@cust)";
             cmd.Parameters.AddWithValue("@AcctID", i.email);
             cmd.Parameters.AddWithValue("@cust", i.customerId);
             cmd.Parameters.AddWithValue("@password", i.password);
@@ -26,7 +26,6 @@ namespace api.Database{
             cmd.Parameters.AddWithValue("@gender", i.gender);
             cmd.Parameters.AddWithValue("@phone", i.phoneNo);
             cmd.Parameters.AddWithValue("@goal", i.fitnessGoals);
-            cmd.Parameters.AddWithValue("@cust", i.customerId);
             Console.WriteLine(i.fitnessGoals);
             cmd.Connection=con;
             cmd.Prepare();
