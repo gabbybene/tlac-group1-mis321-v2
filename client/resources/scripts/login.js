@@ -103,6 +103,7 @@ function validateNewCustomerInputs(){
             alert("Email, Password, First Name, Last Name, and Date of Birth are required.");
         }
         else {
+            //error checking for email, then password, then fName, then lName
             if(email == null || email == ""){
                 alert("Email is required.");
                 document.getElementById("custEmail").focus();
@@ -119,6 +120,7 @@ function validateNewCustomerInputs(){
                 alert("Last Name is required.");
                 document.getElementById("custLastName").focus();
             }
+            //error checking for dob
             if(dob == null || dob == "" || dob.toString() > "2008-01-01"){
                 if(dob == null || dob == ""){
                     alert("Date of Birth is required..");
@@ -128,15 +130,12 @@ function validateNewCustomerInputs(){
                 }
                 document.getElementById("newCustBirthDate").focus();
             }
+            //error checkign for referredby
             if(referred && (referrerName == null || referrerName == "")){
                 alert("If you were referred by a friend, their email is required.");
                 document.getElementById("referrerName").focus();
             }
-            // else {
-            //     console.log("made it to the else");
-            //     handleCreateNewCustOnClick();
-            // }
-
+            //error checking for phoneNumber, if entered
             if(phoneNumber != null && phoneNumber != undefined){
                 if(isNaN(phoneNumber)){
                     alert("Phone number must be entered as XXXXXXXXXX, with no dashes or other characters.");
@@ -150,10 +149,8 @@ function validateNewCustomerInputs(){
                     }
                 }
             }
-            else {
-                console.log("made it to the else");
-                handleCreateNewCustOnClick();
-            }
+
+            handleCreateNewCustOnClick();
         }
     }
     catch(e) {
