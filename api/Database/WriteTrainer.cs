@@ -20,11 +20,12 @@ namespace api.Database
             cmd.Prepare();
             cmd.ExecuteNonQuery();
 
-            cmd.CommandText = @"INSERT into trainer (fName, lName, DOB, Gender, AcctID) VALUES (@fname,@lname,@dob,@gender, (SELECT acctID FROM Account WHERE acctID=@email))";
+            cmd.CommandText = @"INSERT into trainer (fName, lName, DOB, Gender, AcctID, Phone) VALUES (@fname,@lname,@dob,@gender, (SELECT acctID FROM Account WHERE acctID=@email), @phone)";
             cmd.Parameters.AddWithValue("@fname", i.fName);
             cmd.Parameters.AddWithValue("@lname", i.lName);
             cmd.Parameters.AddWithValue("@dob", i.birthDate);
             cmd.Parameters.AddWithValue("@gender", i.gender);
+            cmd.Parameters.AddWithValue("@phone", i.phoneNo);
             cmd.Connection=con;
             cmd.Prepare();
             cmd.ExecuteNonQuery();

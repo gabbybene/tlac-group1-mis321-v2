@@ -12,8 +12,9 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
 
-            cmd.CommandText = @"UPDATE account SET AcctID=@AcctID, Password=@password WHERE AcctID=@AcctID";
+            cmd.CommandText = @"UPDATE account SET AcctID=@AcctID, Password=@password WHERE AcctID=(SELECT AcctID from Customer WHERE CustID=@cust)";
             cmd.Parameters.AddWithValue("@AcctID", i.email);
+            cmd.Parameters.AddWithValue("@cust", i.customerId);
             cmd.Parameters.AddWithValue("@password", i.password);
             cmd.Connection=con;
             cmd.Prepare();
