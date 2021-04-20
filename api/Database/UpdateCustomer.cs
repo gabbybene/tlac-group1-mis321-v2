@@ -58,7 +58,7 @@ namespace api.Database{
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
             }
-            if(i.referredBy != null){
+            if(i.referredBy.customerId!=0){
                 Console.WriteLine("Referral Customer Not Null" + i.referredBy.customerId);
                 cmd.CommandText = @"UPDATE customer SET Refer_CustID=@referrer WHERE CustID=@cust";
                 cmd.Parameters.AddWithValue("@referrer", i.referredBy.customerId);
@@ -66,7 +66,7 @@ namespace api.Database{
                 cmd.Prepare();
                 cmd.ExecuteNonQuery();
             }
-            else if(i.referredBy==null){
+            else if(i.referredBy.customerId==0){
                 cmd.CommandText = @"UPDATE customer SET Refer_CustID=null WHERE CustID=@cust";
                 cmd.Connection=con;
                 cmd.Prepare();
