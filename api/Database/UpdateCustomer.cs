@@ -29,6 +29,7 @@ namespace api.Database{
                 cmd.ExecuteNonQuery();
             }
             cmd.CommandText = @"UPDATE customer SET fName=@fname, lName=@lname, DOB=@dob, Gender=@gender, Phone=@phone, fitnessGoal=@goal WHERE CustID=@cust";
+            cmd.Parameters.AddWithValue("@cust", i.customerId);
             cmd.Parameters.AddWithValue("@fname", i.fName);
             cmd.Parameters.AddWithValue("@lname", i.lName);
             cmd.Parameters.AddWithValue("@dob", i.birthDate);

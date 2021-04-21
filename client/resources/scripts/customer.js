@@ -63,8 +63,6 @@ function getCustDashboardUrl(){
 function getConfirmedAppointments(customer){
     //Get appointments from DB that match the customer ID In the url & have a date of today or in the future.
     //return that array of appointment objects
-    // var confirmedAppts = [];
-    console.log("customer id is " + customer.customerId);
     let html = "";
     const apptApiUrl = "https://localhost:5001/api/Appointment/GetConfirmedAppointmentsForCustomer/"+customer.customerId;
     fetch(apptApiUrl).then(function(response){
@@ -72,7 +70,6 @@ function getConfirmedAppointments(customer){
         return response.json();
     }).then(function(json){
         if(json[0] == undefined){
-            console.log("no appointments found");
              //will return the empty []
             html += "<h2>You don't have any upcoming appointments scheduled at this time.</h2><h2>Check out the calendar below to find some sessions and get training!</h2>";
         }
@@ -369,7 +366,6 @@ function previousMonth() {
 //FOR MODAL TO MAKE APPOINTMENTS
 function showMakeAppointmentModal(value){
     let selectedDate = value;
-    console.log("Selected Date is" + selectedDate);
     
     //Make API call to get available appointments matching user-selected date
     const apptApiUrl = "https://localhost:5001/api/Appointment/GetAvailableAppointmentsByDate/"+selectedDate;
@@ -377,8 +373,6 @@ function showMakeAppointmentModal(value){
         console.log(response);
         return response.json();
     }).then(function(json){
-        console.log("json[0].appointmentID is :");
-        console.log(json[0].appointmentId);
         //set up starting HTML
         let html = document.getElementById("custMakeApptModal");
         html += "<div class=\"modal-dialog\"><div class=\"modal-content\">";
@@ -527,7 +521,7 @@ function addCustToAppointment(apptID){
 
     //REVERT TO THIS IF NO CREDIT CARD
             // let bodyObj = [customerId, apptID];
-    //ACTUALLY NEED TO UPDATE THIS TO TAKE A BODYOBJ
+    //ACTUALLY NEED TO UPDATE THIS TO TAKE A BODYOBJECT
 
             //IF USING CREDIT CARD, CHANGE PUTBYADDINGCUSTOMERID TO TAKE AN OBJECT WITH APPTCUSTOMER, APPTID, AND AMOUNTPAID BY CASH OR CARD
             let bodyObj = {};
@@ -619,11 +613,9 @@ window.onclick = function(event){
 
 /* GET / UPDATE CUSTOMER PROFILE SECTION */
 function getCustomerProfileForm(customer){
+    document.getElementById("currPassword").value = "";
 
-    // let dateAndTime = customer.birthDate;
-    // let birthDateOnly = dateAndTime.slice(0,10);
-    let birthDateOnly = customer.birthDate.slice(0,10);
-   
+    let birthDateOnly = customer.birthDate.slice(0,10);   
     document.getElementById("currEmail").value = customer.email;
     document.getElementById("inputFName").value = customer.fName;
     document.getElementById("inputLName").value = customer.lName;
@@ -634,7 +626,6 @@ function getCustomerProfileForm(customer){
 
     for(var i in customer.customerActivities){ //update checked status of activities
         if(customer.customerActivities[i].activityId == 4){ // 4 = cardio
-            console.log("cardio value: " + document.getElementById("cardio").value);
             document.getElementById("cardio").checked = true;
         }
         else if(customer.customerActivities[i].activityId == 14){ // 14 = strength training
@@ -674,8 +665,6 @@ function custEditProfile(){
 
         //get values of items in the form
         //customer MUST enter currPassword in order to make changes
-        console.log("currPassword value: ");
-        console.log(document.getElementById("currPassword").value );
         if(document.getElementById("currPassword").value == undefined){
             document.getElementById("mustEnterCurrPasswordMsg").style.display = "block";
         }
@@ -697,15 +686,10 @@ function custEditProfile(){
                     return response.json();
                 }).then(function(json){
                     //set referred by Id to the customer id that was found
-                    console.log("json.customerId is ");
-                    console.log(json.customerId);
                     referredById = json.customerId;
 
                     //if referredById was found, create customer object to send in body of PUT request
                     let bodyObj = getUpdatedCustomerObj();
-
-                    console.log("TEST");
-                    console.log(JSON.stringify(bodyObj));
 
                     const putCustApiUrl = "https://localhost:5001/api/Customer/PutCustomerWithReferredBy/"+referredById;
                     //make api call to UPDATE customer
@@ -717,7 +701,17 @@ function custEditProfile(){
                         },
                         body: JSON.stringify(bodyObj)
                     }).then(function(response){
-                        getCustomerProfileForm(customer);
+                        //get updated customer to reload form
+                        const getCustApiUrl="https://localhost:5001/api/Customer/GetCustomerByID/"+customer.customerId;
+                        fetch(getCustApiUrl).then(function(response){
+                            console.log(response);
+                            return response.json();
+                        }).then(function(json){
+                            getCustomerProfileForm(json);
+                            console.log(response);
+                        }).catch(function(error){
+                            console.log(error);
+                        })
                         console.log(response);
                     })
                 }).catch(function(error){
@@ -749,6 +743,7 @@ function custEditProfile(){
                         }).catch(function(error){
                             console.log(error);
                         })
+                        console.log(response);
                     })
             }     
         }
@@ -788,16 +783,11 @@ function getUpdatedCustomerObj(){
     //handle phoneNo
     let inputPhoneNo = "";
     if(document.getElementById("updateCustPhone").value != undefined){
-        console.log("result of isNaN");
-        console.log(isNaN(document.getElementById("updateCustPhone").value));
         if(!isNaN(document.getElementById("updateCustPhone").value)){
             //if it is a number, add its value to inputPhoneNo
             inputPhoneNo = document.getElementById("updateCustPhone").value;
         }
     }
-    console.log("inputPhoneNo is ");
-    console.log(inputPhoneNo);
-
     
     //handle preferred activities
     let inputActivityIDs = [];
