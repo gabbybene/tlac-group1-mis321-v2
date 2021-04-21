@@ -12,21 +12,14 @@ namespace api.Database{
             con.Open();
             using var cmd = new MySqlCommand();
 
-            cmd.CommandText = @"SELECT AccountID FROM Customer WHERE CustID=@ExistingCustID";
-            cmd.Parameters.AddWithValue("@ExistingCustID",i.customerId);
-            cmd.Parameters.AddWithValue("@ifnullvalue", "Please enter your fitness goals here!");
-            cmd.Parameters.AddWithValue("@cust", i.customerId);
-            cmd.Connection=con;
-            cmd.Prepare();
-            using MySqlDataReader rdr = cmd.ExecuteReader();
-            string existingEmail = null;
-            while(rdr.Read()){
-                existingEmail = rdr.GetString(0);
-            }
-            rdr.Dispose();
-            if(existingEmail!=i.email){
-                cmd.CommandText = @"UPDATE account SET AcctID=@AcctID, WHERE AcctID=(SELECT AccountID from Customer WHERE CustID=@cust)";
-                cmd.Parameters.AddWithValue("@AcctID", i.email);
+            if(i.email!=""){
+                Console.WriteLine("Updating Email to "+i.email +"Customer ID: "+i.customerId);
+                cmd.CommandText = @"UPDATE account SET AcctID=@newemail WHERE AcctID=(SELECT AccountID from Customer WHERE CustID=@cust)";
+                cmd.Parameters.AddWithValue("@cust", i.customerId);
+                cmd.Parameters.AddWithValue("@newemail", i.email);
+                cmd.Connection=con;
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
             }
             if(i.password!=""){
                 cmd.CommandText = @"UPDATE account SET Password=@password WHERE AcctID=(SELECT AccountID from Customer WHERE CustID=@cust)";
