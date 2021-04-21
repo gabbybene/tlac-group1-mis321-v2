@@ -19,9 +19,19 @@ namespace api.Database{
             Trainer trainer = new Trainer();
             MySqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read()){
-                Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7), phoneNo=rdr.GetString(8)};
-                temp.trainerActivities = GetTrainerActivities(temp);
-                trainer = temp;
+                 if(rdr.IsDBNull(8)){
+                    //if phoneNo is null, return trainer without phone
+                    Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                    temp.trainerActivities = GetTrainerActivities(temp);
+                    trainer = temp;
+                }
+                else {
+                    //if phone is not null, return trainer with phone
+                    Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7), phoneNo=rdr.GetString(8)};
+                    temp.trainerActivities = GetTrainerActivities(temp);
+                    trainer = temp;
+                }
+               
             }
             return trainer;
         }
@@ -37,9 +47,19 @@ namespace api.Database{
             using MySqlDataReader rdr = cmd.ExecuteReader();
             Trainer trainer = new Trainer();
             while (rdr.Read()){
-                Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7), phoneNo=rdr.GetString(8)};
-                temp.trainerActivities = GetTrainerActivities(temp);
-                trainer = temp;
+                if(rdr.IsDBNull(8)){
+                    //if phoneNo is null, return trainer without phone
+                    Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                    temp.trainerActivities = GetTrainerActivities(temp);
+                    trainer = temp;
+                }
+                else {
+                    //if phone is not null, return trainer with phone
+                    Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7), phoneNo=rdr.GetString(8)};
+                    temp.trainerActivities = GetTrainerActivities(temp);
+                    trainer = temp;
+                }
+                
             }
             return trainer;
             
@@ -55,9 +75,20 @@ namespace api.Database{
 
             List<Trainer> allTrainers = new List<Trainer>();
             while(rdr.Read()){
-                Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
-                temp.trainerActivities = GetTrainerActivities(temp);
-                allTrainers.Add(temp);
+                
+                if(rdr.IsDBNull(8)){
+                    //if phoneNo is null, return trainer without phone
+                    Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7)};
+                    temp.trainerActivities = GetTrainerActivities(temp);
+                    allTrainers.Add(temp);
+                }
+                else {
+                    //if phone is not null, return trainer with phone
+                    Trainer temp = new Trainer(){trainerId=rdr.GetInt32(0),fName=rdr.GetString(1),lName=rdr.GetString(2),birthDate=rdr.GetDateTime(3), gender=rdr.GetString(4), email=rdr.GetString(5), password=rdr.GetString(7), phoneNo=rdr.GetString(8)};
+                    temp.trainerActivities = GetTrainerActivities(temp);
+                    allTrainers.Add(temp);
+                }
+
             }
             return allTrainers;
         }

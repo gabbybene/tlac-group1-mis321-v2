@@ -451,13 +451,23 @@ function showApptDetails(apptID){
         html += "<div class=\"row text-left\"><h4>Price: $"+appt.price+"</h4></div></div>";
         /*radio button for paying cash, and credit card (disabled for now)*/
         html += "<form><div class=\"form-check\"><div class=\"row\">";
-        html += "<div class=\"col-md-12\"><input class=\"form-check-input\" type=\"radio\" name=\"flexRadioDefault\" id=\"payingCash\" checked>";
+        html += "<div class=\"col-md-12\"><input class=\"form-check-input\" type=\"radio\" name=\"flexRadioDefault\" id=\"payingCash\" checked onchange=\"toggleCreditCardForm()\">";
         html += "<label class=\"form-check-label\" for=\"payingCash\">Cash</label></div></div>";
         html += "<div class=\"col-md-12\"><label for=\"amountPaid\" style=\"padding-left: 24px;\">Enter amount:</label>";
         html += "<input type=\"number\" id=\"amountPaid\" placeholder=\"Enter amount here\"></div><small id=\"insufficientCashMessage\" class=\"text-muted\" style=\"display: none\">Amount entered must be equal to the price of the appointment.</small></div>";
-        html += "<div class=\"form-check\"><div class=\"row\"><div class=\"col-md-12\"><input class=\"form-check-input\" type=\"radio\" name=\"flexRadioDefault\" id=\"payingCard\" disabled>";
+        html += "<div class=\"form-check\"><div class=\"row\"><div class=\"col-md-12\"><input class=\"form-check-input\" type=\"radio\" name=\"flexRadioDefault\" id=\"payingCard\" onchange=\"toggleCreditCardForm()\" disabled>"; //DISABLED
         html += "<label class=\"form-check-label\" for=\"payingCard\">Credit Card</label></div></div></div>";
         html += "</form>";
+
+        //add credit form here, start at hide, show if radio button for creditCard is selected
+        //HTML FOR THIS FORM CAME FROM https://tutorialzine.com/2016/11/simple-credit-card-validation-form
+        html+="<div class=\"row\"><div id=\"creditCardForm\" class=\"payment\" style=\"display: none;\"><form><div class=\"form-group owner\"><label for=\"owner\">Owner</label><input type=\"text\" class=\"form-control\" id=\"owner\"></div>";
+        html += "<div class=\"row\"><div class=\"col-sm-12\"><div class=\"form-group\" id=\"card-number-field\"><label for=\"cardNumber\">Card Number</label><input type=\"text\" class=\"form-control\" id=\"cardNumber\"></div></div></div>";
+        html += "<div class=\"row\"><div class=\"col-sm-6\"><div class=\"form-group CVV\"><label for=\"cvv\">CVV</label><input type=\"text\" class=\"form-control\" id=\"cvv\"></div></div>";
+        html += "<div class=\"col-sm-6\"><div class=\"form-group\" id=\"expiration-date\"><label>Expiration Date</label><select><option value=\"01\">January</option><option value=\"02\">February </option><option value=\"03\">March</option>";
+        html += "<option value=\"04\">April</option><option value=\"05\">May</option><option value=\"06\">June</option><option value=\"07\">July</option><option value=\"08\">August</option>";
+        html += "<option value=\"09\">September</option><option value=\"10\">October</option><option value=\"11\">November</option><option value=\"12\">December</option></select>";
+        html += "<select><option value=\"21\"> 2021</option><option value=\"22\"> 2022</option><option value=\"23\"> 2023</option><option value=\"24\"> 2024</option><option value=\"25\"> 2025</option><option value=\"26\"> 2026</option></select></div></div></div></div></div>";
 
         html += "<div class=\"text-center\"><button class=\"btn btn-lg btn-success\" type=\"submit\" onclick=\"addCustToAppointment("+apptID+")\">Pay and Confirm</button></div></div></div>";
         //update modal HTML
@@ -465,10 +475,17 @@ function showApptDetails(apptID){
     }).catch(function(error){
         console.log(error);
     })
+}
 
-    // Might use the following for credit card info form: 
-    // https://bbbootstrap.com/snippets/credit-card-payment-form-78109411
-    // div for the CC form would go right after the form but before the button. Set display to hide. Set to show if radio button for credit card is selected.
+function toggleCreditCardForm(){
+    if(document.getElementById("payingCash").checked){
+        document.getElementById("creditCardForm").style.display = "none";
+    }
+    else {
+        //if payingCard is checked
+        document.getElementById("creditCardForm").style.display = "block";
+    }
+    
 }
 
 function addCustToAppointment(apptID){
@@ -480,14 +497,17 @@ function addCustToAppointment(apptID){
     }).then(function(json){
         var tempStr = JSON.stringify(json);
         var object = JSON.parse(tempStr);
+
         //simplify object to a format with only the needed items
+
         var appt = {
             apptDate: getFormattedDate(object.appointmentDate),
             startTime: getFormattedTime(object.startTime.hours, object.startTime.minutes),
             endTime: getFormattedTime(object.endTime.hours, object.endTime.minutes),
             activity:  object.appointmentTrainer.trainerActivities[0].activityName,
             trainerName: object.appointmentTrainer.fName+ " " + object.appointmentTrainer.lName,
-            price: object.appointmentCost
+            price: object.appointmentCost,
+            amountPaidByCash: document.getElementById("amountPaid").value
         }
 
         //parse amountPaid to a number
@@ -502,9 +522,42 @@ function addCustToAppointment(apptID){
             
             //make API call to add customer to appt
             let customerId = getCustomerId();
-            const addCustApiUrl = "https://localhost:5001/api/Appointment/PutByAddingCustomerID/"+customerId;
+            // const addCustApiUrl = "https://localhost:5001/api/Appointment/PutByAddingCustomerID/"+customerId;
             //make an int[] to send into the put request. [0]=custID, [1]=apptID
-            let bodyObj = [customerId, apptID];
+
+    //REVERT TO THIS IF NO CREDIT CARD
+            // let bodyObj = [customerId, apptID];
+    //ACTUALLY NEED TO UPDATE THIS TO TAKE A BODYOBJ
+
+            //IF USING CREDIT CARD, CHANGE PUTBYADDINGCUSTOMERID TO TAKE AN OBJECT WITH APPTCUSTOMER, APPTID, AND AMOUNTPAID BY CASH OR CARD
+            let bodyObj = {};
+
+            if(document.getElementById("payingCash").checked){
+                console.log("paying with cash");
+                bodyObj = {
+                    appointmentId: apptID,
+                    appointmentCustomer: {
+                        customerId: customerId
+                    },
+                    amountPaidByCard: 0,
+                    amountPaidByCash: amountPaid
+                };
+            }
+            else {
+                //if checked payingCard
+                console.log("paying with card");
+                bodyObj = {
+                    appointmentId: apptID,
+                    appointmentCustomer: {
+                        customerId: customerId
+                    },
+                    amountPaidByCard: amountPaid,
+                    amountPaidByCash: 0
+                };
+            }
+            console.log(JSON.stringify(bodyObj));
+
+            const addCustApiUrl = "https://localhost:5001/api/Appointment/PutByAddingCustomer/";
             fetch(addCustApiUrl, {
                 method: "PUT",
                 headers: {

@@ -142,6 +142,14 @@ namespace api.Controllers
             System.Console.WriteLine("made it to the update");
             ua.UpdateAddCustomerId(ids);
         }
+
+        [EnableCors("AnotherPolicy")]
+        [Route("[action]/")]
+        [HttpPut]
+        public void PutByAddingCustomer([FromBody] Appointment a){
+            UpdateAppointment ua = new UpdateAppointment();
+            ua.UpdateAddCustomer(a);
+        }
        
        
         // Update Appointments by Deleting a customer from appointment 
