@@ -125,7 +125,6 @@ namespace api.Database{
             }
             return myAppointments;
         }
-
         public int GetMaxAppointmentID()
         {            
             ConnectionString cs = new ConnectionString();
@@ -145,6 +144,7 @@ namespace api.Database{
             }
             return -1;
         }
+
 
         public List<Appointment> ReadConfirmedAppointmentsForCustomer(int customerId){
             List<Appointment> appointments = new List<Appointment>();

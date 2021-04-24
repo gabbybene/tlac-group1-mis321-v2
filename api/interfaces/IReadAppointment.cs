@@ -11,5 +11,6 @@ namespace api.interfaces
         List<DateTime> ReadDistinctAvailableAppointments();
         List<Appointment> ReadAvailableAppointmentsByDate(DateTime date);
         List<Appointment> ReadAvailableAppointmentsByDateForTrainer(int trainerId, DateTime date);
+        int GetMaxAppointmentID();
     }
 }

@@ -86,7 +86,6 @@ namespace api.Controllers
             ReadAppointment ra = new ReadAppointment();
             return ra.ReadConfirmedAppointmentsForCustomer(customerId);
         }
-
         //Get maximum appointment ID
         [EnableCors("AnotherPolicy")]
         [Route("[action]")]
