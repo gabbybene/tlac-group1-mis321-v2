@@ -126,6 +126,26 @@ namespace api.Database{
             return myAppointments;
         }
 
+        public int GetMaxAppointmentID()
+        {            
+            ConnectionString cs = new ConnectionString();
+            using var con = new MySqlConnection(cs.cs);
+            con.Open();
+            using var cmd = new MySqlCommand();
+            cmd.Connection = con;
+            cmd.CommandText = @"SELECT AppointmentID FROM Appointment ORDER BY AppointmentID DESC";
+            cmd.Prepare();
+          
+            using MySqlDataReader rdr = cmd.ExecuteReader();
+
+            //created new ReadCustomer, ReadTrainer, and ReacActivity to get Customer, Trainer, and Activity data
+            while (rdr.Read())
+            {
+                return rdr.GetInt32(0);
+            }
+            return -1;
+        }
+
         public List<Appointment> ReadConfirmedAppointmentsForCustomer(int customerId){
             List<Appointment> appointments = new List<Appointment>();
 
